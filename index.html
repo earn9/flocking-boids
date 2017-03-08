@@ -11,17 +11,30 @@
     <script src="js/three.js"></script>
     <script>
 
+        const createCube = (scene) => {
+            const cube = {};
+
+            const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            const material = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+            const cubeMesh = new THREE.Mesh( geometry, material );
+
+            scene.add(cubeMesh);
+
+            cube.update = (delta) => {
+                cubeMesh.rotation.x += delta * 0.6;
+                cubeMesh.rotation.y += delta * 0.6;                
+            };
+
+            return cube;
+        };
+
         const update = (delta, graph) => {
-            var cube = graph.cube;
-            cube.rotation.x += delta * 0.6;
-            cube.rotation.y += delta * 0.6;
-        }
+            const cube = graph.cube;
+            cube.update(delta);
+        };
 
         const setup = (scene) => {
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshPhongMaterial( { color: 0xffffff } );
-            var cube = new THREE.Mesh( geometry, material );
-            scene.add(cube);
+            const cube = createCube(scene);
 
             var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
             var floorMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff } );
@@ -46,7 +59,7 @@
             scene.add(pointLights[2]);
 
             return {cube};
-        }
+        };
 
         const createRenderLoop = (clock, graph, scene, camera, renderer) => {
             const internalRender = () => {
@@ -58,7 +71,7 @@
                 renderer.render(scene, camera);
             }
             return internalRender;
-        }
+        };
 
         window.onload = () => {
             var scene = new THREE.Scene();
