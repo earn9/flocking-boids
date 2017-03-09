@@ -22,19 +22,43 @@
 
             cube.update = (delta) => {
                 cubeMesh.rotation.x += delta * 0.6;
-                cubeMesh.rotation.y += delta * 0.6;                
+                cubeMesh.rotation.y += delta * 0.8;                
             };
 
             return cube;
         };
 
+        const createBoid = (scene) => {
+            const boid = {};
+
+            const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            const material = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
+            const boidMesh = new THREE.Mesh( geometry, material );
+
+            scene.add(boidMesh);
+
+            var direction = new THREE.Vector3(1, 0, 0);
+            var speed = 1.0;
+
+            boid.update = (delta) => {
+                let velocity = direction.clone();
+                velocity.multiplyScalar(speed);
+                velocity.multiplyScalar(delta);
+                boidMesh.position.add(velocity);
+            };
+
+            return boid;
+        }
+
         const update = (delta, graph) => {
-            const cube = graph.cube;
-            cube.update(delta);
+            for (const node of graph) {
+                node.update(delta);
+            }
         };
 
         const setup = (scene) => {
             const cube = createCube(scene);
+            const boid = createBoid(scene);
 
             var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
             var floorMaterial = new THREE.MeshPhongMaterial( { color: 0x6464ff } );
@@ -49,16 +73,16 @@
             pointLights[0].position.set(100, 10, 0);
 
             pointLights[1] = new THREE.PointLight(0xffffff, 1, 0);
-            pointLights[1].position.set(-100, 10, 0);
+            pointLights[1].position.set(0, 10, 0);
             
             pointLights[2] = new THREE.PointLight(0xffffff, 1, 0);
-            pointLights[2].position.set(0, 10, 5);
+            pointLights[2].position.set(0, 0, 5);
             
             scene.add(pointLights[0]);
             scene.add(pointLights[1]);
             scene.add(pointLights[2]);
 
-            return {cube};
+            return [cube, boid];
         };
 
         const createRenderLoop = (clock, graph, scene, camera, renderer) => {
