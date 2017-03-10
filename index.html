@@ -43,8 +43,8 @@
             const factor = 2 * Math.PI * Math.random();
 
             return {
-                u: Math.sin(factor),
-                v: Math.cos(factor)
+                u: Math.cos(factor),
+                v: Math.sin(factor)
             };
         };
 
@@ -103,7 +103,10 @@
         };
 
         const createCamera = () => {
-            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10);
+            var camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10);
+            camera.zoom = 70;
+            camera.updateProjectionMatrix();
             camera.position.y = 6;
             camera.position.z = 0;
             camera.up = new THREE.Vector3(0, 1, 0);
