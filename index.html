@@ -74,14 +74,9 @@
             const boidGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
             const boidMaterial = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
 
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            for (let i = 0; i < 100; i++) {
+                graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));    
+            }
 
             var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
             var floorMaterial = new THREE.MeshPhongMaterial( { color: 0x6464ff } );
