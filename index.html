@@ -28,17 +28,29 @@
             return cube;
         };
 
-        const createBoid = (scene, boidGeometry, boidMaterial, startingSpeed) => {
+        const randomBetween = (min, max) => {
+            return Math.random() * (max - min) + min;
+        };
+
+        const randomVec2 = (min, max) => {
+            return {
+                x: randomBetween(min, max),
+                y: randomBetween(min, max)
+            }
+        };
+
+        const createBoid = (scene, boidGeometry, boidMaterial, startPos) => {
             const boid = {};
 
             const geometry = boidGeometry || new THREE.BoxGeometry(1, 1, 1);
             const material = boidMaterial || new THREE.MeshPhongMaterial({ color: 0xff6464 });
             const boidMesh = new THREE.Mesh(geometry, material);
+            boidMesh.position.set(startPos.x, 0, startPos.y);
 
             scene.add(boidMesh);
 
             const direction = new THREE.Vector3(1, 0, 0);
-            var speed = startingSpeed;
+            var speed = 0.75;
 
             boid.update = (delta) => {
                 const velocity = direction.clone();
@@ -48,7 +60,7 @@
             };
 
             return boid;
-        }
+        };
 
         const update = (delta, graph) => {
             for (const node of graph) {
@@ -62,14 +74,14 @@
             const boidGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
             const boidMaterial = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
 
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.1));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.2));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.3));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.4));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.4));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.3));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.2));
-            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.1));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-10, 10)));
 
             var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
             var floorMaterial = new THREE.MeshPhongMaterial( { color: 0x6464ff } );
