@@ -28,17 +28,17 @@
             return cube;
         };
 
-        const createBoid = (scene) => {
+        const createBoid = (scene, boidGeometry, boidMaterial, startingSpeed) => {
             const boid = {};
 
-            const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            const material = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
-            const boidMesh = new THREE.Mesh( geometry, material );
+            const geometry = boidGeometry || new THREE.BoxGeometry(1, 1, 1);
+            const material = boidMaterial || new THREE.MeshPhongMaterial({ color: 0xff6464 });
+            const boidMesh = new THREE.Mesh(geometry, material);
 
             scene.add(boidMesh);
 
             const direction = new THREE.Vector3(1, 0, 0);
-            var speed = 0.2433;
+            var speed = startingSpeed;
 
             boid.update = (delta) => {
                 const velocity = direction.clone();
@@ -59,7 +59,17 @@
         const setup = (scene) => {
             const graph = [];
 
-            graph.push(createBoid(scene));
+            const boidGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+            const boidMaterial = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
+
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.1));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.2));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.3));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, 0.4));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.4));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.3));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.2));
+            graph.push(createBoid(scene, boidGeometry, boidMaterial, -0.1));
 
             var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
             var floorMaterial = new THREE.MeshPhongMaterial( { color: 0x6464ff } );
