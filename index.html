@@ -43,14 +43,16 @@
             const factor = 2 * Math.PI * Math.random();
 
             return {
-                u: Math.cos(factor),
-                v: Math.sin(factor)
+                x: Math.cos(factor),
+                y: Math.sin(factor)
             };
         };
 
         const createWorld = () => {
             const boids = {};
-            const world = {
+            const world = {};
+
+            const findNearby = (position) => {
                 
             };
 
@@ -121,8 +123,18 @@
         };
 
         const createCamera = () => {
-            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10);
-            var camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10);
+            var camera = new THREE.PerspectiveCamera(
+                75, 
+                window.innerWidth / window.innerHeight,
+                0.1,
+                10);
+            var camera = new THREE.OrthographicCamera(
+                window.innerWidth / -2, 
+                window.innerWidth / 2, 
+                window.innerHeight / 2, 
+                window.innerHeight / -2, 
+                0.1, 
+                10);
             camera.zoom = 70;
             camera.updateProjectionMatrix();
             camera.position.y = 6;
@@ -136,17 +148,20 @@
             const world = createWorld();
             const graph = [];
 
-            const boidGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-            const boidMaterial = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
+            const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
             for (let i = 0; i < 100; i++) {
                 const boid = createBoidMesh(scene, boidGeometry, boidMaterial);   
                 boid.tag = i;             
-                graph.push(boid);    
-                const {x, y} = randomVec2(-5, 5);
-                const location = new THREE.Vector3(x, 0, y);
-                const {u, v} = randomDirection();
-                const direction = new THREE.Vector3(u, 0, v);
+                graph.push(boid);
+
+                const {x: xPos, y: yPos} = randomVec2(-5, 5);
+                const location = new THREE.Vector3(xPos, 0, yPos);
+
+                const {x: xDir, y: yDir} = randomDirection();
+                const direction = new THREE.Vector3(xDir, 0, yDir);
+
                 var speed = 0.75;
                 world.addBoid(location, direction, speed, boid.tag);
             }
