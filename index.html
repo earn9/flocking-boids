@@ -48,33 +48,51 @@
             };
         };
 
-        const createBoid = (scene, boidGeometry, boidMaterial, startPos) => {
+        const createWorld = () => {
+            const boids = {};
+            const world = {
+                
+            };
+
+            world.addBoid = (position, direction, speed, key) => {
+                boids[key] = {position, direction, speed};
+            };
+
+            world.update = (delta) => {
+                for (const key in boids) {
+                    const velocity = boids[key].direction.clone();
+                    velocity.multiplyScalar(boids[key].speed);
+                    velocity.multiplyScalar(delta);
+                    boids[key].position.add(velocity);
+                };
+            };
+
+            world.getPositionOf = (key) => {
+                return boids[key].position;
+            };
+
+            return world;
+        };
+
+        const createBoidMesh = (scene, boidGeometry, boidMaterial, startPos) => {
             const boid = {};
 
             const geometry = boidGeometry || new THREE.BoxGeometry(1, 1, 1);
             const material = boidMaterial || new THREE.MeshPhongMaterial({ color: 0xff6464 });
             const boidMesh = new THREE.Mesh(geometry, material);
-            boidMesh.position.set(startPos.x, 0, startPos.y);
 
             scene.add(boidMesh);
 
-            const {u, v} = randomDirection();
-            const direction = new THREE.Vector3(u, 0, v);
-            var speed = 0.75;
-
-            boid.update = (delta) => {
-                const velocity = direction.clone();
-                velocity.multiplyScalar(speed);
-                velocity.multiplyScalar(delta);
-                boidMesh.position.add(velocity);
-            };
+            boid.mesh = boidMesh;
 
             return boid;
         };
 
-        const update = (delta, graph) => {
+        const update = (delta, graph, world) => {
+            world.update(delta);
             for (const node of graph) {
-                node.update(delta);
+                const {x, y, z} = world.getPositionOf(node.tag);
+                node.mesh.position.set(x, y, z);
             }
         };
 
@@ -115,15 +133,25 @@
         };
 
         const setup = (scene) => {
+            const world = createWorld();
             const graph = [];
 
             const boidGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
             const boidMaterial = new THREE.MeshPhongMaterial( { color: 0xff6464 } );
 
             for (let i = 0; i < 100; i++) {
-                graph.push(createBoid(scene, boidGeometry, boidMaterial, randomVec2(-5, 5)));    
+                const boid = createBoidMesh(scene, boidGeometry, boidMaterial);   
+                boid.tag = i;             
+                graph.push(boid);    
+                const {x, y} = randomVec2(-5, 5);
+                const location = new THREE.Vector3(x, 0, y);
+                const {u, v} = randomDirection();
+                const direction = new THREE.Vector3(u, 0, v);
+                var speed = 0.75;
+                world.addBoid(location, direction, speed, boid.tag);
             }
 
+            
             scene.add(createFloor());
 
             var pointLights = createLights();
@@ -134,15 +162,15 @@
 
             var camera = createCamera();
 
-            return {graph, camera};
+            return {world, graph, camera};
         };
 
-        const createRenderLoop = (clock, graph, scene, camera, renderer) => {
+        const createRenderLoop = (clock, graph, scene, camera, renderer, world) => {
             const internalRender = () => {
                 window.requestAnimationFrame(internalRender);
 
                 var delta = clock.getDelta();
-                update(delta, graph);
+                update(delta, graph, world);
 
                 renderer.render(scene, camera);
             }
@@ -156,11 +184,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            var {graph, camera} = setup(scene);
+            var {world, graph, camera} = setup(scene);
 
             var clock = new THREE.Clock();
 
-            var render = createRenderLoop(clock, graph, scene, camera, renderer);
+            var render = createRenderLoop(clock, graph, scene, camera, renderer, world);
 
             render();
         };
