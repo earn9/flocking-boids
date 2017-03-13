@@ -50,14 +50,21 @@
 
         const createBoid = (position, direction, speed) => {
             const findClosestFriend = (fromBoid, world) => {
-                const friends = [];
+                let friend;
+                let distance = 100;
                 world.forEachBoid(otherBoid => {
+                    if (fromBoid === otherBoid) return;
                     if (fromBoid.collisionSphere.containsPoint(otherBoid.position))
                     {
-                        friends.push(otherBoid);
+                        const newDist = fromBoid.position.distanceTo(otherBoid.position);
+                        if (newDist < distance)
+                        {
+                            friend = otherBoid;
+                            distance = newDist
+                        }
                     }
                 });
-                return friends[0];
+                return friend;
             };
 
             const boid = {
@@ -122,7 +129,7 @@
         };
 
         const createFriendLine = (scene) => {
-            const friedLine = {};
+            const friendLine = {};
 
             const geometry = new THREE.Geometry();
             geometry.vertices.push(
@@ -132,13 +139,18 @@
 
             scene.add(mesh);
 
-            friedLine.setLine = (start, end) => {
+            friendLine.setLine = (start, end) => {
+                mesh.visible = true;
                 geometry.vertices[0].set(start.x, start.y, start.z);
                 geometry.vertices[1].set(end.x, end.y, end.z);
                 geometry.verticesNeedUpdate = true;
             };
 
-            return friedLine;
+            friendLine.hide = () => {
+                mesh.visible = false;
+            };
+
+            return friendLine;
         };
 
         const update = (delta, graph, world) => {
@@ -149,6 +161,8 @@
                 node.mesh.position.set(x, y, z);
                 if (boid.friend) {
                     graph.friendLines[node.tag].setLine(node.mesh.position, boid.friend.position);
+                } else {
+                    graph.friendLines[node.tag].hide();
                 }
             }
         };
