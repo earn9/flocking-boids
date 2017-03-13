@@ -49,11 +49,22 @@
         };
 
         const createBoid = (position, direction, speed) => {
+            const findClosestFriend = (fromBoid, world) => {
+                const friends = [];
+                world.forEachBoid(otherBoid => {
+                    if (fromBoid.collisionSphere.containsPoint(otherBoid.position))
+                    {
+                        friends.push(otherBoid);
+                    }
+                });
+                return friends[0];
+            };
+
             const boid = {
                 position,
                 direction,
                 speed,
-                collisionSphere: new THREE.Sphere(position, 10)
+                collisionSphere: new THREE.Sphere(position, 1)
             };
 
             boid.update = (delta, world) => {
@@ -62,6 +73,8 @@
                 velocity.multiplyScalar(delta);
                 boid.position.add(velocity);
                 boid.collisionSphere.center.set(position.x, position.y, position.z);
+
+                boid.friend = findClosestFriend(boid, world);
             };
 
             return boid;
@@ -84,6 +97,12 @@
                     boids[key].update(delta, world);
                 };
             };
+
+            world.forEachBoid = (boidAction) => {
+                for (const key in boids) {
+                    boidAction(boids[key]);
+                };                
+            }
 
             world.getPositionOf = (key) => {
                 return boids[key].position;
