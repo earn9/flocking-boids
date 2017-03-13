@@ -48,6 +48,25 @@
             };
         };
 
+        const createBoid = (position, direction, speed) => {
+            const boid = {
+                position,
+                direction,
+                speed,
+                collisionSphere: new THREE.Sphere(position, 10)
+            };
+
+            boid.update = (delta, world) => {
+                const velocity = boid.direction.clone();
+                velocity.multiplyScalar(boid.speed);
+                velocity.multiplyScalar(delta);
+                boid.position.add(velocity);
+                boid.collisionSphere.center.set(position.x, position.y, position.z);
+            };
+
+            return boid;
+        };
+
         const createWorld = () => {
             const boids = {};
             const world = {};
@@ -57,15 +76,12 @@
             };
 
             world.addBoid = (position, direction, speed, key) => {
-                boids[key] = {position, direction, speed};
+                boids[key] = createBoid(position, direction, speed);
             };
 
             world.update = (delta) => {
                 for (const key in boids) {
-                    const velocity = boids[key].direction.clone();
-                    velocity.multiplyScalar(boids[key].speed);
-                    velocity.multiplyScalar(delta);
-                    boids[key].position.add(velocity);
+                    boids[key].update(delta, world);
                 };
             };
 
