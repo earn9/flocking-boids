@@ -84,10 +84,6 @@
             const boids = {};
             const world = {};
 
-            const findNearby = (position) => {
-                
-            };
-
             world.addBoid = (position, direction, speed, key) => {
                 boids[key] = createBoid(position, direction, speed);
             };
@@ -104,8 +100,8 @@
                 };                
             }
 
-            world.getPositionOf = (key) => {
-                return boids[key].position;
+            world.getBoid = (key) => {
+                return boids[key];
             };
 
             return world;
@@ -125,11 +121,35 @@
             return boid;
         };
 
+        const createFriendLine = (scene) => {
+            const friedLine = {};
+
+            const geometry = new THREE.Geometry();
+            geometry.vertices.push(
+                new THREE.Vector3(0,0,0),
+                new THREE.Vector3(0,0,0));
+            const mesh = new THREE.Line(geometry);
+
+            scene.add(mesh);
+
+            friedLine.setLine = (start, end) => {
+                geometry.vertices[0].set(start.x, start.y, start.z);
+                geometry.vertices[1].set(end.x, end.y, end.z);
+                geometry.verticesNeedUpdate = true;
+            };
+
+            return friedLine;
+        };
+
         const update = (delta, graph, world) => {
             world.update(delta);
-            for (const node of graph) {
-                const {x, y, z} = world.getPositionOf(node.tag);
+            for (const node of graph.boids) {
+                const boid = world.getBoid(node.tag);
+                const {x, y, z} = boid.position;
                 node.mesh.position.set(x, y, z);
+                if (boid.friend) {
+                    graph.friendLines[node.tag].setLine(node.mesh.position, boid.friend.position);
+                }
             }
         };
 
@@ -181,15 +201,19 @@
 
         const setup = (scene) => {
             const world = createWorld();
-            const graph = [];
+            const graph = { boids: [], friendLines: [] };
 
             const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
             const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
-            for (let i = 0; i < 100; i++) {
+            const numBoids = 100;
+
+            for (let i = 0; i < numBoids; i++) {
                 const boid = createBoidMesh(scene, boidGeometry, boidMaterial);   
                 boid.tag = i;             
-                graph.push(boid);
+                graph.boids.push(boid);
+
+                graph.friendLines[i] = createFriendLine(scene);
 
                 const {x: xPos, y: yPos} = randomVec2(-5, 5);
                 const location = new THREE.Vector3(xPos, 0, yPos);
@@ -200,7 +224,6 @@
                 var speed = 0.75;
                 world.addBoid(location, direction, speed, boid.tag);
             }
-
             
             scene.add(createFloor());
 
