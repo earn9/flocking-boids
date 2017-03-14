@@ -43,22 +43,19 @@ const createBoid = (position, direction, speed) => {
         let distance = 9999999999;
         world.forEachBoid(otherBoid => {
             if (fromBoid === otherBoid) return;
-//            if (fromBoid.collisionSphere.containsPoint(otherBoid.position)) {
             const newDist = fromBoid.position.distanceTo(otherBoid.position);
             if (newDist < distance) {
                 friend = otherBoid;
                 distance = newDist
             }
-//            }
         });
-        return friend;
+        return distance < 1 ? friend : undefined;
     };
 
     const boid = {
         position,
         direction,
-        speed,
-        collisionSphere: new THREE.Sphere(position, 1)
+        speed
     };
 
     boid.update = (delta, world) => {
@@ -66,7 +63,6 @@ const createBoid = (position, direction, speed) => {
         velocity.multiplyScalar(boid.speed);
         velocity.multiplyScalar(delta);
         boid.position.add(velocity);
-        boid.collisionSphere.center.set(position.x, position.y, position.z);
 
         boid.friend = findClosestFriend(boid, world);
     };
