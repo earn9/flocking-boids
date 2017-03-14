@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 const createBoid = (position, direction, speed) => {
     const findClosestFriend = (fromBoid, world) => {
         let friend;
@@ -13,6 +15,15 @@ const createBoid = (position, direction, speed) => {
         return distance < 1 ? friend : undefined;
     };
 
+    const getVectorToFriend = (me, other) => {
+        const result = me.clone();
+        result.sub(other);
+        result.normalize();
+        return result;
+    }
+
+    const rotationVector = new THREE.Vector3(0, 1, 0);
+
     const boid = {
         position,
         direction,
@@ -26,6 +37,15 @@ const createBoid = (position, direction, speed) => {
         boid.position.add(velocity);
 
         boid.friend = findClosestFriend(boid, world);
+
+        if (boid.friend) {
+            const vecToFriend = getVectorToFriend(boid.position, boid.friend.position);
+            const rot = vecToFriend.dot(boid.direction);
+            console.log('angleTo', rot);
+            const rotConst = 8;
+            const rotFactor = rot > 0 ? 1 * rotConst : -1 * rotConst;
+            boid.direction.applyAxisAngle(rotationVector, (rotFactor * delta));
+        }
     };
 
     return boid;
