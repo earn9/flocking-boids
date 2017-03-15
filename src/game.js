@@ -41,7 +41,6 @@ const createBoid = (position, direction, speed) => {
         if (boid.friend) {
             const vecToFriend = boid.friend.direction.clone(); //getVectorToFriend(boid.position, boid.friend.position);
             const rot = vecToFriend.dot(boid.direction);
-            console.log('angleTo', rot);
             const rotConst = 4;
 
             let rotFactor = 0;
