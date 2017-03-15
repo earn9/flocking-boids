@@ -30,8 +30,8 @@ const createFriendLine = (scene) => {
 
     friendLine.setLine = (start, end) => {
         mesh.visible = true;
-        geometry.vertices[0].set(start.x, start.y, start.z);
-        geometry.vertices[1].set(end.x, end.y, end.z);
+        geometry.vertices[0].copy(start);
+        geometry.vertices[1].copy(end);
         geometry.verticesNeedUpdate = true;
     };
 
