@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createBoid, createWorld } from './game';
-import { createBoidMesh, createFriendLine, createFloor, createLights, createCamera } from './renderer';
+import { createBoidView, createFriendLine, createFloor, createLights, createCamera } from './renderer';
 
 const randomBetween = (min, max) => {
     return Math.random() * (max - min) + min;
@@ -46,7 +46,7 @@ const setup = (scene) => {
     const numBoids = 100;
 
     for (let i = 0; i < numBoids; i++) {
-        const boid = createBoidMesh(scene, boidGeometry, boidMaterial);
+        const boid = createBoidView(scene, boidGeometry, boidMaterial);
         boid.tag = i;
         graph.boids.push(boid);
 

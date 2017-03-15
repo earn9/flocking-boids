@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 
-const createBoidMesh = (scene, boidGeometry, boidMaterial, startPos) => {
+const createBoidView = (
+        scene, 
+        boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
+        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
+        startPos) => {
+
     const boid = {};
 
-    const geometry = boidGeometry || new THREE.BoxGeometry(1, 1, 1);
-    const material = boidMaterial || new THREE.MeshPhongMaterial({ color: 0xff6464 });
-    const boidMesh = new THREE.Mesh(geometry, material);
+    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
 
     scene.add(boidMesh);
 
@@ -85,4 +88,4 @@ const createCamera = () => {
     return camera;
 };
 
-export { createBoidMesh, createFriendLine, createFloor, createLights, createCamera };
+export { createBoidView, createFriendLine, createFloor, createLights, createCamera };
