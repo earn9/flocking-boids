@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Vector3 } from 'three';
 
 const createBoid = (position, direction, speed) => {
     const findClosestFriend = (fromBoid, world) => {
@@ -22,7 +22,7 @@ const createBoid = (position, direction, speed) => {
         return result;
     };
 
-    const rotationVector = new THREE.Vector3(0, 1, 0);
+    const rotationVector = new Vector3(0, 1, 0);
 
     const boid = {
         position,
