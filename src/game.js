@@ -1,19 +1,6 @@
 import { Vector3 } from 'three';
 
 const createBoid = (position, direction, speed) => {
-    const findClosestFriend = (fromBoid, world) => {
-        let friend;
-        let distance = 9999999999;
-        world.forEachBoid(otherBoid => {
-            if (fromBoid === otherBoid) return;
-            const newDist = fromBoid.position.distanceTo(otherBoid.position);
-            if (newDist < distance) {
-                friend = otherBoid;
-                distance = newDist
-            }
-        });
-        return distance < 1 ? friend : undefined;
-    };
 
     const getVectorToFriend = (me, other) => {
         const result = me.clone();
@@ -27,7 +14,8 @@ const createBoid = (position, direction, speed) => {
     const boid = {
         position,
         direction,
-        speed
+        speed,
+        friends: []
     };
 
     boid.update = (delta, world) => {
@@ -36,22 +24,7 @@ const createBoid = (position, direction, speed) => {
         velocity.multiplyScalar(delta);
         boid.position.add(velocity);
 
-        boid.friend = findClosestFriend(boid, world);
-
-        if (boid.friend) {
-            const vecToFriend = boid.friend.direction.clone();
-            const rot = vecToFriend.dot(boid.direction);
-            const rotConst = 4;
-
-            let rotFactor = 0;
-            if (rot > 0.01) {
-                rotFactor = rotConst;
-            } else if (rot < -0.01) {
-                rotFactor = -rotConst;
-            }
-
-            boid.direction.applyAxisAngle(rotationVector, (rotFactor * delta));
-        }
+        boid.friends = world.findNearbyBoids(boid, 1);
     };
 
     return boid;
@@ -80,6 +53,19 @@ const createWorld = () => {
     world.getBoid = (key) => {
         return boids[key];
     };
+
+    world.findNearbyBoids = (fromBoid, cutoffDistance) => {
+        let friends = [];
+        world.forEachBoid(otherBoid => {
+            if (fromBoid === otherBoid) return;
+            const newDist = fromBoid.position.distanceTo(otherBoid.position);
+            if (newDist < cutoffDistance) {
+                friends.push(otherBoid);
+            }
+        });
+        return friends;
+    };
+
 
     return world;
 };

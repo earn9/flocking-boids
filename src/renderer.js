@@ -6,8 +6,18 @@ const createBoidView = (
         boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
         startPos) => {
 
+    const createFriendLines = () => {
+        const friendLines = [];
+        for (let i = 0; i < 10; i++) {
+            friendLines[i] = createFriendLine(scene);
+            friendLines[i].hide();
+        }
+        return friendLines;
+    };
+
     const boid = {
-        directionLine: createFriendLine(scene)
+        directionLine: createFriendLine(scene),
+        friendLines: createFriendLines()
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
@@ -22,6 +32,14 @@ const createBoidView = (
         const directionEnd = gameBoid.position.clone();
         directionEnd.addScaledVector(gameBoid.direction, 0.2);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
+        let friendLineIndex = 0;
+        for (let friend of gameBoid.friends) {
+            boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+            friendLineIndex++;
+        }
+        for (let i = friendLineIndex; i < 10; i++) {
+            boid.friendLines[i].hide();
+        }
     };
 
     return boid;
@@ -48,6 +66,10 @@ const createFriendLine = (scene) => {
     friendLine.hide = () => {
         mesh.visible = false;
     };
+
+    friendLine.show = () => {
+        mesh.visible = true;
+    }
 
     return friendLine;
 };
