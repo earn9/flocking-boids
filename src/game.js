@@ -39,7 +39,7 @@ const createBoid = (position, direction, speed) => {
         boid.friend = findClosestFriend(boid, world);
 
         if (boid.friend) {
-            const vecToFriend = boid.friend.direction.clone(); //getVectorToFriend(boid.position, boid.friend.position);
+            const vecToFriend = boid.friend.direction.clone();
             const rot = vecToFriend.dot(boid.direction);
             const rotConst = 4;
 

@@ -26,7 +26,7 @@ const update = (delta, graph, world) => {
     world.update(delta);
     for (const node of graph.boids) {
         const boid = world.getBoid(node.tag);
-        node.mesh.position.copy(boid.position);
+        node.update(boid);
         if (boid.friend) {
             graph.friendLines[node.tag].setLine(node.mesh.position, boid.friend.position);
         } else {

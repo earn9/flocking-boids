@@ -6,13 +6,23 @@ const createBoidView = (
         boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
         startPos) => {
 
-    const boid = {};
+    const boid = {
+        directionLine: createFriendLine(scene)
+    };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
 
     scene.add(boidMesh);
 
     boid.mesh = boidMesh;
+
+    boid.update = (gameBoid) => {
+        boid.mesh.position.copy(gameBoid.position);
+
+        const directionEnd = gameBoid.position.clone();
+        directionEnd.addScaledVector(gameBoid.direction, 0.2);
+        boid.directionLine.setLine(gameBoid.position, directionEnd);
+    };
 
     return boid;
 };
