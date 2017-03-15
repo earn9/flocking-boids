@@ -20,7 +20,7 @@ const createBoid = (position, direction, speed) => {
         result.sub(other);
         result.normalize();
         return result;
-    }
+    };
 
     const rotationVector = new THREE.Vector3(0, 1, 0);
 
@@ -39,11 +39,18 @@ const createBoid = (position, direction, speed) => {
         boid.friend = findClosestFriend(boid, world);
 
         if (boid.friend) {
-            const vecToFriend = getVectorToFriend(boid.position, boid.friend.position);
+            const vecToFriend = boid.friend.direction.clone(); //getVectorToFriend(boid.position, boid.friend.position);
             const rot = vecToFriend.dot(boid.direction);
             console.log('angleTo', rot);
-            const rotConst = 8;
-            const rotFactor = rot > 0 ? 1 * rotConst : -1 * rotConst;
+            const rotConst = 4;
+
+            let rotFactor = 0;
+            if (rot > 0.01) {
+                rotFactor = rotConst;
+            } else if (rot < -0.01) {
+                rotFactor = -rotConst;
+            }
+
             boid.direction.applyAxisAngle(rotationVector, (rotFactor * delta));
         }
     };
