@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createBoid, createWorld } from './game';
-import { createBoidView, createFriendLine, createFloor, createLights, createCamera } from './renderer';
+import { createBoidView, createFloor, createLights, createCamera } from './renderer';
 
 const randomBetween = (min, max) => {
     return Math.random() * (max - min) + min;
@@ -32,19 +32,17 @@ const update = (delta, graph, world) => {
 
 const setup = (scene) => {
     const world = createWorld();
-    const graph = { boids: [], friendLines: [] };
+    const graph = { boids: [] };
 
     const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
-    const numBoids = 100;
+    const numBoids = 50;
 
     for (let i = 0; i < numBoids; i++) {
         const boid = createBoidView(scene, boidGeometry, boidMaterial);
         boid.tag = i;
         graph.boids.push(boid);
-
-        graph.friendLines[i] = createFriendLine(scene);
 
         const { x: xPos, y: yPos } = randomVec2(-5, 5);
         const location = new THREE.Vector3(xPos, 0, yPos);
