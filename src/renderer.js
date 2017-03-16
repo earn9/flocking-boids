@@ -34,7 +34,9 @@ const createBoidView = (
         boid.directionLine.setLine(gameBoid.position, directionEnd);
         let friendLineIndex = 0;
         for (let friend of gameBoid.friends) {
-            boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+            if (friendLineIndex < boid.friendLines.length) {
+                boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+            }
             friendLineIndex++;
         }
         for (let i = friendLineIndex; i < 10; i++) {

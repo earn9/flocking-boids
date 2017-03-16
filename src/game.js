@@ -18,13 +18,36 @@ const createBoid = (position, direction, speed) => {
         friends: []
     };
 
+    console.log("init dir: " + JSON.stringify(boid.direction));
+
     boid.update = (delta, world) => {
         const velocity = boid.direction.clone();
+        console.log("pre dir 1: " + JSON.stringify(boid.direction));
         velocity.multiplyScalar(boid.speed);
         velocity.multiplyScalar(delta);
         boid.position.add(velocity);
 
         boid.friends = world.findNearbyBoids(boid, 1);
+
+        const averageNeighbourDirection = new Vector3();
+        for (const friend of boid.friends) {
+            averageNeighbourDirection.add(friend.direction);            
+        }
+        averageNeighbourDirection.divideScalar(boid.friends.length);
+        console.log("averageNeighbourDirection: " + JSON.stringify(averageNeighbourDirection));
+        const dotDirections = averageNeighbourDirection.dot(boid.direction);
+
+        console.log("dotDirections: " + JSON.stringify(dotDirections));
+        console.log("pre dir: " + JSON.stringify(boid.direction));
+        
+        let factor = 0;
+        if (dotDirections > 0.01) {
+            factor = 1;
+        } else if (dotDirections < 0.01) {
+            factor = -1;
+        }
+        boid.direction.applyAxisAngle(rotationVector, 2 * delta * factor);
+        console.log("post dir: " + JSON.stringify(boid.direction));
     };
 
     return boid;
