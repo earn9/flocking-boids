@@ -30,14 +30,9 @@ const update = (delta, boids, world) => {
     }
 };
 
-const setup = (scene) => {
-    const world = createWorld();
-    const boids = [];
-
-    const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
-
+const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const numBoids = 50;
+    const boids = [];
 
     for (let i = 0; i < numBoids; i++) {
         const boid = createBoidView(scene, boidGeometry, boidMaterial);
@@ -53,12 +48,20 @@ const setup = (scene) => {
         var speed = 0.75;
         world.addBoid(location, direction, speed, boid.tag);
     }
+    return boids;
+};
+
+const setup = (scene) => {
+    const world = createWorld();
+
+    const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+    const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
+
+    const boids = setupBoids(scene, world, boidGeometry, boidMaterial);
 
     scene.add(createFloor());
 
-    var pointLights = createLights();
-
-    for (const light of pointLights) {
+    for (const light of createLights()) {
         scene.add(light);
     }
 
