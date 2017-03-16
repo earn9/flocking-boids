@@ -26,8 +26,6 @@ const createBoid = (position, direction, speed) => {
         return averagePosition;
     };
 
-    console.log("init dir: " + JSON.stringify(boid.direction));
-
     boid.update = (delta, world) => {
         const velocity = boid.direction.clone();
         velocity.multiplyScalar(boid.speed);
@@ -42,15 +40,9 @@ const createBoid = (position, direction, speed) => {
         }
         if (boid.friends.length > 0) {
             averageNeighbourDirection.divideScalar(boid.friends.length);
-            console.log("averageNeighbourDirection: " + JSON.stringify(averageNeighbourDirection));
             const localCenter = findLocalAveragePoint();
-            console.log("localCenter: " + JSON.stringify(localCenter));
             const distanceToCenter = boid.position.distanceTo(localCenter);
-            console.log("distanceToCenter: " + JSON.stringify(distanceToCenter));
-        } else {
-            console.log("no friends");
         }
-
     };
 
     return boid;
