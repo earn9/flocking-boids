@@ -81,7 +81,7 @@ const createFloor = () => {
     var floorMaterial = new THREE.MeshPhongMaterial({ color: 0x6464ff });
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
-    floor.position.set(0, -1.5, 0);
+    floor.position.set(0, -1, 0);
     floor.rotation.x = -90 * (Math.PI / 180);
     return floor;
 };
@@ -107,8 +107,8 @@ const createCamera = () => {
         0.1,
         100);
     camera.updateProjectionMatrix();
-    camera.position.y = 3;
-    camera.position.z = 9;
+    camera.position.y = 6;
+    camera.position.z = 0;
     camera.up = new THREE.Vector3(0, 1, 0);
     camera.lookAt(new THREE.Vector3(0, 0, 0))
     return camera;

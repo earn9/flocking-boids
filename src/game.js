@@ -1,6 +1,12 @@
 import { Vector3 } from 'three';
 
 const createBoid = (position, direction, speed) => {
+    const boid = {
+        position,
+        direction,
+        speed,
+        friends: []
+    };
 
     const getVectorToFriend = (me, other) => {
         const result = me.clone();
@@ -11,18 +17,19 @@ const createBoid = (position, direction, speed) => {
 
     const rotationVector = new Vector3(0, 1, 0);
 
-    const boid = {
-        position,
-        direction,
-        speed,
-        friends: []
+    const findLocalAveragePoint = () => {
+        const averagePosition = boid.position.clone();
+        for (const friend of boid.friends) {
+            averagePosition.add(friend.position)
+        }        
+        averagePosition.divideScalar(boid.friends.length + 1);
+        return averagePosition;
     };
 
     console.log("init dir: " + JSON.stringify(boid.direction));
 
     boid.update = (delta, world) => {
         const velocity = boid.direction.clone();
-        console.log("pre dir 1: " + JSON.stringify(boid.direction));
         velocity.multiplyScalar(boid.speed);
         velocity.multiplyScalar(delta);
         boid.position.add(velocity);
@@ -33,21 +40,17 @@ const createBoid = (position, direction, speed) => {
         for (const friend of boid.friends) {
             averageNeighbourDirection.add(friend.direction);            
         }
-        averageNeighbourDirection.divideScalar(boid.friends.length);
-        console.log("averageNeighbourDirection: " + JSON.stringify(averageNeighbourDirection));
-        const dotDirections = averageNeighbourDirection.dot(boid.direction);
-
-        console.log("dotDirections: " + JSON.stringify(dotDirections));
-        console.log("pre dir: " + JSON.stringify(boid.direction));
-        
-        let factor = 0;
-        if (dotDirections > 0.01) {
-            factor = 1;
-        } else if (dotDirections < 0.01) {
-            factor = -1;
+        if (boid.friends.length > 0) {
+            averageNeighbourDirection.divideScalar(boid.friends.length);
+            console.log("averageNeighbourDirection: " + JSON.stringify(averageNeighbourDirection));
+            const localCenter = findLocalAveragePoint();
+            console.log("localCenter: " + JSON.stringify(localCenter));
+            const distanceToCenter = boid.position.distanceTo(localCenter);
+            console.log("distanceToCenter: " + JSON.stringify(distanceToCenter));
+        } else {
+            console.log("no friends");
         }
-        boid.direction.applyAxisAngle(rotationVector, 4 * delta * factor);
-        console.log("post dir: " + JSON.stringify(boid.direction));
+
     };
 
     return boid;
