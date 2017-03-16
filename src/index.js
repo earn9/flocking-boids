@@ -40,13 +40,14 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
         boids.push(boid);
 
         const { x: xPos, y: yPos } = randomVec2(-5, 5);
-        const location = new THREE.Vector3(xPos, 0, yPos);
+        const position = new THREE.Vector3(xPos, 0, yPos);
 
         const { x: xDir, y: yDir } = randomDirection();
         const direction = new THREE.Vector3(xDir, 0, yDir);
 
         var speed = 0.75;
-        world.addBoid(location, direction, speed, boid.tag);
+
+        world.addBoid(createBoid(position, direction, speed), boid.tag);
     }
     return boids;
 };

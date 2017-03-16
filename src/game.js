@@ -52,8 +52,8 @@ const createWorld = () => {
     const boids = {};
     const world = {};
 
-    world.addBoid = (position, direction, speed, key) => {
-        boids[key] = createBoid(position, direction, speed);
+    world.addBoid = (boid, key) => {
+        boids[key] = boid;
     };
 
     world.update = (delta) => {
