@@ -22,9 +22,9 @@ const randomDirection = () => {
     };
 };
 
-const update = (delta, graph, world) => {
+const update = (delta, boids, world) => {
     world.update(delta);
-    for (const node of graph.boids) {
+    for (const node of boids) {
         const boid = world.getBoid(node.tag);
         node.update(boid);
     }
@@ -32,7 +32,7 @@ const update = (delta, graph, world) => {
 
 const setup = (scene) => {
     const world = createWorld();
-    const graph = { boids: [] };
+    const boids = [];
 
     const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
@@ -42,7 +42,7 @@ const setup = (scene) => {
     for (let i = 0; i < numBoids; i++) {
         const boid = createBoidView(scene, boidGeometry, boidMaterial);
         boid.tag = i;
-        graph.boids.push(boid);
+        boids.push(boid);
 
         const { x: xPos, y: yPos } = randomVec2(-5, 5);
         const location = new THREE.Vector3(xPos, 0, yPos);
@@ -64,15 +64,15 @@ const setup = (scene) => {
 
     var camera = createCamera();
 
-    return { world, graph, camera };
+    return { world, boids, camera };
 };
 
-const createRenderLoop = (clock, graph, scene, camera, renderer, world) => {
+const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
     const internalRender = () => {
         window.requestAnimationFrame(internalRender);
 
         var delta = clock.getDelta();
-        update(delta, graph, world);
+        update(delta, boids, world);
 
         renderer.render(scene, camera);
     }
@@ -86,11 +86,11 @@ window.onload = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    var { world, graph, camera } = setup(scene);
+    var { world, boids, camera } = setup(scene);
 
     var clock = new THREE.Clock();
 
-    var render = createRenderLoop(clock, graph, scene, camera, renderer, world);
+    var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
 
     render();
 };
