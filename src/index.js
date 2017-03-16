@@ -27,11 +27,6 @@ const update = (delta, graph, world) => {
     for (const node of graph.boids) {
         const boid = world.getBoid(node.tag);
         node.update(boid);
-        if (boid.friend) {
-            graph.friendLines[node.tag].setLine(node.mesh.position, boid.friend.position);
-        } else {
-            graph.friendLines[node.tag].hide();
-        }
     }
 };
 
