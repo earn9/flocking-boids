@@ -77,11 +77,11 @@ const createFriendLine = (scene) => {
 };
 
 const createFloor = () => {
-    var floorGeometry = new THREE.PlaneGeometry(10, 10, 5, 5);
+    var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
     var floorMaterial = new THREE.MeshPhongMaterial({ color: 0x6464ff });
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
-    floor.position.set(0, -1, 0);
+    floor.position.set(0, -0.5, 0);
     floor.rotation.x = -90 * (Math.PI / 180);
     return floor;
 };
@@ -105,10 +105,10 @@ const createCamera = () => {
         75,
         window.innerWidth / window.innerHeight,
         0.1,
-        100);
+        150);
     camera.updateProjectionMatrix();
-    camera.position.y = 6;
-    camera.position.z = 0;
+    camera.position.y = 10;
+    camera.position.z = 6;
     camera.up = new THREE.Vector3(0, 1, 0);
     camera.lookAt(new THREE.Vector3(0, 0, 0))
     return camera;
