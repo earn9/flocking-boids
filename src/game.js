@@ -46,7 +46,7 @@ const createBoid = (position, direction, speed) => {
         } else if (dotDirections < 0.01) {
             factor = -1;
         }
-        boid.direction.applyAxisAngle(rotationVector, 2 * delta * factor);
+        boid.direction.applyAxisAngle(rotationVector, 4 * delta * factor);
         console.log("post dir: " + JSON.stringify(boid.direction));
     };
 

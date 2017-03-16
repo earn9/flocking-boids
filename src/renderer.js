@@ -105,18 +105,10 @@ const createCamera = () => {
         75,
         window.innerWidth / window.innerHeight,
         0.1,
-        10);
-    var camera = new THREE.OrthographicCamera(
-        window.innerWidth / -2,
-        window.innerWidth / 2,
-        window.innerHeight / 2,
-        window.innerHeight / -2,
-        0.1,
-        10);
-    camera.zoom = 70;
+        100);
     camera.updateProjectionMatrix();
-    camera.position.y = 6;
-    camera.position.z = 0;
+    camera.position.y = 3;
+    camera.position.z = 9;
     camera.up = new THREE.Vector3(0, 1, 0);
     camera.lookAt(new THREE.Vector3(0, 0, 0))
     return camera;
