@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import { createBoid, createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera } from './renderer';
 
-
-
 const update = (delta, boids, world) => {
     world.update(delta);
     for (const node of boids) {
@@ -11,7 +9,6 @@ const update = (delta, boids, world) => {
         node.update(boid);
     }
 };
-
 
 const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const numBoids = 50;
