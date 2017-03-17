@@ -30,6 +30,16 @@ const update = (delta, boids, world) => {
     }
 };
 
+const createBoidWithRandomPositionAndDirection = (min, max, speed) => {
+    const { x: xPos, y: yPos } = randomVec2(-5, 5);
+    const position = new THREE.Vector3(xPos, 0, yPos);
+
+    const { x: xDir, y: yDir } = randomDirection();
+    const direction = new THREE.Vector3(xDir, 0, yDir);
+
+    return createBoid(position, direction, speed);
+};
+
 const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const numBoids = 50;
     const boids = [];
@@ -39,15 +49,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
         boid.tag = i;
         boids.push(boid);
 
-        const { x: xPos, y: yPos } = randomVec2(-5, 5);
-        const position = new THREE.Vector3(xPos, 0, yPos);
-
-        const { x: xDir, y: yDir } = randomDirection();
-        const direction = new THREE.Vector3(xDir, 0, yDir);
-
-        var speed = 0.75;
-
-        world.addBoid(createBoid(position, direction, speed), boid.tag);
+        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75), boid.tag);
     }
     return boids;
 };
