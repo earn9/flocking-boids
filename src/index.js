@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createBoid, createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera } from './renderer';
+import { createSeeker } from './steering';
 
 const update = (delta, boids, world) => {
     world.update(delta);
@@ -10,6 +11,7 @@ const update = (delta, boids, world) => {
     }
 };
 
+// setup a bunch of boids that should flock
 const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const numBoids = 50;
     const boids = [];
@@ -24,13 +26,27 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     return boids;
 };
 
+// sets up a simple test of steering
+const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
+    const boids = [];
+
+    const boidView = createBoidView(scene, boidGeometry, boidMaterial);
+    boidView.tag = "seeker";
+    boids.push(boidView);
+
+    const seeker = createSeeker(new THREE.Vector3(5, 0, 5), new THREE.Vector3(1, 0, 0), 0.1, boidView.tag);
+    world.addBoid(seeker, boidView.tag);
+
+    return boids;
+};
+
 const setup = (scene) => {
     const world = createWorld();
 
     const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
-    const boids = setupBoids(scene, world, boidGeometry, boidMaterial);
+    const boids = setupSteering(scene, world, boidGeometry, boidMaterial);
 
     scene.add(createFloor());
 
