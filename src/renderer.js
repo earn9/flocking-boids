@@ -47,6 +47,24 @@ const createBoidView = (
     return boid;
 };
 
+const createSimpleView = (
+        scene, 
+        boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
+        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
+        startPos) => {
+
+    const boid = {
+    };
+
+    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+
+    scene.add(boidMesh);
+
+    boid.mesh = boidMesh;
+
+    return boid;
+};
+
 const createFriendLine = (scene) => {
     const friendLine = {};
 
@@ -114,4 +132,4 @@ const createCamera = () => {
     return camera;
 };
 
-export { createBoidView, createFriendLine, createFloor, createLights, createCamera };
+export { createBoidView, createFriendLine, createFloor, createLights, createCamera, createSimpleView };

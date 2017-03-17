@@ -1,15 +1,18 @@
 import { Vector3 } from 'three';
 
-const createSeeker = (position, direction, speed, tag) => {
+const createSeeker = (position, direction, speed, target, tag) => {
     const seeker = { 
         position, 
         direction, 
         speed, 
+        target,
         tag,
         friends: [] 
     };
 
-    seeker.update = () => {};
+    seeker.update = (delta) => {
+        
+    };
 
     return seeker;
 };

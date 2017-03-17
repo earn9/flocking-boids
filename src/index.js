@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createBoid, createWorld, createBoidWithRandomPositionAndDirection } from './game';
-import { createBoidView, createFloor, createLights, createCamera } from './renderer';
+import { createBoidView, createFloor, createLights, createCamera, createSimpleView } from './renderer';
 import { createSeeker } from './steering';
 
 const update = (delta, boids, world) => {
@@ -34,7 +34,15 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
     boidView.tag = "seeker";
     boids.push(boidView);
 
-    const seeker = createSeeker(new THREE.Vector3(5, 0, 5), new THREE.Vector3(1, 0, 0), 0.1, boidView.tag);
+    const targetView = createSimpleView(scene, boidGeometry, boidMaterial);
+
+    const seeker = createSeeker(
+        new THREE.Vector3(5, 0, 5), 
+        new THREE.Vector3(1, 0, 0), 
+        0.1, 
+        new THREE.Vector3(0, 0, 0),
+        boidView.tag);
+
     world.addBoid(seeker, boidView.tag);
 
     return boids;
