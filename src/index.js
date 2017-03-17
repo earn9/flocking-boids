@@ -1,26 +1,8 @@
 import * as THREE from 'three';
-import { createBoid, createWorld } from './game';
+import { createBoid, createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera } from './renderer';
 
-const randomBetween = (min, max) => {
-    return Math.random() * (max - min) + min;
-};
 
-const randomVec2 = (min, max) => {
-    return {
-        x: randomBetween(min, max),
-        y: randomBetween(min, max)
-    };
-};
-
-const randomDirection = () => {
-    const factor = 2 * Math.PI * Math.random();
-
-    return {
-        x: Math.cos(factor),
-        y: Math.sin(factor)
-    };
-};
 
 const update = (delta, boids, world) => {
     world.update(delta);
@@ -30,15 +12,6 @@ const update = (delta, boids, world) => {
     }
 };
 
-const createBoidWithRandomPositionAndDirection = (min, max, speed) => {
-    const { x: xPos, y: yPos } = randomVec2(-5, 5);
-    const position = new THREE.Vector3(xPos, 0, yPos);
-
-    const { x: xDir, y: yDir } = randomDirection();
-    const direction = new THREE.Vector3(xDir, 0, yDir);
-
-    return createBoid(position, direction, speed);
-};
 
 const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const numBoids = 50;

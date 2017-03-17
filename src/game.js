@@ -48,6 +48,37 @@ const createBoid = (position, direction, speed) => {
     return boid;
 };
 
+const randomBetween = (min, max) => {
+    return Math.random() * (max - min) + min;
+};
+
+const randomVec2 = (min, max) => {
+    return {
+        x: randomBetween(min, max),
+        y: randomBetween(min, max)
+    };
+};
+
+const randomDirection = () => {
+    const factor = 2 * Math.PI * Math.random();
+
+    return {
+        x: Math.cos(factor),
+        y: Math.sin(factor)
+    };
+};
+
+const createBoidWithRandomPositionAndDirection = (min, max, speed) => {
+    const { x: xPos, y: yPos } = randomVec2(-5, 5);
+    const position = new Vector3(xPos, 0, yPos);
+
+    const { x: xDir, y: yDir } = randomDirection();
+    const direction = new Vector3(xDir, 0, yDir);
+
+    return createBoid(position, direction, speed);
+};
+
+
 const createWorld = () => {
     const boids = {};
     const world = {};
@@ -88,4 +119,4 @@ const createWorld = () => {
     return world;
 };
 
-export { createBoid, createWorld };
+export { createBoid, createWorld, createBoidWithRandomPositionAndDirection };
