@@ -39,7 +39,7 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
     const seeker = createSeeker(
         new THREE.Vector3(5, 0, 5), 
         new THREE.Vector3(1, 0, 0), 
-        0.1, 
+        4, 
         new THREE.Vector3(0, 0, 0),
         boidView.tag);
 
