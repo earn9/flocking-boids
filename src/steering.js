@@ -24,7 +24,6 @@ const createSeeker = (position, direction, speed, target, tag) => {
         velocity.add(acceleration);
         velocity.clampLength(0, seeker.maxSpeed * delta);
 
-        seeker.direction.copy
         seeker.position.add(velocity);
 
         seeker.speed = velocity.length() / delta;
