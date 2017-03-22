@@ -30,7 +30,7 @@ const createBoidView = (
         boid.mesh.position.copy(gameBoid.position);
 
         const directionEnd = gameBoid.position.clone();
-        directionEnd.addScaledVector(gameBoid.direction, 0.2);
+        directionEnd.addScaledVector(gameBoid.direction, 0.5);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
         let friendLineIndex = 0;
         for (let friend of gameBoid.friends) {
