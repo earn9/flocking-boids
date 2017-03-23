@@ -9,7 +9,6 @@ const createBoid = (position, direction, speed, tag) => {
         maxForce: 0.2,
         tag,
         mass: 1,
-        strategy,
         friends: []
     };
 
@@ -22,32 +21,58 @@ const createBoid = (position, direction, speed, tag) => {
 
     const rotationVector = new Vector3(0, 1, 0);
 
+    const integrate = (steeringDirection, delta) => {
+        const steeringForce = steeringDirection.clone();
+        steeringForce.clampLength(0, boid.maxForce * delta);
+        const acceleration = steeringForce.clone();
+        acceleration.divideScalar(boid.mass);
+
+        const velocity = boid.direction.clone();
+        velocity.multiplyScalar(boid.speed * delta);
+        velocity.add(acceleration);
+        velocity.clampLength(0, boid.maxSpeed * delta);
+
+        boid.position.add(velocity);
+
+        boid.speed = velocity.length() / delta;
+        velocity.normalize();
+        boid.direction.copy(velocity);
+    };
+
     const findLocalAveragePoint = () => {
-        const averagePosition = boid.position.clone();
+        const averagePosition = new Vector3(0, 0, 0);
         for (const friend of boid.friends) {
             averagePosition.add(friend.position)
         }        
-        averagePosition.divideScalar(boid.friends.length + 1);
+        averagePosition.divideScalar(boid.friends.length);
         return averagePosition;
     };
 
-    boid.update = (delta, world) => {
-        const velocity = boid.direction.clone();
-        velocity.multiplyScalar(boid.speed);
-        velocity.multiplyScalar(delta);
-        boid.position.add(velocity);
+    const getForceTowardCenter = () => {
+        const localCenter = findLocalAveragePoint();
+        localCenter.sub(boid.position);
 
-        boid.friends = world.findNearbyBoids(boid, 1);
+        localCenter.divideScalar(100);
+        return localCenter
+    }
+
+    boid.update = (delta, world) => {
+        boid.friends = world.findNearbyBoids(boid, 2);
 
         const averageNeighbourDirection = new Vector3();
         for (const friend of boid.friends) {
             averageNeighbourDirection.add(friend.direction);            
         }
+
         if (boid.friends.length > 0) {
             averageNeighbourDirection.divideScalar(boid.friends.length);
             const localCenter = findLocalAveragePoint();
             const distanceToCenter = boid.position.distanceTo(localCenter);
         }
+
+        const forceToCenter = getForceTowardCenter();
+
+        integrate(forceToCenter, delta);
     };
 
     return boid;

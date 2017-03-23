@@ -17,11 +17,11 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
     const boids = [];
 
     for (let i = 0; i < numBoids; i++) {
-        const boid = createBoidView(scene, boidGeometry, boidMaterial);
-        boid.tag = i;
-        boids.push(boid);
+        const boidView = createBoidView(scene, boidGeometry, boidMaterial);
+        boidView.tag = i;
+        boids.push(boidView);
 
-        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75, tag));
+        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75, boidView.tag));
     }
     return boids;
 };
@@ -58,7 +58,7 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
 
     world.addBoid(fleeer);
 
-    const targetView = createSimpleView(scene, boidGeometry, boidMaterial);
+    createSimpleView(scene, boidGeometry, boidMaterial);
 
     return boids;
 };
@@ -69,7 +69,7 @@ const setup = (scene) => {
     const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
-    const boids = setupSteering(scene, world, boidGeometry, boidMaterial);
+    const boids = setupBoids(scene, world, boidGeometry, boidMaterial);
 
     scene.add(createFloor());
 
