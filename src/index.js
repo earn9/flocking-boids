@@ -27,7 +27,10 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
 };
 
 // sets up a simple test of steering
+/* eslint-disable no-unused-vars */
 const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
+/* eslint-enable no-unused-vars */
+
     const boids = [];
 
     const boidView = createBoidView(scene, boidGeometry, boidMaterial);
