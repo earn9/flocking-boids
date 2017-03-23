@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBoid, createWorld, createBoidWithRandomPositionAndDirection } from './game';
+import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSimpleView } from './renderer';
 import { createVehicle, FLEE_STEERING, SEEK_STEERING } from './steering';
 
@@ -90,7 +90,7 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
         update(delta, boids, world);
 
         renderer.render(scene, camera);
-    }
+    };
     return internalRender;
 };
 

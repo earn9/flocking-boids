@@ -12,15 +12,6 @@ const createBoid = (position, direction, speed, tag) => {
         friends: []
     };
 
-    const getVectorToFriend = (me, other) => {
-        const result = me.clone();
-        result.sub(other);
-        result.normalize();
-        return result;
-    };
-
-    const rotationVector = new Vector3(0, 1, 0);
-
     const integrate = (steeringDirection, delta) => {
         const steeringForce = steeringDirection.clone();
         steeringForce.clampLength(0, boid.maxForce * delta);

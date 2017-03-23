@@ -1,5 +1,3 @@
-import { Vector3 } from 'three';
-
 const SEEK_STEERING = 'seek';
 const FLEE_STEERING = 'flee';
 

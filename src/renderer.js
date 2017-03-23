@@ -3,8 +3,7 @@ import * as THREE from 'three';
 const createBoidView = (
         scene, 
         boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
-        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
-        startPos) => {
+        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
 
     const createFriendLines = () => {
         const friendLines = [];
@@ -50,8 +49,7 @@ const createBoidView = (
 const createSimpleView = (
         scene, 
         boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
-        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }), 
-        startPos) => {
+        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
 
     const boid = {
     };
@@ -89,7 +87,7 @@ const createFriendLine = (scene) => {
 
     friendLine.show = () => {
         mesh.visible = true;
-    }
+    };
 
     return friendLine;
 };
@@ -128,7 +126,7 @@ const createCamera = () => {
     camera.position.y = 3;
     camera.position.z = 10;
     camera.up = new THREE.Vector3(0, 1, 0);
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
     return camera;
 };
 
