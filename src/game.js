@@ -64,11 +64,9 @@ const createBoid = (position, direction, speed, tag) => {
             difference.sub(boid.position);
             result.sub(difference);
         }
-        result.divideScalar(250);
+        result.divideScalar(150);
         return result;
     };
-
-    
 
     const getForceToMatchVelocity = () => {
         const result = new Vector3(0, 0, 0);
@@ -95,17 +93,6 @@ const createBoid = (position, direction, speed, tag) => {
 
     boid.update = (delta, world) => {
         boid.friends = world.findNearbyBoids(boid, 1);
-
-        const averageNeighbourDirection = new Vector3();
-        for (const friend of boid.friends) {
-            averageNeighbourDirection.add(friend.direction);            
-        }
-
-        if (boid.friends.length > 0) {
-            averageNeighbourDirection.divideScalar(boid.friends.length);
-            const localCenter = findLocalAveragePoint();
-            const distanceToCenter = boid.position.distanceTo(localCenter);
-        }
 
         const forceToCenter = getForceTowardCenterOfFriends();
         const forceAway = getForceAwayFromNearby(); 
