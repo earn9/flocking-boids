@@ -60,16 +60,16 @@ const createVehicle = (position, direction, speed, target, tag, strategy = SEEK_
         const desiredVelocity = strategies[vehicle.strategy](vehicle.position, vehicle.target, vehicle.maxSpeed, delta);
 
         const steering = desiredVelocity.clone();
-        console.log("steering: " + JSON.stringify(steering));
+        //console.log("steering: " + JSON.stringify(steering));
         const velocity = vehicle.direction.clone();
         velocity.multiplyScalar(vehicle.speed * delta);
         steering.sub(velocity);
 
         integrate(steering, delta);
 
-        console.log("position: " + JSON.stringify(vehicle.position));
-        console.log("direction: " + JSON.stringify(vehicle.direction));
-        console.log("speed: " + JSON.stringify(vehicle.speed));
+        //console.log("position: " + JSON.stringify(vehicle.position));
+        //console.log("direction: " + JSON.stringify(vehicle.direction));
+        //console.log("speed: " + JSON.stringify(vehicle.speed));
     };
 
     return vehicle;

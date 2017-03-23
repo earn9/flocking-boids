@@ -21,7 +21,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
         boid.tag = i;
         boids.push(boid);
 
-        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75), boid.tag);
+        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75, tag));
     }
     return boids;
 };
@@ -42,7 +42,7 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
         boidView.tag,
         SEEK_STEERING);
 
-    world.addBoid(seeker, boidView.tag);
+    world.addBoid(seeker);
 
     const fleeerView = createBoidView(scene, boidGeometry, boidMaterial);
     fleeerView.tag = "fleeer";
@@ -53,10 +53,10 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
         new THREE.Vector3(1, 0, 0), 
         4, 
         new THREE.Vector3(0, 0, 0),
-        boidView.tag,
+        fleeerView.tag,
         FLEE_STEERING);
 
-    world.addBoid(fleeer, fleeerView.tag);
+    world.addBoid(fleeer);
 
     const targetView = createSimpleView(scene, boidGeometry, boidMaterial);
 

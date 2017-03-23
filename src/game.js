@@ -1,10 +1,15 @@
 import { Vector3 } from 'three';
 
-const createBoid = (position, direction, speed) => {
-    const boid = {
-        position,
-        direction,
-        speed,
+const createBoid = (position, direction, speed, tag) => {
+    const boid = { 
+        position, 
+        direction, 
+        speed, 
+        maxSpeed: 5,
+        maxForce: 0.2,
+        tag,
+        mass: 1,
+        strategy,
         friends: []
     };
 
@@ -68,14 +73,14 @@ const randomDirection = () => {
     };
 };
 
-const createBoidWithRandomPositionAndDirection = (min, max, speed) => {
+const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     const { x: xPos, y: yPos } = randomVec2(-5, 5);
     const position = new Vector3(xPos, 0, yPos);
 
     const { x: xDir, y: yDir } = randomDirection();
     const direction = new Vector3(xDir, 0, yDir);
 
-    return createBoid(position, direction, speed);
+    return createBoid(position, direction, speed, tag);
 };
 
 
@@ -83,8 +88,8 @@ const createWorld = () => {
     const boids = {};
     const world = {};
 
-    world.addBoid = (boid, key) => {
-        boids[key] = boid;
+    world.addBoid = (boid) => {
+        boids[boid.tag] = boid;
     };
 
     world.update = (delta) => {
