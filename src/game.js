@@ -42,7 +42,7 @@ const createBoid = (position, direction, speed, tag) => {
     const findLocalAveragePoint = () => {
         const averagePosition = new Vector3(0, 0, 0);
         for (const friend of boid.friends) {
-            averagePosition.add(friend.position)
+            averagePosition.add(friend.position);
         }        
         averagePosition.divideScalar(boid.friends.length);
         return averagePosition;
@@ -54,8 +54,8 @@ const createBoid = (position, direction, speed, tag) => {
             localCenter.sub(boid.position);
             localCenter.divideScalar(100);
         }
-        return localCenter
-    }
+        return localCenter;
+    };
 
     const getForceAwayFromNearby = () => {
         const result = new Vector3(0, 0, 0);
@@ -66,6 +66,31 @@ const createBoid = (position, direction, speed, tag) => {
         }
         result.divideScalar(250);
         return result;
+    };
+
+    
+
+    const getForceToMatchVelocity = () => {
+        const result = new Vector3(0, 0, 0);
+
+        if (boid.friends.length === 0) {
+            return result;
+        }
+
+        for (const friend of boid.friends) {
+            result.add(friend.getVelocity());
+        }
+        result.divideScalar(boid.friends.length);
+
+        result.sub(boid.getVelocity());
+        result.divideScalar(320);
+        return result;
+    };
+
+    boid.getVelocity = () => {
+        const velocity = boid.direction.clone();
+        velocity.multiplyScalar(boid.speed);
+        return velocity;
     };
 
     boid.update = (delta, world) => {
@@ -84,10 +109,12 @@ const createBoid = (position, direction, speed, tag) => {
 
         const forceToCenter = getForceTowardCenterOfFriends();
         const forceAway = getForceAwayFromNearby(); 
+        const forceToMatchVelocity = getForceToMatchVelocity();
 
         const totalSteeringForce = new Vector3(0, 0, 0);
         totalSteeringForce.add(forceToCenter);
         totalSteeringForce.add(forceAway);
+        totalSteeringForce.add(forceToMatchVelocity);
 
         integrate(totalSteeringForce, delta);
     };
@@ -144,7 +171,7 @@ const createWorld = () => {
         for (const key in boids) {
             boidAction(boids[key]);
         };
-    }
+    };
 
     world.getBoid = (key) => {
         return boids[key];
