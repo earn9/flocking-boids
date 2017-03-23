@@ -48,7 +48,7 @@ const createBoid = (position, direction, speed, tag) => {
         return averagePosition;
     };
 
-    const getForceTowardCenter = () => {
+    const getForceTowardCenterOfFriends = () => {
         const localCenter = findLocalAveragePoint();
         if (boid.friends.length > 0) {
             localCenter.sub(boid.position);
@@ -57,8 +57,19 @@ const createBoid = (position, direction, speed, tag) => {
         return localCenter
     }
 
+    const getForceAwayFromNearby = () => {
+        const result = new Vector3(0, 0, 0);
+        for (const friend of boid.friends) {
+            const difference = friend.position.clone();
+            difference.sub(boid.position);
+            result.sub(difference);
+        }
+        result.divideScalar(250);
+        return result;
+    };
+
     boid.update = (delta, world) => {
-        boid.friends = world.findNearbyBoids(boid, 0.5);
+        boid.friends = world.findNearbyBoids(boid, 1);
 
         const averageNeighbourDirection = new Vector3();
         for (const friend of boid.friends) {
@@ -71,9 +82,14 @@ const createBoid = (position, direction, speed, tag) => {
             const distanceToCenter = boid.position.distanceTo(localCenter);
         }
 
-        const forceToCenter = getForceTowardCenter();
+        const forceToCenter = getForceTowardCenterOfFriends();
+        const forceAway = getForceAwayFromNearby(); 
 
-        integrate(forceToCenter, delta);
+        const totalSteeringForce = new Vector3(0, 0, 0);
+        totalSteeringForce.add(forceToCenter);
+        totalSteeringForce.add(forceAway);
+
+        integrate(totalSteeringForce, delta);
     };
 
     return boid;
