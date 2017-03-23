@@ -34,8 +34,6 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
     boidView.tag = "seeker";
     boids.push(boidView);
 
-    const targetView = createSimpleView(scene, boidGeometry, boidMaterial);
-
     const seeker = createVehicle(
         new THREE.Vector3(5, 0, 5), 
         new THREE.Vector3(1, 0, 0), 
@@ -45,6 +43,22 @@ const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
         SEEK_STEERING);
 
     world.addBoid(seeker, boidView.tag);
+
+    const fleeerView = createBoidView(scene, boidGeometry, boidMaterial);
+    fleeerView.tag = "fleeer";
+    boids.push(fleeerView);
+
+    const fleeer = createVehicle(
+        new THREE.Vector3(-1, 0, -1), 
+        new THREE.Vector3(1, 0, 0), 
+        4, 
+        new THREE.Vector3(0, 0, 0),
+        boidView.tag,
+        FLEE_STEERING);
+
+    world.addBoid(fleeer, fleeerView.tag);
+
+    const targetView = createSimpleView(scene, boidGeometry, boidMaterial);
 
     return boids;
 };
