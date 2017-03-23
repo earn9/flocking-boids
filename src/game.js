@@ -5,7 +5,7 @@ const createBoid = (position, direction, speed, tag) => {
         position, 
         direction, 
         speed, 
-        maxSpeed: 5,
+        maxSpeed: 2,
         maxForce: 0.2,
         tag,
         mass: 1,
@@ -50,14 +50,15 @@ const createBoid = (position, direction, speed, tag) => {
 
     const getForceTowardCenter = () => {
         const localCenter = findLocalAveragePoint();
-        localCenter.sub(boid.position);
-
-        localCenter.divideScalar(100);
+        if (boid.friends.length > 0) {
+            localCenter.sub(boid.position);
+            localCenter.divideScalar(100);
+        }
         return localCenter
     }
 
     boid.update = (delta, world) => {
-        boid.friends = world.findNearbyBoids(boid, 2);
+        boid.friends = world.findNearbyBoids(boid, 0.5);
 
         const averageNeighbourDirection = new Vector3();
         for (const friend of boid.friends) {
