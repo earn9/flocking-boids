@@ -20,6 +20,9 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        "eqeqeq": "warn"
+        "eqeqeq": "warn",
+        "camelcase": "error",
+        "brace-style": "error",
+        "prefer-const": "warn"
     }
 }
