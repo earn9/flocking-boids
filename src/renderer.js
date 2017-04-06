@@ -32,7 +32,7 @@ const createBoidView = (
         directionEnd.addScaledVector(gameBoid.direction, 0.5);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
         let friendLineIndex = 0;
-        for (let friend of gameBoid.friends) {
+        for (const friend of gameBoid.friends) {
             if (friendLineIndex < boid.friendLines.length) {
                 boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
             }
