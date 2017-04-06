@@ -121,7 +121,7 @@ const randomDirection = () => {
 };
 
 const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
-    const { x: xPos, y: yPos } = randomVec2(-5, 5);
+    const { x: xPos, y: yPos } = randomVec2(min, max);
     const position = new Vector3(xPos, 0, yPos);
 
     const { x: xDir, y: yDir } = randomDirection();
@@ -156,7 +156,7 @@ const createWorld = () => {
     };
 
     world.findNearbyBoids = (fromBoid, cutoffDistance) => {
-        let friends = [];
+        const friends = [];
         world.forEachBoid(otherBoid => {
             if (fromBoid === otherBoid) return;
             const newDist = fromBoid.position.distanceTo(otherBoid.position);
