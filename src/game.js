@@ -1,4 +1,5 @@
 import { Vector3 } from 'three';
+import { randomDirection, randomVec2 } from './mathUtils';
 
 const createBoid = (position, direction, speed, tag) => {
     const boid = { 
@@ -98,26 +99,6 @@ const createBoid = (position, direction, speed, tag) => {
     };
 
     return boid;
-};
-
-const randomBetween = (min, max) => {
-    return Math.random() * (max - min) + min;
-};
-
-const randomVec2 = (min, max) => {
-    return {
-        x: randomBetween(min, max),
-        y: randomBetween(min, max)
-    };
-};
-
-const randomDirection = () => {
-    const factor = 2 * Math.PI * Math.random();
-
-    return {
-        x: Math.cos(factor),
-        y: Math.sin(factor)
-    };
 };
 
 const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
