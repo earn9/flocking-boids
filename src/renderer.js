@@ -15,8 +15,15 @@ const createBoidView = (
     };
 
     const boid = {
-        directionLine: createFriendLine(scene),
-        friendLines: createFriendLines()
+        directionLine: createFriendLine(scene, 0x00ff00),
+        forceLine: createFriendLine(scene, 0xff0000),
+        friendLines: createFriendLines(),
+    };
+
+    const getForceVector = (gameBoid) => {
+        const result = gameBoid.getVelocity();
+        result.multiplyScalar(1);
+        return result;
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
@@ -25,12 +32,22 @@ const createBoidView = (
 
     boid.mesh = boidMesh;
 
+    const updateForceLine = (gameBoid) => {
+        const forceVector = getForceVector(gameBoid);
+        forceVector.add(gameBoid.position);
+        forceVector.multiplyScalar(1.0);
+        boid.forceLine.setLine(gameBoid.position, forceVector);
+    };
+
     boid.update = (gameBoid) => {
         boid.mesh.position.copy(gameBoid.position);
 
         const directionEnd = gameBoid.position.clone();
         directionEnd.addScaledVector(gameBoid.direction, 0.5);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
+        
+        updateForceLine(gameBoid);
+
         let friendLineIndex = 0;
         for (const friend of gameBoid.friends) {
             if (friendLineIndex < boid.friendLines.length) {
@@ -63,14 +80,19 @@ const createSimpleView = (
     return boid;
 };
 
-const createFriendLine = (scene) => {
+const createFriendLine = (scene, color) => {
     const friendLine = {};
+
+    let material;
+    if (color) {
+        material = new THREE.LineBasicMaterial({ color });
+    }
 
     const geometry = new THREE.Geometry();
     geometry.vertices.push(
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(0, 0, 0));
-    const mesh = new THREE.Line(geometry);
+    const mesh = new THREE.Line(geometry, material);
 
     scene.add(mesh);
 
