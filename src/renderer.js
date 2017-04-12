@@ -30,15 +30,14 @@ const createBoidView = (
     boid.mesh = boidMesh;
 
     const updateForceLine = (gameBoid) => {
-        const forceVector = gameBoid.getVelocity();
-        forceVector.add(gameBoid.position);
-        forceVector.multiplyScalar(1.0);
+        const forceVector = gameBoid.position.clone();
+        forceVector.add(gameBoid.getVelocity());
         boid.forceLine.setLine(gameBoid.position, forceVector);
     };
 
     const updateRepelLine = (gameBoid) => {
-        const forceVector = gameBoid.forceAway.clone();
-        forceVector.add(gameBoid.position);
+        const forceVector = gameBoid.position.clone();
+        forceVector.addScaledVector(gameBoid.forceAway, 1000);
         forceVector.multiplyScalar(1);
         
         boid.repelForceLine.setLine(gameBoid.position, forceVector);
@@ -57,15 +56,36 @@ const createBoidView = (
         }
     };
 
-    boid.update = (gameBoid) => {
-        boid.mesh.position.copy(gameBoid.position);
+    const updateAttractLine = (gameBoid) => {
+        const forceVector = gameBoid.position.clone();
+        forceVector.addScaledVector(gameBoid.forceToCenter, 1000);
 
+        boid.attractForceLine.setLine(gameBoid.position, forceVector);
+    };
+
+    const updateDirectionLine = (gameBoid) => {
         const directionEnd = gameBoid.position.clone();
         directionEnd.addScaledVector(gameBoid.direction, 0.5);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
-        
+    };
+
+    const updateFollowLine = (gameBoid) => {
+        const followVector = gameBoid.position.clone();
+        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 1000);
+
+        boid.followForceLine.setLine(gameBoid.position, followVector);
+    };
+
+    boid.update = (gameBoid) => {
+        boid.mesh.position.copy(gameBoid.position);
+
+        updateDirectionLine(gameBoid);
+
         updateForceLine(gameBoid);
         updateRepelLine(gameBoid);
+        updateAttractLine(gameBoid);
+        updateFollowLine(gameBoid);
+
         updateFriendLines(gameBoid);
     };
 
