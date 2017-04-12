@@ -86,14 +86,14 @@ const createBoid = (position, direction, speed, tag) => {
     boid.update = (delta, world) => {
         boid.friends = world.findNearbyBoids(boid, 1);
 
-        const forceToCenter = getForceTowardCenterOfFriends();
-        const forceAway = getForceAwayFromNearby(); 
-        const forceToMatchVelocity = getForceToMatchVelocity();
+        boid.forceToCenter = getForceTowardCenterOfFriends();
+        boid.forceAway = getForceAwayFromNearby(); 
+        boid.forceToMatchVelocity = getForceToMatchVelocity();
 
         const totalSteeringForce = new Vector3(0, 0, 0);
-        totalSteeringForce.add(forceToCenter);
-        totalSteeringForce.add(forceAway);
-        totalSteeringForce.add(forceToMatchVelocity);
+        totalSteeringForce.add(boid.forceToCenter);
+        totalSteeringForce.add(boid.forceAway);
+        totalSteeringForce.add(boid.forceToMatchVelocity);
 
         integrate(totalSteeringForce, delta);
     };

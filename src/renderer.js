@@ -15,15 +15,12 @@ const createBoidView = (
     };
 
     const boid = {
-        directionLine: createFriendLine(scene, 0x00ff00),
-        forceLine: createFriendLine(scene, 0xff0000),
+        directionLine: createFriendLine(scene, 0xff4444),
+        forceLine: createFriendLine(scene, 0xffffff),
+        repelForceLine: createFriendLine(scene, 0xff0000),
+        attractForceLine: createFriendLine(scene, 0x00ff00),
+        followForceLine: createFriendLine(scene, 0x0000ff),
         friendLines: createFriendLines(),
-    };
-
-    const getForceVector = (gameBoid) => {
-        const result = gameBoid.getVelocity();
-        result.multiplyScalar(1);
-        return result;
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
@@ -33,21 +30,21 @@ const createBoidView = (
     boid.mesh = boidMesh;
 
     const updateForceLine = (gameBoid) => {
-        const forceVector = getForceVector(gameBoid);
+        const forceVector = gameBoid.getVelocity();
         forceVector.add(gameBoid.position);
         forceVector.multiplyScalar(1.0);
         boid.forceLine.setLine(gameBoid.position, forceVector);
     };
 
-    boid.update = (gameBoid) => {
-        boid.mesh.position.copy(gameBoid.position);
-
-        const directionEnd = gameBoid.position.clone();
-        directionEnd.addScaledVector(gameBoid.direction, 0.5);
-        boid.directionLine.setLine(gameBoid.position, directionEnd);
+    const updateRepelLine = (gameBoid) => {
+        const forceVector = gameBoid.forceAway.clone();
+        forceVector.add(gameBoid.position);
+        forceVector.multiplyScalar(1);
         
-        updateForceLine(gameBoid);
+        boid.repelForceLine.setLine(gameBoid.position, forceVector);
+    };
 
+    const updateFriendLines = (gameBoid) => {
         let friendLineIndex = 0;
         for (const friend of gameBoid.friends) {
             if (friendLineIndex < boid.friendLines.length) {
@@ -58,6 +55,18 @@ const createBoidView = (
         for (let i = friendLineIndex; i < 10; i++) {
             boid.friendLines[i].hide();
         }
+    };
+
+    boid.update = (gameBoid) => {
+        boid.mesh.position.copy(gameBoid.position);
+
+        const directionEnd = gameBoid.position.clone();
+        directionEnd.addScaledVector(gameBoid.direction, 0.5);
+        boid.directionLine.setLine(gameBoid.position, directionEnd);
+        
+        updateForceLine(gameBoid);
+        updateRepelLine(gameBoid);
+        updateFriendLines(gameBoid);
     };
 
     return boid;
