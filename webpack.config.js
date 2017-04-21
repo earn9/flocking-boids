@@ -6,5 +6,6 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'var',
         filename: 'bundle.js'
-    }
+    },
+    devtool: "source-map"
 };
