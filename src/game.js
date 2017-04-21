@@ -2,6 +2,8 @@ import { Vector3 } from 'three';
 import { randomDirection, randomVec2 } from './mathUtils';
 
 const createBoid = (position, direction, speed, tag) => {
+    const friendDistance = 1;
+
     const boid = { 
         position, 
         direction, 
@@ -52,9 +54,14 @@ const createBoid = (position, direction, speed, tag) => {
     const getForceAwayFromNearby = () => {
         const result = new Vector3(0, 0, 0);
         for (const friend of boid.friends) {
-            const difference = friend.position.clone();
-            difference.sub(boid.position);
-            result.sub(difference);
+            const vectorFromFriendToBoid = friend.position.clone();
+            vectorFromFriendToBoid.sub(boid.position);
+            const lengthFromFriendToBoid = vectorFromFriendToBoid.length();
+            const inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
+            const forceLength = inverseOfLengthFromFriendToBoid * -0.7;
+            vectorFromFriendToBoid.setLength(forceLength);
+
+            result.add(vectorFromFriendToBoid);
         }
         result.divideScalar(150);
         return result;
@@ -84,7 +91,7 @@ const createBoid = (position, direction, speed, tag) => {
     };
 
     boid.update = (delta, world) => {
-        boid.friends = world.findNearbyBoids(boid, 1);
+        boid.friends = world.findNearbyBoids(boid, friendDistance);
 
         boid.forceToCenter = getForceTowardCenterOfFriends();
         boid.forceAway = getForceAwayFromNearby(); 
