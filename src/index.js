@@ -13,7 +13,7 @@ const update = (delta, boids, world) => {
 
 // setup a bunch of boids that should flock
 const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
-    const numBoids = 50;
+    const numBoids = 450;
     const boids = [];
 
     for (let i = 0; i < numBoids; i++) {
