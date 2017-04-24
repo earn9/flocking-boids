@@ -37,10 +37,16 @@ const createBoidView = (
 
     const updateRepelLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
-        forceVector.addScaledVector(gameBoid.forceAway, 1000);
-        forceVector.multiplyScalar(1);
+        forceVector.addScaledVector(gameBoid.forceAway, 100);
         
         boid.repelForceLine.setLine(gameBoid.position, forceVector);
+    };
+
+    const updateFollowLine = (gameBoid) => {
+        const followVector = gameBoid.position.clone();
+        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
+
+        boid.followForceLine.setLine(gameBoid.position, followVector);
     };
 
     const updateFriendLines = (gameBoid) => {
@@ -58,22 +64,15 @@ const createBoidView = (
 
     const updateAttractLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
-        forceVector.addScaledVector(gameBoid.forceToCenter, 1000);
+        forceVector.addScaledVector(gameBoid.forceToCenter, 100);
 
         boid.attractForceLine.setLine(gameBoid.position, forceVector);
     };
 
     const updateDirectionLine = (gameBoid) => {
         const directionEnd = gameBoid.position.clone();
-        directionEnd.addScaledVector(gameBoid.direction, 0.5);
+        directionEnd.addScaledVector(gameBoid.direction, 0.25);
         boid.directionLine.setLine(gameBoid.position, directionEnd);
-    };
-
-    const updateFollowLine = (gameBoid) => {
-        const followVector = gameBoid.position.clone();
-        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 1000);
-
-        boid.followForceLine.setLine(gameBoid.position, followVector);
     };
 
     boid.update = (gameBoid) => {
@@ -86,7 +85,7 @@ const createBoidView = (
         updateAttractLine(gameBoid);
         updateFollowLine(gameBoid);
 
-        updateFriendLines(gameBoid);
+        // updateFriendLines(gameBoid);
     };
 
     return boid;
@@ -115,6 +114,7 @@ const createFriendLine = (scene, color) => {
     let material;
     if (color) {
         material = new THREE.LineBasicMaterial({ color });
+        material.depthTest = false;
     }
 
     const geometry = new THREE.Geometry();
