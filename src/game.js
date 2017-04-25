@@ -130,13 +130,13 @@ const createWorld = () => {
     world.update = (delta) => {
         for (const key in boids) {
             boids[key].update(delta, world);
-        };
+        }
     };
 
     world.forEachBoid = (boidAction) => {
         for (const key in boids) {
             boidAction(boids[key]);
-        };
+        }
     };
 
     world.getBoid = (key) => {
