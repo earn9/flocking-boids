@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "node ./node_modules/eslint/bin/eslint.js src/** || true",
     "start-pack": "./node_modules/.bin/webpack --watch",
+    "pack": "./node_modules/.bin/webpack",
     "start-server": "python -m SimpleHTTPServer"
   },
   "author": "",
