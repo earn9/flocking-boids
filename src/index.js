@@ -7,7 +7,8 @@ const context = {
     config: {
         showForceLine: false,
         showRepelLine: false,
-        showAttractLine: false
+        showAttractLine: false,
+        handleFollowLine: false
     }
 };
 
@@ -108,6 +109,7 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
 const KEYS = {
     KEY_I: 73,
     KEY_U: 85,
+    KEY_O: 79,
     KEY_Y: 89
 };
 
@@ -122,6 +124,9 @@ const onDocumentKeyDown = (event) => {
             break;
         case KEYS.KEY_I:
             context.config.showAttractLine = !context.config.showAttractLine;
+            break;
+        case KEYS.KEY_O:
+            context.config.showFollowLine = !context.config.showFollowLine;
             break;
     }
 };

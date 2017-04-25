@@ -47,6 +47,10 @@ const createBoidView = (
         boid.attractForceLine.hide();
     };
 
+    const hideFollowLine = () => {
+        boid.followForceLine.hide();
+    };
+
     const updateRepelLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
@@ -111,6 +115,14 @@ const createBoidView = (
         }
     };
 
+    const handleFollowLine = (gameBoid, context) => {
+        if (context.config.showFollowLine) {
+            updateFollowLine(gameBoid);
+        } else {
+            hideFollowLine();
+        }
+    };
+
     boid.update = (gameBoid, context) => {
         boid.mesh.position.copy(gameBoid.position);
 
@@ -119,8 +131,7 @@ const createBoidView = (
         handleForceLine(gameBoid, context);
         handleRepelLine(gameBoid, context);
         handleAttractLine(gameBoid, context);
-        // updateAttractLine(gameBoid);
-        // updateFollowLine(gameBoid);
+        handleFollowLine(gameBoid, context); 
 
         // updateFriendLines(gameBoid);
     };
