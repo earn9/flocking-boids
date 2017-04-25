@@ -3,11 +3,19 @@ import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSimpleView } from './renderer';
 import { createVehicle, FLEE_STEERING, SEEK_STEERING } from './steering';
 
-const update = (delta, boids, world) => {
+const context = {
+    config: {
+        showForceLine: false,
+        showRepelLine: false,
+        showAttractLine: false
+    }
+};
+
+const update = (delta, boidsViews, world) => {
     world.update(delta);
-    for (const node of boids) {
-        const boid = world.getBoid(node.tag);
-        node.update(boid);
+    for (const boidView of boidsViews) {
+        const boid = world.getBoid(boidView.tag);
+        boidView.update(boid, context);
     }
 };
 
@@ -97,6 +105,31 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
     return internalRender;
 };
 
+const KEYS = {
+    KEY_I: 73,
+    KEY_U: 85,
+    KEY_Y: 89
+};
+
+const onDocumentKeyDown = (event) => {
+    console.log('keydown', event);
+    switch (event.keyCode) {
+        case KEYS.KEY_Y:
+            context.config.showForceLine = !context.config.showForceLine;
+            break;
+        case KEYS.KEY_U:
+            context.config.showRepelLine = !context.config.showRepelLine;
+            break;
+        case KEYS.KEY_I:
+            context.config.showAttractLine = !context.config.showAttractLine;
+            break;
+    }
+};
+
+const setupKeyboardListeners = () => {
+    document.addEventListener("keydown", onDocumentKeyDown, false);
+};
+
 window.onload = () => {
     var scene = new THREE.Scene();
 
@@ -105,6 +138,8 @@ window.onload = () => {
     document.body.appendChild(renderer.domElement);
 
     var { world, boids, camera } = setup(scene);
+
+    setupKeyboardListeners();
 
     var clock = new THREE.Clock();
 

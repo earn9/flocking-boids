@@ -35,6 +35,18 @@ const createBoidView = (
         boid.forceLine.setLine(gameBoid.position, forceVector);
     };
 
+    const hideForceLine = () => {
+        boid.forceLine.hide();
+    };
+
+    const hideRepelLine = () => {
+        boid.repelForceLine.hide();
+    };
+
+    const hideAttractLine = () => {
+        boid.attractForceLine.hide();
+    };
+
     const updateRepelLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
@@ -75,15 +87,40 @@ const createBoidView = (
         boid.directionLine.setLine(gameBoid.position, directionEnd);
     };
 
-    boid.update = (gameBoid) => {
+    const handleForceLine = (gameBoid, context) => {
+        if (context.config.showForceLine) {
+            updateForceLine(gameBoid);
+        } else {
+            hideForceLine();
+        }
+    };
+
+    const handleRepelLine = (gameBoid, context) => {
+        if (context.config.showRepelLine) {
+            updateRepelLine(gameBoid);
+        } else {
+            hideRepelLine();
+        }
+    };
+
+    const handleAttractLine = (gameBoid, context) => {
+        if (context.config.showAttractLine) {
+            updateAttractLine(gameBoid);
+        } else {
+            hideAttractLine();
+        }
+    };
+
+    boid.update = (gameBoid, context) => {
         boid.mesh.position.copy(gameBoid.position);
 
         updateDirectionLine(gameBoid);
 
-        updateForceLine(gameBoid);
-        updateRepelLine(gameBoid);
-        updateAttractLine(gameBoid);
-        updateFollowLine(gameBoid);
+        handleForceLine(gameBoid, context);
+        handleRepelLine(gameBoid, context);
+        handleAttractLine(gameBoid, context);
+        // updateAttractLine(gameBoid);
+        // updateFollowLine(gameBoid);
 
         // updateFriendLines(gameBoid);
     };
