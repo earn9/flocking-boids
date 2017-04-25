@@ -11,6 +11,7 @@
         },
         "sourceType": "module"
     },
+    "extends": "eslint:recommended",
     "rules": {
         "semi": "error",
         "no-const-assign": "warn",
