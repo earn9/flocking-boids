@@ -24,6 +24,7 @@
         "eqeqeq": "warn",
         "camelcase": "error",
         "brace-style": "error",
-        "prefer-const": "warn"
+        "prefer-const": "warn",
+        "no-console": "warn"
     }
 }
