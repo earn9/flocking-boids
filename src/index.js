@@ -8,7 +8,8 @@ const context = {
         showForceLine: false,
         showRepelLine: false,
         showAttractLine: false,
-        handleFollowLine: false
+        showFollowLine: false,
+        showFriendLines: false
     }
 };
 
@@ -110,6 +111,7 @@ const KEYS = {
     KEY_I: 73,
     KEY_U: 85,
     KEY_O: 79,
+    KEY_P: 80,
     KEY_Y: 89
 };
 
@@ -127,6 +129,9 @@ const onDocumentKeyDown = (event) => {
             break;
         case KEYS.KEY_O:
             context.config.showFollowLine = !context.config.showFollowLine;
+            break;
+        case KEYS.KEY_P:
+            context.config.showFriendLines = !context.config.showFriendLines;
             break;
     }
 };

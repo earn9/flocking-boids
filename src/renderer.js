@@ -65,13 +65,15 @@ const createBoidView = (
         boid.followForceLine.setLine(gameBoid.position, followVector);
     };
 
-    const updateFriendLines = (gameBoid) => {
+    const updateFriendLines = (gameBoid, context) => {
         let friendLineIndex = 0;
-        for (const friend of gameBoid.friends) {
-            if (friendLineIndex < boid.friendLines.length) {
-                boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+        if (context.config.showFriendLines) {
+            for (const friend of gameBoid.friends) {
+                if (friendLineIndex < boid.friendLines.length) {
+                    boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+                }
+                friendLineIndex++;
             }
-            friendLineIndex++;
         }
         for (let i = friendLineIndex; i < 10; i++) {
             boid.friendLines[i].hide();
@@ -133,7 +135,7 @@ const createBoidView = (
         handleAttractLine(gameBoid, context);
         handleFollowLine(gameBoid, context); 
 
-        // updateFriendLines(gameBoid);
+        updateFriendLines(gameBoid, context);
     };
 
     return boid;
