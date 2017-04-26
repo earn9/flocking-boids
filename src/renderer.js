@@ -8,18 +8,18 @@ const createBoidView = (
     const createFriendLines = () => {
         const friendLines = [];
         for (let i = 0; i < 10; i++) {
-            friendLines[i] = createFriendLine(scene);
+            friendLines[i] = createDebugLine(scene);
             friendLines[i].hide();
         }
         return friendLines;
     };
 
     const boid = {
-        directionLine: createFriendLine(scene, 0xff4444),
-        forceLine: createFriendLine(scene, 0xffffff),
-        repelForceLine: createFriendLine(scene, 0xff0000),
-        attractForceLine: createFriendLine(scene, 0x00ff00),
-        followForceLine: createFriendLine(scene, 0x0000ff),
+        directionLine: createDebugLine(scene, 0xff4444, true),
+        forceLine: createDebugLine(scene, 0xffffff),
+        repelForceLine: createDebugLine(scene, 0xff0000),
+        attractForceLine: createDebugLine(scene, 0x00ff00),
+        followForceLine: createDebugLine(scene, 0x0000ff),
         friendLines: createFriendLines(),
     };
 
@@ -156,13 +156,13 @@ const createSimpleView = (
     return boid;
 };
 
-const createFriendLine = (scene, color) => {
+const createDebugLine = (scene, color, depthTest = false) => {
     const friendLine = {};
 
     let material;
     if (color) {
         material = new THREE.LineBasicMaterial({ color });
-        material.depthTest = false;
+        material.depthTest = depthTest;
     }
 
     const geometry = new THREE.Geometry();
@@ -229,4 +229,4 @@ const createCamera = () => {
     return camera;
 };
 
-export { createBoidView, createFriendLine, createFloor, createLights, createCamera, createSimpleView };
+export { createBoidView, createFloor, createLights, createCamera, createSimpleView };
