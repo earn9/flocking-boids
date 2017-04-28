@@ -15,7 +15,7 @@ const createBoidView = (
     };
 
     const boid = {
-        directionLine: createDebugLine(scene, 0xff4444, true),
+        directionLine: createDebugLine(scene, 0xaf4484, true),
         forceLine: createDebugLine(scene, 0xffffff),
         repelForceLine: createDebugLine(scene, 0xff0000),
         attractForceLine: createDebugLine(scene, 0x00ff00),
