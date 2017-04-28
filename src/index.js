@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
-import { createBoidView, createFloor, createLights, createCamera, createSimpleView } from './renderer';
-import { createVehicle, FLEE_STEERING, SEEK_STEERING } from './steering';
+import { createBoidView, createFloor, createLights, createCamera } from './renderer';
 
 const context = {
     config: {
@@ -31,48 +30,8 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
         boidView.tag = i;
         boids.push(boidView);
 
-        world.addBoid(createBoidWithRandomPositionAndDirection(-5, 5, 0.75, boidView.tag));
+        world.addBoid(createBoidWithRandomPositionAndDirection(-7, 7, 0.75, boidView.tag));
     }
-    return boids;
-};
-
-// sets up a simple test of steering
-/* eslint-disable no-unused-vars */
-const setupSteering = (scene, world, boidGeometry, boidMaterial) => {
-/* eslint-enable no-unused-vars */
-
-    const boids = [];
-
-    const boidView = createBoidView(scene, boidGeometry, boidMaterial);
-    boidView.tag = "seeker";
-    boids.push(boidView);
-
-    const seeker = createVehicle(
-        new THREE.Vector3(5, 0, 5), 
-        new THREE.Vector3(1, 0, 0), 
-        4, 
-        new THREE.Vector3(0, 0, 0),
-        boidView.tag,
-        SEEK_STEERING);
-
-    world.addBoid(seeker);
-
-    const fleeerView = createBoidView(scene, boidGeometry, boidMaterial);
-    fleeerView.tag = "fleeer";
-    boids.push(fleeerView);
-
-    const fleeer = createVehicle(
-        new THREE.Vector3(-1, 0, -1), 
-        new THREE.Vector3(1, 0, 0), 
-        4, 
-        new THREE.Vector3(0, 0, 0),
-        fleeerView.tag,
-        FLEE_STEERING);
-
-    world.addBoid(fleeer);
-
-    createSimpleView(scene, boidGeometry, boidMaterial);
-
     return boids;
 };
 
