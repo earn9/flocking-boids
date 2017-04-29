@@ -36,6 +36,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial) => {
 };
 
 const setup = (scene) => {
+    initializeConfig(context.config);
     const world = createWorld();
 
     const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
@@ -74,11 +75,29 @@ const KEYS = {
     KEY_Y: 89
 };
 
+const storageAvailable = typeof(Storage) !== 'undefined';
+const SHOW_FORCE = 'show.force';
+
+const initializeConfig = (config) => {
+    if (storageAvailable) {
+        config.showForceLine = localStorage.getItem(SHOW_FORCE) == 'true';
+    }
+};
+
+const toggleForce = () => {
+    context.config.showForceLine = !context.config.showForceLine;
+    if (storageAvailable) {
+        localStorage.setItem(SHOW_FORCE, context.config.showForceLine);
+    } else {
+        console.log('no storage available');
+    }
+};
+
 const onDocumentKeyDown = (event) => {
     console.log('keydown', event);
     switch (event.keyCode) {
         case KEYS.KEY_Y:
-            context.config.showForceLine = !context.config.showForceLine;
+            toggleForce();
             break;
         case KEYS.KEY_U:
             context.config.showRepelLine = !context.config.showRepelLine;
@@ -96,7 +115,7 @@ const onDocumentKeyDown = (event) => {
 };
 
 const setupKeyboardListeners = () => {
-    document.addEventListener("keydown", onDocumentKeyDown, false);
+    document.addEventListener('keydown', onDocumentKeyDown, false);
 };
 
 window.onload = () => {
