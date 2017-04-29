@@ -83,10 +83,14 @@ const boolFromString = (input) => {
     return input == 'true';
 };
 
+const boolFromStorage = (storageKey) => {
+    return boolFromString(localStorage.getItem(storageKey));
+};
+
 const initializeConfig = (config) => {
     if (storageAvailable) {
-        config.showForceLine = boolFromString(localStorage.getItem(SHOW_FORCE));
-        config.showAttractLine = boolFromString(localStorage.getItem(SHOW_ATTRACT));
+        config.showForceLine = boolFromStorage(SHOW_FORCE);
+        config.showAttractLine = boolFromStorage(SHOW_ATTRACT);
     }
 };
 
