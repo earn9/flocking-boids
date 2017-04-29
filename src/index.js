@@ -77,17 +77,32 @@ const KEYS = {
 
 const storageAvailable = typeof(Storage) !== 'undefined';
 const SHOW_FORCE = 'show.force';
+const SHOW_ATTRACT = 'show.attract';
+
+const boolFromString = (input) => {
+    return input == 'true';
+};
 
 const initializeConfig = (config) => {
     if (storageAvailable) {
-        config.showForceLine = localStorage.getItem(SHOW_FORCE) == 'true';
+        config.showForceLine = boolFromString(localStorage.getItem(SHOW_FORCE));
+        config.showAttractLine = boolFromString(localStorage.getItem(SHOW_ATTRACT));
     }
 };
 
-const toggleForce = () => {
+const toggleForceLine = () => {
     context.config.showForceLine = !context.config.showForceLine;
     if (storageAvailable) {
         localStorage.setItem(SHOW_FORCE, context.config.showForceLine);
+    } else {
+        console.log('no storage available');
+    }
+};
+
+const toggleAttractLine = () => {
+    context.config.showAttractLine = !context.config.showAttractLine;
+    if (storageAvailable) {
+        localStorage.setItem(SHOW_ATTRACT, context.config.showAttractLine);
     } else {
         console.log('no storage available');
     }
@@ -97,10 +112,10 @@ const onDocumentKeyDown = (event) => {
     console.log('keydown', event);
     switch (event.keyCode) {
         case KEYS.KEY_Y:
-            toggleForce();
+            toggleForceLine();
             break;
         case KEYS.KEY_U:
-            context.config.showRepelLine = !context.config.showRepelLine;
+            toggleAttractLine();
             break;
         case KEYS.KEY_I:
             context.config.showAttractLine = !context.config.showAttractLine;
