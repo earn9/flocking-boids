@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera } from './renderer';
+import { initializeConfig, storeConfigChanges } from './persistance';
 
 const context = {
     config: {
@@ -73,32 +74,6 @@ const KEYS = {
     KEY_O: 79,
     KEY_P: 80,
     KEY_Y: 89
-};
-
-const storageAvailable = typeof(Storage) !== 'undefined';
-
-const boolFromString = (input) => {
-    return input == 'true';
-};
-
-const boolFromStorage = (storageKey) => {
-    return boolFromString(localStorage.getItem(storageKey));
-};
-
-const initializeConfig = (config) => {
-    if (storageAvailable) {
-        Object.keys(config).forEach(key => config[key] = boolFromStorage(key));
-    } else {
-        console.log('no storage available');
-    }
-};
-
-const storeConfigChanges = (config) => {
-    if (storageAvailable) {
-        Object.keys(config).forEach(key => localStorage.setItem(key, config[key]));
-    } else {
-        console.log('no storage available');
-    }
 };
 
 const toggleForceLine = () => {
