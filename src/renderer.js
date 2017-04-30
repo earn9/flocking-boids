@@ -6,9 +6,10 @@ const createBoidView = (
         boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
 
     const createFriendLines = () => {
+        const lineColor = Math.random() * 0xffffff;
         const friendLines = [];
         for (let i = 0; i < 10; i++) {
-            friendLines[i] = createDebugLine(scene);
+            friendLines[i] = createDebugLine(scene, lineColor);
             friendLines[i].hide();
         }
         return friendLines;
@@ -158,7 +159,7 @@ const createSimpleView = (
     return boid;
 };
 
-const createDebugLine = (scene, color, depthTest = false) => {
+const createDebugLine = (scene, color = null, depthTest = false) => {
     const friendLine = {};
 
     let material;
