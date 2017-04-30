@@ -78,6 +78,7 @@ const KEYS = {
 const storageAvailable = typeof(Storage) !== 'undefined';
 const SHOW_FORCE = 'show.force';
 const SHOW_ATTRACT = 'show.attract';
+const SHOW_REPEL = 'show.repel';
 
 const boolFromString = (input) => {
     return input == 'true';
@@ -91,25 +92,28 @@ const initializeConfig = (config) => {
     if (storageAvailable) {
         config.showForceLine = boolFromStorage(SHOW_FORCE);
         config.showAttractLine = boolFromStorage(SHOW_ATTRACT);
+        config.showRepelLine = boolFromStorage(SHOW_REPEL);
+    } else {
+        console.log('no storage available');
+    }
+};
+
+const storeConfigChanges = (config) => {
+    if (storageAvailable) {
+        localStorage.setItem(SHOW_FORCE, config.showForceLine);
+        localStorage.setItem(SHOW_ATTRACT, config.showAttractLine);
+        localStorage.setItem(SHOW_REPEL, config.showRepelLine);
+    } else {
+        console.log('no storage available');
     }
 };
 
 const toggleForceLine = () => {
     context.config.showForceLine = !context.config.showForceLine;
-    if (storageAvailable) {
-        localStorage.setItem(SHOW_FORCE, context.config.showForceLine);
-    } else {
-        console.log('no storage available');
-    }
 };
 
 const toggleAttractLine = () => {
     context.config.showAttractLine = !context.config.showAttractLine;
-    if (storageAvailable) {
-        localStorage.setItem(SHOW_ATTRACT, context.config.showAttractLine);
-    } else {
-        console.log('no storage available');
-    }
 };
 
 const onDocumentKeyDown = (event) => {
@@ -119,10 +123,10 @@ const onDocumentKeyDown = (event) => {
             toggleForceLine();
             break;
         case KEYS.KEY_U:
-            toggleAttractLine();
+            context.config.showRepelLine = !context.config.showRepelLine;
             break;
         case KEYS.KEY_I:
-            context.config.showAttractLine = !context.config.showAttractLine;
+            toggleAttractLine();
             break;
         case KEYS.KEY_O:
             context.config.showFollowLine = !context.config.showFollowLine;
@@ -131,6 +135,7 @@ const onDocumentKeyDown = (event) => {
             context.config.showFriendLines = !context.config.showFriendLines;
             break;
     }
+    storeConfigChanges(context.config);
 };
 
 const setupKeyboardListeners = () => {
