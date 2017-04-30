@@ -1,7 +1,10 @@
 import * as THREE from 'three';
+import orbit from '../js/three-orbit-controls';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
+
+const orbitControls = orbit(THREE);
 
 const context = {
     config: {
@@ -110,14 +113,21 @@ const setupKeyboardListeners = () => {
     document.addEventListener('keydown', onDocumentKeyDown, false);
 };
 
+let controls;
+
 window.onload = () => {
     var scene = new THREE.Scene();
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+
     document.body.appendChild(renderer.domElement);
 
     var { world, boids, camera } = setup(scene);
+
+    controls = orbitControls(camera, renderer.domElement );
+    // controls.addEventListener( 'change', render );
 
     setupKeyboardListeners();
 
