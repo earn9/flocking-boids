@@ -76,9 +76,6 @@ const KEYS = {
 };
 
 const storageAvailable = typeof(Storage) !== 'undefined';
-const SHOW_FORCE = 'show.force';
-const SHOW_ATTRACT = 'show.attract';
-const SHOW_REPEL = 'show.repel';
 
 const boolFromString = (input) => {
     return input == 'true';
@@ -90,9 +87,7 @@ const boolFromStorage = (storageKey) => {
 
 const initializeConfig = (config) => {
     if (storageAvailable) {
-        config.showForceLine = boolFromStorage(SHOW_FORCE);
-        config.showAttractLine = boolFromStorage(SHOW_ATTRACT);
-        config.showRepelLine = boolFromStorage(SHOW_REPEL);
+        Object.keys(config).forEach(key => config[key] = boolFromStorage(key));
     } else {
         console.log('no storage available');
     }
@@ -100,9 +95,7 @@ const initializeConfig = (config) => {
 
 const storeConfigChanges = (config) => {
     if (storageAvailable) {
-        localStorage.setItem(SHOW_FORCE, config.showForceLine);
-        localStorage.setItem(SHOW_ATTRACT, config.showAttractLine);
-        localStorage.setItem(SHOW_REPEL, config.showRepelLine);
+        Object.keys(config).forEach(key => localStorage.setItem(key, config[key]));
     } else {
         console.log('no storage available');
     }
