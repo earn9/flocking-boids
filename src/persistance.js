@@ -1,8 +1,14 @@
 
-const storageAvailable = typeof(Storage) !== 'undefined';
+const storageAvailable = function() {
+    const result = typeof(Storage) !== 'undefined';
+    if (!result) {
+        console.log('no storage available');
+    }
+    return result;
+}();
 
 const boolFromString = (input) => {
-    return input == 'true';
+    return input === 'true';
 };
 
 const boolFromStorage = (storageKey) => {
@@ -12,15 +18,11 @@ const boolFromStorage = (storageKey) => {
 export const initializeConfig = (config) => {
     if (storageAvailable) {
         Object.keys(config).forEach(key => config[key] = boolFromStorage(key));
-    } else {
-        console.log('no storage available');
-    }
+    } 
 };
 
 export const storeConfigChanges = (config) => {
     if (storageAvailable) {
         Object.keys(config).forEach(key => localStorage.setItem(key, config[key]));
-    } else {
-        console.log('no storage available');
     }
 };
