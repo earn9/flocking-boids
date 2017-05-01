@@ -24,12 +24,6 @@ const createBoidView = (
         friendLines: createFriendLines(),
     };
 
-    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-
-    scene.add(boidMesh);
-
-    boid.mesh = boidMesh;
-
     const updateForceLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
         forceVector.add(gameBoid.getVelocity());
@@ -125,6 +119,14 @@ const createBoidView = (
             hideFollowLine();
         }
     };
+
+    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+
+    boidMesh.scale.set(0.005, 0.005, 0.005);
+
+    scene.add(boidMesh);
+
+    boid.mesh = boidMesh;
 
     boid.update = (gameBoid, context) => {
         boid.mesh.position.copy(gameBoid.position);
