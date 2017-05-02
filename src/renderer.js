@@ -1,5 +1,21 @@
 import * as THREE from 'three';
 
+const center = new THREE.Vector3(0, 0, 0);
+const xAxisNormal = new THREE.Vector3(1, 0, 0);
+const yAxisNormal = new THREE.Vector3(0, 1, 0);
+const zAxisNormal = new THREE.Vector3(0, 0, 1);
+
+const createAxisGroup = () => {
+    const group = new THREE.Group();
+    const xAxisLine = createDebugLine(group, 0xff0000);
+    xAxisLine.setLine(center, xAxisNormal);
+    const yAxisLine = createDebugLine(group, 0x00ff00);
+    yAxisLine.setLine(center, yAxisNormal);
+    const zAxisLine = createDebugLine(group, 0x0000ff);
+    zAxisLine.setLine(center, zAxisNormal);
+    return group;
+};
+
 const createBoidView = (
         scene, 
         boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
@@ -121,9 +137,9 @@ const createBoidView = (
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-
-    boidMesh.scale.set(0.005, 0.005, 0.005);
-
+    // boidMesh.scale.set(0.005, 0.005, 0.005);
+    boid.debugAxis = createAxisGroup();
+    boidMesh.add(boid.debugAxis);
     scene.add(boidMesh);
 
     boid.mesh = boidMesh;
@@ -139,6 +155,8 @@ const createBoidView = (
         handleFollowLine(gameBoid, context); 
 
         updateFriendLines(gameBoid, context);
+
+        boid.debugAxis.visible = context.config.showAxis;
     };
 
     return boid;

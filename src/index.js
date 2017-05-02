@@ -12,7 +12,8 @@ const context = {
         showRepelLine: false,
         showAttractLine: false,
         showFollowLine: false,
-        showFriendLines: false
+        showFriendLines: false,
+        showAxis: false
     }
 };
 
@@ -47,10 +48,10 @@ const setup = (scene) => {
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
     const loader = new THREE.JSONLoader();
-    loader.load('/resources/parrot.js', geometry => { 
-        setupBoids(scene, world, geometry, boidMaterial, boids);
-     });
-    // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
+    // loader.load('/resources/parrot.js', geometry => { 
+    //     setupBoids(scene, world, geometry, boidMaterial, boids);
+    //  });
+    setupBoids(scene, world, boidGeometry, boidMaterial, boids);
 
     scene.add(createFloor());
 
@@ -76,6 +77,7 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
 };
 
 const KEYS = {
+    KEY_B: 66,
     KEY_I: 73,
     KEY_U: 85,
     KEY_O: 79,
@@ -108,6 +110,9 @@ const onDocumentKeyDown = (event) => {
             break;
         case KEYS.KEY_P:
             context.config.showFriendLines = !context.config.showFriendLines;
+            break;
+        case KEYS.KEY_B:
+            context.config.showAxis = !context.config.showAxis;
             break;
     }
     storeConfigChanges(context.config);
