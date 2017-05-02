@@ -16,6 +16,17 @@ const createAxisGroup = () => {
     return group;
 };
 
+const getRotationMatrix = (direction) => {
+    const xAxis = direction.clone();
+    const yAxis = yAxisNormal.clone();
+    const zAxis = xAxis.clone();
+    zAxis.cross(yAxis);
+    zAxis.normalize();
+    const rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
+    return rotationMatrix;
+};
+
 const createBoidView = (
         scene, 
         boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
@@ -157,6 +168,8 @@ const createBoidView = (
         updateFriendLines(gameBoid, context);
 
         boid.debugAxis.visible = context.config.showAxis;
+
+        boid.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
     };
 
     return boid;
