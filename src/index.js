@@ -27,7 +27,7 @@ const update = (delta, boidsViews, world) => {
 
 // setup a bunch of boids that should flock
 const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
-    const numBoids = 450;
+    const numBoids = 500;
 
     for (let i = 0; i < numBoids; i++) {
         const boidView = createBoidView(scene, boidGeometry, boidMaterial);
@@ -48,10 +48,10 @@ const setup = (scene) => {
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
     const loader = new THREE.JSONLoader();
-    // loader.load('/resources/parrot.js', geometry => { 
-    //     setupBoids(scene, world, geometry, boidMaterial, boids);
-    //  });
-    setupBoids(scene, world, boidGeometry, boidMaterial, boids);
+    loader.load('/assets/models/parrot01.json', geometry => { 
+        setupBoids(scene, world, geometry, boidMaterial, boids);
+     });
+    // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
 
     scene.add(createFloor());
 

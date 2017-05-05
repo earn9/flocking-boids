@@ -5,23 +5,27 @@ const xAxisNormal = new THREE.Vector3(1, 0, 0);
 const yAxisNormal = new THREE.Vector3(0, 1, 0);
 const zAxisNormal = new THREE.Vector3(0, 0, 1);
 
+const xAxisHalfNormal = new THREE.Vector3(0.5, 0, 0);
+const yAxisHalfNormal = new THREE.Vector3(0, 0.5, 0);
+const zAxisHalfNormal = new THREE.Vector3(0, 0, 0.5);
+
 const createAxisGroup = () => {
     const group = new THREE.Group();
     const xAxisLine = createDebugLine(group, 0xff0000);
-    xAxisLine.setLine(center, xAxisNormal);
+    xAxisLine.setLine(center, xAxisHalfNormal);
     const yAxisLine = createDebugLine(group, 0x00ff00);
-    yAxisLine.setLine(center, yAxisNormal);
+    yAxisLine.setLine(center, yAxisHalfNormal);
     const zAxisLine = createDebugLine(group, 0x0000ff);
-    zAxisLine.setLine(center, zAxisNormal);
+    zAxisLine.setLine(center, zAxisHalfNormal);
     return group;
 };
 
 const getRotationMatrix = (direction) => {
-    const xAxis = direction.clone();
+    const zAxis = direction.clone();
     const yAxis = yAxisNormal.clone();
-    const zAxis = xAxis.clone();
-    zAxis.cross(yAxis);
-    zAxis.normalize();
+    const xAxis = yAxis.clone();
+    xAxis.cross(zAxis);
+    xAxis.normalize();
     const rotationMatrix = new THREE.Matrix4();
     rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
     return rotationMatrix;
@@ -50,6 +54,8 @@ const createBoidView = (
         followForceLine: createDebugLine(scene, 0x0000ff),
         friendLines: createFriendLines(),
     };
+
+    boid.directionLine.visible = false;
 
     const updateForceLine = (gameBoid) => {
         const forceVector = gameBoid.position.clone();
@@ -148,7 +154,7 @@ const createBoidView = (
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-    // boidMesh.scale.set(0.005, 0.005, 0.005);
+    boidMesh.scale.set(0.25, 0.25, 0.25);
     boid.debugAxis = createAxisGroup();
     boidMesh.add(boid.debugAxis);
     scene.add(boidMesh);
@@ -158,7 +164,7 @@ const createBoidView = (
     boid.update = (gameBoid, context) => {
         boid.mesh.position.copy(gameBoid.position);
 
-        updateDirectionLine(gameBoid);
+        // updateDirectionLine(gameBoid);
 
         handleForceLine(gameBoid, context);
         handleRepelLine(gameBoid, context);
