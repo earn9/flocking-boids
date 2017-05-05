@@ -40,7 +40,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
 
 const boids = [];
 
-const setup = (scene) => {
+const setup = (scene, assetRoot = '') => {
     initializeConfig(context.config);
     const world = createWorld();
 
@@ -48,7 +48,7 @@ const setup = (scene) => {
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
     const loader = new THREE.JSONLoader();
-    loader.load('/assets/models/parrot01.json', geometry => { 
+    loader.load(`${assetRoot}/assets/models/parrot01.json`, geometry => { 
         setupBoids(scene, world, geometry, boidMaterial, boids);
      });
     // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
@@ -124,25 +124,29 @@ const setupKeyboardListeners = () => {
 
 let controls;
 
-window.onload = () => {
-    var scene = new THREE.Scene();
 
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+export function startUp(assetRoot = '') {
+
+    window.onload = () => {
+        var scene = new THREE.Scene();
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
 
 
-    document.body.appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement);
 
-    var { world, boids, camera } = setup(scene);
+        var { world, boids, camera } = setup(scene, assetRoot);
 
-    controls = orbitControls(camera, renderer.domElement );
-    // controls.addEventListener( 'change', render );
+        controls = orbitControls(camera, renderer.domElement );
+        // controls.addEventListener( 'change', render );
 
-    setupKeyboardListeners();
+        setupKeyboardListeners();
 
-    var clock = new THREE.Clock();
+        var clock = new THREE.Clock();
 
-    var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
+        var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
 
-    render();
-};
+        render();
+    };
+}

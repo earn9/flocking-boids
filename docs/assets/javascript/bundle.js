@@ -64,7 +64,7 @@ var Boids =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -43368,697 +43368,6 @@ function CanvasRenderer() {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mathUtils__ = __webpack_require__(4);
-/* unused harmony export createBoid */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createWorld; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return createBoidWithRandomPositionAndDirection; });
-
-
-
-const createBoid = (position, direction, speed, tag) => {
-    const friendDistance = 1;
-
-    const boid = { 
-        position, 
-        direction, 
-        speed, 
-        maxSpeed: 2,
-        maxForce: 0.2,
-        tag,
-        mass: 1,
-        friends: []
-    };
-
-    const integrate = (steeringDirection, delta) => {
-        const steeringForce = steeringDirection.clone();
-        steeringForce.clampLength(0, boid.maxForce * delta);
-        const acceleration = steeringForce.clone();
-        acceleration.divideScalar(boid.mass);
-
-        const velocity = boid.direction.clone();
-        velocity.multiplyScalar(boid.speed * delta);
-        velocity.add(acceleration);
-        velocity.clampLength(0, boid.maxSpeed * delta);
-
-        boid.position.add(velocity);
-
-        boid.speed = velocity.length() / delta;
-        velocity.normalize();
-        boid.direction.copy(velocity);
-    };
-
-    const findLocalAveragePoint = () => {
-        const averagePosition = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
-        for (const friend of boid.friends) {
-            averagePosition.add(friend.position);
-        }        
-        averagePosition.divideScalar(boid.friends.length);
-        return averagePosition;
-    };
-
-    const getForceTowardCenterOfFriends = () => {
-        const localCenter = findLocalAveragePoint();
-        if (boid.friends.length > 0) {
-            localCenter.sub(boid.position);
-            localCenter.divideScalar(100);
-        }
-        return localCenter;
-    };
-
-    const getForceAwayFromNearby = () => {
-        const result = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
-        for (const friend of boid.friends) {
-            const vectorFromFriendToBoid = friend.position.clone();
-            vectorFromFriendToBoid.sub(boid.position);
-            const lengthFromFriendToBoid = vectorFromFriendToBoid.length();
-            const inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
-            const forceLength = inverseOfLengthFromFriendToBoid * -0.7;
-            vectorFromFriendToBoid.setLength(forceLength);
-
-            result.add(vectorFromFriendToBoid);
-        }
-        result.divideScalar(150);
-        return result;
-    };
-
-    const getForceToMatchVelocity = () => {
-        const result = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
-
-        if (boid.friends.length === 0) {
-            return result;
-        }
-
-        for (const friend of boid.friends) {
-            result.add(friend.getVelocity());
-        }
-        result.divideScalar(boid.friends.length);
-
-        result.sub(boid.getVelocity());
-        result.divideScalar(320);
-        return result;
-    };
-
-    boid.getVelocity = () => {
-        const velocity = boid.direction.clone();
-        velocity.multiplyScalar(boid.speed);
-        return velocity;
-    };
-
-    boid.update = (delta, world) => {
-        boid.friends = world.findNearbyBoids(boid, friendDistance);
-
-        boid.forceToCenter = getForceTowardCenterOfFriends();
-        boid.forceAway = getForceAwayFromNearby(); 
-        boid.forceToMatchVelocity = getForceToMatchVelocity();
-
-        const totalSteeringForce = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
-        totalSteeringForce.add(boid.forceToCenter);
-        totalSteeringForce.add(boid.forceAway);
-        totalSteeringForce.add(boid.forceToMatchVelocity);
-
-        integrate(totalSteeringForce, delta);
-    };
-
-    return boid;
-};
-
-const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
-    const { x: xPos, y: yPos } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomVec2 */])(min, max);
-    const position = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](xPos, 0, yPos);
-
-    const { x: xDir, y: yDir } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["b" /* randomDirection */])();
-    const direction = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](xDir, 0, yDir);
-
-    return createBoid(position, direction, speed, tag);
-};
-
-
-const createWorld = () => {
-    const boids = {};
-    const world = {};
-
-    world.addBoid = (boid) => {
-        boids[boid.tag] = boid;
-    };
-
-    world.update = (delta) => {
-        for (const key in boids) {
-            boids[key].update(delta, world);
-        }
-    };
-
-    world.forEachBoid = (boidAction) => {
-        for (const key in boids) {
-            boidAction(boids[key]);
-        }
-    };
-
-    world.getBoid = (key) => {
-        return boids[key];
-    };
-
-    world.findNearbyBoids = (fromBoid, cutoffDistance) => {
-        const friends = [];
-        world.forEachBoid(otherBoid => {
-            if (fromBoid === otherBoid) return;
-            const newDist = fromBoid.position.distanceTo(otherBoid.position);
-            if (newDist < cutoffDistance) {
-                friends.push(otherBoid);
-            }
-        });
-        return friends;
-    };
-
-
-    return world;
-};
-
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return createBoidView; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createFloor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return createLights; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return createCamera; });
-/* unused harmony export createSimpleView */
-
-
-const center = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
-const xAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](1, 0, 0);
-const yAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 1, 0);
-const zAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 1);
-
-const xAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0.5, 0, 0);
-const yAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0.5, 0);
-const zAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0.5);
-
-const createAxisGroup = () => {
-    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
-    const xAxisLine = createDebugLine(group, 0xff0000);
-    xAxisLine.setLine(center, xAxisHalfNormal);
-    const yAxisLine = createDebugLine(group, 0x00ff00);
-    yAxisLine.setLine(center, yAxisHalfNormal);
-    const zAxisLine = createDebugLine(group, 0x0000ff);
-    zAxisLine.setLine(center, zAxisHalfNormal);
-    return group;
-};
-
-const getRotationMatrix = (direction) => {
-    const zAxis = direction.clone();
-    const yAxis = yAxisNormal.clone();
-    const xAxis = yAxis.clone();
-    xAxis.cross(zAxis);
-    xAxis.normalize();
-    const rotationMatrix = new __WEBPACK_IMPORTED_MODULE_0_three__["Matrix4"]();
-    rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
-    return rotationMatrix;
-};
-
-const createBoidView = (
-        scene, 
-        boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](1, 1, 1), 
-        boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 })) => {
-
-    const createFriendLines = () => {
-        const lineColor = Math.random() * 0xffffff;
-        const friendLines = [];
-        for (let i = 0; i < 10; i++) {
-            friendLines[i] = createDebugLine(scene, lineColor);
-            friendLines[i].hide();
-        }
-        return friendLines;
-    };
-
-    const boid = {
-        directionLine: createDebugLine(scene, 0xaf4484, true),
-        forceLine: createDebugLine(scene, 0xffffff),
-        repelForceLine: createDebugLine(scene, 0xff0000),
-        attractForceLine: createDebugLine(scene, 0x00ff00),
-        followForceLine: createDebugLine(scene, 0x0000ff),
-        friendLines: createFriendLines(),
-    };
-
-    boid.directionLine.visible = false;
-
-    const updateForceLine = (gameBoid) => {
-        const forceVector = gameBoid.position.clone();
-        forceVector.add(gameBoid.getVelocity());
-        boid.forceLine.setLine(gameBoid.position, forceVector);
-    };
-
-    const hideForceLine = () => {
-        boid.forceLine.hide();
-    };
-
-    const hideRepelLine = () => {
-        boid.repelForceLine.hide();
-    };
-
-    const hideAttractLine = () => {
-        boid.attractForceLine.hide();
-    };
-
-    const hideFollowLine = () => {
-        boid.followForceLine.hide();
-    };
-
-    const updateRepelLine = (gameBoid) => {
-        const forceVector = gameBoid.position.clone();
-        forceVector.addScaledVector(gameBoid.forceAway, 100);
-        
-        boid.repelForceLine.setLine(gameBoid.position, forceVector);
-    };
-
-    const updateFollowLine = (gameBoid) => {
-        const followVector = gameBoid.position.clone();
-        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
-
-        boid.followForceLine.setLine(gameBoid.position, followVector);
-    };
-
-    const updateFriendLines = (gameBoid, context) => {
-        let friendLineIndex = 0;
-        if (context.config.showFriendLines) {
-            for (const friend of gameBoid.friends) {
-                if (friendLineIndex < boid.friendLines.length) {
-                    boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
-                }
-                friendLineIndex++;
-            }
-        }
-        for (let i = friendLineIndex; i < 10; i++) {
-            boid.friendLines[i].hide();
-        }
-    };
-
-    const updateAttractLine = (gameBoid) => {
-        const forceVector = gameBoid.position.clone();
-        forceVector.addScaledVector(gameBoid.forceToCenter, 100);
-
-        boid.attractForceLine.setLine(gameBoid.position, forceVector);
-    };
-
-    const updateDirectionLine = (gameBoid) => {
-        const directionEnd = gameBoid.position.clone();
-        directionEnd.addScaledVector(gameBoid.direction, 0.25);
-        boid.directionLine.setLine(gameBoid.position, directionEnd);
-    };
-
-    const handleForceLine = (gameBoid, context) => {
-        if (context.config.showForceLine) {
-            updateForceLine(gameBoid);
-        } else {
-            hideForceLine();
-        }
-    };
-
-    const handleRepelLine = (gameBoid, context) => {
-        if (context.config.showRepelLine) {
-            updateRepelLine(gameBoid);
-        } else {
-            hideRepelLine();
-        }
-    };
-
-    const handleAttractLine = (gameBoid, context) => {
-        if (context.config.showAttractLine) {
-            updateAttractLine(gameBoid);
-        } else {
-            hideAttractLine();
-        }
-    };
-
-    const handleFollowLine = (gameBoid, context) => {
-        if (context.config.showFollowLine) {
-            updateFollowLine(gameBoid);
-        } else {
-            hideFollowLine();
-        }
-    };
-
-    const boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](boidGeometry, boidMaterial);
-    boidMesh.scale.set(0.25, 0.25, 0.25);
-    boid.debugAxis = createAxisGroup();
-    boidMesh.add(boid.debugAxis);
-    scene.add(boidMesh);
-
-    boid.mesh = boidMesh;
-
-    boid.update = (gameBoid, context) => {
-        boid.mesh.position.copy(gameBoid.position);
-
-        // updateDirectionLine(gameBoid);
-
-        handleForceLine(gameBoid, context);
-        handleRepelLine(gameBoid, context);
-        handleAttractLine(gameBoid, context);
-        handleFollowLine(gameBoid, context); 
-
-        updateFriendLines(gameBoid, context);
-
-        boid.debugAxis.visible = context.config.showAxis;
-
-        boid.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
-    };
-
-    return boid;
-};
-
-const createSimpleView = (
-        scene, 
-        boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](1, 1, 1), 
-        boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 })) => {
-
-    const boid = {
-    };
-
-    const boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](boidGeometry, boidMaterial);
-
-    scene.add(boidMesh);
-
-    boid.mesh = boidMesh;
-
-    return boid;
-};
-
-const createDebugLine = (scene, color = null, depthTest = false) => {
-    const friendLine = {};
-
-    let material;
-    if (color) {
-        material = new __WEBPACK_IMPORTED_MODULE_0_three__["LineBasicMaterial"]({ color });
-        material.depthTest = depthTest;
-    }
-
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["Geometry"]();
-    geometry.vertices.push(
-        new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0),
-        new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Line"](geometry, material);
-
-    scene.add(mesh);
-
-    friendLine.setLine = (start, end) => {
-        mesh.visible = true;
-        geometry.vertices[0].copy(start);
-        geometry.vertices[1].copy(end);
-        geometry.verticesNeedUpdate = true;
-    };
-
-    friendLine.hide = () => {
-        mesh.visible = false;
-    };
-
-    friendLine.show = () => {
-        mesh.visible = true;
-    };
-
-    return friendLine;
-};
-
-const createFloor = () => {
-    var floorGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](100, 100, 10, 10);
-    var floorMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0x6464ff });
-    var floor = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](floorGeometry, floorMaterial);
-
-    floor.position.set(0, -0.5, 0);
-    floor.rotation.x = -90 * (Math.PI / 180);
-    return floor;
-};
-
-const createLights = () => {
-    var pointLights = [];
-    pointLights[0] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
-    pointLights[0].position.set(100, 10, 0);
-
-    pointLights[1] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
-    pointLights[1].position.set(0, 10, 0);
-
-    pointLights[2] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
-    pointLights[2].position.set(0, 0, 5);
-
-    return pointLights;
-};
-
-const createCamera = () => {
-    var camera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        150);
-    camera.updateProjectionMatrix();
-    camera.position.y = 3;
-    camera.position.z = 10;
-    camera.up = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 1, 0);
-    camera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
-    return camera;
-};
-
-
-
-/***/ }),
-/* 3 */,
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const randomBetween = (min, max) => {
-    return Math.random() * (max - min) + min;
-};
-
-const randomVec2 = (min, max) => {
-    return {
-        x: randomBetween(min, max),
-        y: randomBetween(min, max)
-    };
-};
-/* harmony export (immutable) */ __webpack_exports__["a"] = randomVec2;
-
-
-const randomDirection = () => {
-    const factor = 2 * Math.PI * Math.random();
-
-    return {
-        x: Math.cos(factor),
-        y: Math.sin(factor)
-    };
-};
-/* harmony export (immutable) */ __webpack_exports__["b"] = randomDirection;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__game__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__renderer__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__persistance__ = __webpack_require__(6);
-
-
-
-
-
-
-const orbitControls = __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
-
-const context = {
-    config: {
-        showForceLine: false,
-        showRepelLine: false,
-        showAttractLine: false,
-        showFollowLine: false,
-        showFriendLines: false,
-        showAxis: false
-    }
-};
-
-const update = (delta, boidsViews, world) => {
-    world.update(delta);
-    for (const boidView of boidsViews) {
-        const boid = world.getBoid(boidView.tag);
-        boidView.update(boid, context);
-    }
-};
-
-// setup a bunch of boids that should flock
-const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
-    const numBoids = 500;
-
-    for (let i = 0; i < numBoids; i++) {
-        const boidView = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["a" /* createBoidView */])(scene, boidGeometry, boidMaterial);
-        boidView.tag = i;
-        boids.push(boidView);
-
-        world.addBoid(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__game__["a" /* createBoidWithRandomPositionAndDirection */])(-7, 7, 0.75, boidView.tag));
-    }
-};
-
-const boids = [];
-
-const setup = (scene) => {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__persistance__["a" /* initializeConfig */])(context.config);
-    const world = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__game__["b" /* createWorld */])();
-
-    const boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](0.1, 0.1, 0.1);
-    const boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 });
-
-    const loader = new __WEBPACK_IMPORTED_MODULE_0_three__["JSONLoader"]();
-    loader.load('/resources/parrot01.json', geometry => { 
-        setupBoids(scene, world, geometry, boidMaterial, boids);
-     });
-    // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
-
-    scene.add(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["b" /* createFloor */])());
-
-    for (const light of __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["c" /* createLights */])()) {
-        scene.add(light);
-    }
-
-    var camera = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["d" /* createCamera */])();
-
-    return { world, boids, camera };
-};
-
-const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
-    const internalRender = () => {
-        window.requestAnimationFrame(internalRender);
-
-        var delta = clock.getDelta();
-        update(delta, boids, world);
-
-        renderer.render(scene, camera);
-    };
-    return internalRender;
-};
-
-const KEYS = {
-    KEY_B: 66,
-    KEY_I: 73,
-    KEY_U: 85,
-    KEY_O: 79,
-    KEY_P: 80,
-    KEY_Y: 89
-};
-
-const toggleForceLine = () => {
-    context.config.showForceLine = !context.config.showForceLine;
-};
-
-const toggleAttractLine = () => {
-    context.config.showAttractLine = !context.config.showAttractLine;
-};
-
-const onDocumentKeyDown = (event) => {
-    console.log('keydown', event);
-    switch (event.keyCode) {
-        case KEYS.KEY_Y:
-            toggleForceLine();
-            break;
-        case KEYS.KEY_U:
-            context.config.showRepelLine = !context.config.showRepelLine;
-            break;
-        case KEYS.KEY_I:
-            toggleAttractLine();
-            break;
-        case KEYS.KEY_O:
-            context.config.showFollowLine = !context.config.showFollowLine;
-            break;
-        case KEYS.KEY_P:
-            context.config.showFriendLines = !context.config.showFriendLines;
-            break;
-        case KEYS.KEY_B:
-            context.config.showAxis = !context.config.showAxis;
-            break;
-    }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__persistance__["b" /* storeConfigChanges */])(context.config);
-};
-
-const setupKeyboardListeners = () => {
-    document.addEventListener('keydown', onDocumentKeyDown, false);
-};
-
-let controls;
-
-window.onload = () => {
-    var scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
-
-    var renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["WebGLRenderer"]();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-
-    document.body.appendChild(renderer.domElement);
-
-    var { world, boids, camera } = setup(scene);
-
-    controls = orbitControls(camera, renderer.domElement );
-    // controls.addEventListener( 'change', render );
-
-    setupKeyboardListeners();
-
-    var clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
-
-    var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
-
-    render();
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-const storageAvailable = function() {
-    const result = typeof(Storage) !== 'undefined';
-    if (!result) {
-        console.log('no storage available');
-    }
-    return result;
-}();
-
-const boolFromString = (input) => {
-    return input === 'true';
-};
-
-const boolFromStorage = (storageKey) => {
-    return boolFromString(localStorage.getItem(storageKey));
-};
-
-const initializeConfig = (config) => {
-    if (storageAvailable) {
-        Object.keys(config).forEach(key => config[key] = boolFromStorage(key));
-    } 
-};
-/* harmony export (immutable) */ __webpack_exports__["a"] = initializeConfig;
-
-
-const storeConfigChanges = (config) => {
-    if (storageAvailable) {
-        Object.keys(config).forEach(key => localStorage.setItem(key, config[key]));
-    }
-};
-/* harmony export (immutable) */ __webpack_exports__["b"] = storeConfigChanges;
-
-
-
-/***/ }),
-/* 7 */,
-/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = function( THREE ) {
@@ -45082,6 +44391,699 @@ module.exports = function( THREE ) {
 	return OrbitControls;
 };
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mathUtils__ = __webpack_require__(5);
+/* unused harmony export createBoid */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createWorld; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return createBoidWithRandomPositionAndDirection; });
+
+
+
+const createBoid = (position, direction, speed, tag) => {
+    const friendDistance = 1;
+
+    const boid = { 
+        position, 
+        direction, 
+        speed, 
+        maxSpeed: 2,
+        maxForce: 0.2,
+        tag,
+        mass: 1,
+        friends: []
+    };
+
+    const integrate = (steeringDirection, delta) => {
+        const steeringForce = steeringDirection.clone();
+        steeringForce.clampLength(0, boid.maxForce * delta);
+        const acceleration = steeringForce.clone();
+        acceleration.divideScalar(boid.mass);
+
+        const velocity = boid.direction.clone();
+        velocity.multiplyScalar(boid.speed * delta);
+        velocity.add(acceleration);
+        velocity.clampLength(0, boid.maxSpeed * delta);
+
+        boid.position.add(velocity);
+
+        boid.speed = velocity.length() / delta;
+        velocity.normalize();
+        boid.direction.copy(velocity);
+    };
+
+    const findLocalAveragePoint = () => {
+        const averagePosition = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
+        for (const friend of boid.friends) {
+            averagePosition.add(friend.position);
+        }        
+        averagePosition.divideScalar(boid.friends.length);
+        return averagePosition;
+    };
+
+    const getForceTowardCenterOfFriends = () => {
+        const localCenter = findLocalAveragePoint();
+        if (boid.friends.length > 0) {
+            localCenter.sub(boid.position);
+            localCenter.divideScalar(100);
+        }
+        return localCenter;
+    };
+
+    const getForceAwayFromNearby = () => {
+        const result = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
+        for (const friend of boid.friends) {
+            const vectorFromFriendToBoid = friend.position.clone();
+            vectorFromFriendToBoid.sub(boid.position);
+            const lengthFromFriendToBoid = vectorFromFriendToBoid.length();
+            const inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
+            const forceLength = inverseOfLengthFromFriendToBoid * -0.7;
+            vectorFromFriendToBoid.setLength(forceLength);
+
+            result.add(vectorFromFriendToBoid);
+        }
+        result.divideScalar(150);
+        return result;
+    };
+
+    const getForceToMatchVelocity = () => {
+        const result = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
+
+        if (boid.friends.length === 0) {
+            return result;
+        }
+
+        for (const friend of boid.friends) {
+            result.add(friend.getVelocity());
+        }
+        result.divideScalar(boid.friends.length);
+
+        result.sub(boid.getVelocity());
+        result.divideScalar(320);
+        return result;
+    };
+
+    boid.getVelocity = () => {
+        const velocity = boid.direction.clone();
+        velocity.multiplyScalar(boid.speed);
+        return velocity;
+    };
+
+    boid.update = (delta, world) => {
+        boid.friends = world.findNearbyBoids(boid, friendDistance);
+
+        boid.forceToCenter = getForceTowardCenterOfFriends();
+        boid.forceAway = getForceAwayFromNearby(); 
+        boid.forceToMatchVelocity = getForceToMatchVelocity();
+
+        const totalSteeringForce = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
+        totalSteeringForce.add(boid.forceToCenter);
+        totalSteeringForce.add(boid.forceAway);
+        totalSteeringForce.add(boid.forceToMatchVelocity);
+
+        integrate(totalSteeringForce, delta);
+    };
+
+    return boid;
+};
+
+const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
+    const { x: xPos, y: yPos } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomVec2 */])(min, max);
+    const position = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](xPos, 0, yPos);
+
+    const { x: xDir, y: yDir } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["b" /* randomDirection */])();
+    const direction = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](xDir, 0, yDir);
+
+    return createBoid(position, direction, speed, tag);
+};
+
+
+const createWorld = () => {
+    const boids = {};
+    const world = {};
+
+    world.addBoid = (boid) => {
+        boids[boid.tag] = boid;
+    };
+
+    world.update = (delta) => {
+        for (const key in boids) {
+            boids[key].update(delta, world);
+        }
+    };
+
+    world.forEachBoid = (boidAction) => {
+        for (const key in boids) {
+            boidAction(boids[key]);
+        }
+    };
+
+    world.getBoid = (key) => {
+        return boids[key];
+    };
+
+    world.findNearbyBoids = (fromBoid, cutoffDistance) => {
+        const friends = [];
+        world.forEachBoid(otherBoid => {
+            if (fromBoid === otherBoid) return;
+            const newDist = fromBoid.position.distanceTo(otherBoid.position);
+            if (newDist < cutoffDistance) {
+                friends.push(otherBoid);
+            }
+        });
+        return friends;
+    };
+
+
+    return world;
+};
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+const storageAvailable = function() {
+    const result = typeof(Storage) !== 'undefined';
+    if (!result) {
+        console.log('no storage available');
+    }
+    return result;
+}();
+
+const boolFromString = (input) => {
+    return input === 'true';
+};
+
+const boolFromStorage = (storageKey) => {
+    return boolFromString(localStorage.getItem(storageKey));
+};
+
+const initializeConfig = (config) => {
+    if (storageAvailable) {
+        Object.keys(config).forEach(key => config[key] = boolFromStorage(key));
+    } 
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = initializeConfig;
+
+
+const storeConfigChanges = (config) => {
+    if (storageAvailable) {
+        Object.keys(config).forEach(key => localStorage.setItem(key, config[key]));
+    }
+};
+/* harmony export (immutable) */ __webpack_exports__["b"] = storeConfigChanges;
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return createBoidView; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createFloor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return createLights; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return createCamera; });
+/* unused harmony export createSimpleView */
+
+
+const center = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0);
+const xAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](1, 0, 0);
+const yAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 1, 0);
+const zAxisNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 1);
+
+const xAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0.5, 0, 0);
+const yAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0.5, 0);
+const zAxisHalfNormal = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0.5);
+
+const createAxisGroup = () => {
+    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const xAxisLine = createDebugLine(group, 0xff0000);
+    xAxisLine.setLine(center, xAxisHalfNormal);
+    const yAxisLine = createDebugLine(group, 0x00ff00);
+    yAxisLine.setLine(center, yAxisHalfNormal);
+    const zAxisLine = createDebugLine(group, 0x0000ff);
+    zAxisLine.setLine(center, zAxisHalfNormal);
+    return group;
+};
+
+const getRotationMatrix = (direction) => {
+    const zAxis = direction.clone();
+    const yAxis = yAxisNormal.clone();
+    const xAxis = yAxis.clone();
+    xAxis.cross(zAxis);
+    xAxis.normalize();
+    const rotationMatrix = new __WEBPACK_IMPORTED_MODULE_0_three__["Matrix4"]();
+    rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
+    return rotationMatrix;
+};
+
+const createBoidView = (
+        scene, 
+        boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](1, 1, 1), 
+        boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 })) => {
+
+    const createFriendLines = () => {
+        const lineColor = Math.random() * 0xffffff;
+        const friendLines = [];
+        for (let i = 0; i < 10; i++) {
+            friendLines[i] = createDebugLine(scene, lineColor);
+            friendLines[i].hide();
+        }
+        return friendLines;
+    };
+
+    const boid = {
+        directionLine: createDebugLine(scene, 0xaf4484, true),
+        forceLine: createDebugLine(scene, 0xffffff),
+        repelForceLine: createDebugLine(scene, 0xff0000),
+        attractForceLine: createDebugLine(scene, 0x00ff00),
+        followForceLine: createDebugLine(scene, 0x0000ff),
+        friendLines: createFriendLines(),
+    };
+
+    boid.directionLine.visible = false;
+
+    const updateForceLine = (gameBoid) => {
+        const forceVector = gameBoid.position.clone();
+        forceVector.add(gameBoid.getVelocity());
+        boid.forceLine.setLine(gameBoid.position, forceVector);
+    };
+
+    const hideForceLine = () => {
+        boid.forceLine.hide();
+    };
+
+    const hideRepelLine = () => {
+        boid.repelForceLine.hide();
+    };
+
+    const hideAttractLine = () => {
+        boid.attractForceLine.hide();
+    };
+
+    const hideFollowLine = () => {
+        boid.followForceLine.hide();
+    };
+
+    const updateRepelLine = (gameBoid) => {
+        const forceVector = gameBoid.position.clone();
+        forceVector.addScaledVector(gameBoid.forceAway, 100);
+        
+        boid.repelForceLine.setLine(gameBoid.position, forceVector);
+    };
+
+    const updateFollowLine = (gameBoid) => {
+        const followVector = gameBoid.position.clone();
+        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
+
+        boid.followForceLine.setLine(gameBoid.position, followVector);
+    };
+
+    const updateFriendLines = (gameBoid, context) => {
+        let friendLineIndex = 0;
+        if (context.config.showFriendLines) {
+            for (const friend of gameBoid.friends) {
+                if (friendLineIndex < boid.friendLines.length) {
+                    boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+                }
+                friendLineIndex++;
+            }
+        }
+        for (let i = friendLineIndex; i < 10; i++) {
+            boid.friendLines[i].hide();
+        }
+    };
+
+    const updateAttractLine = (gameBoid) => {
+        const forceVector = gameBoid.position.clone();
+        forceVector.addScaledVector(gameBoid.forceToCenter, 100);
+
+        boid.attractForceLine.setLine(gameBoid.position, forceVector);
+    };
+
+    const updateDirectionLine = (gameBoid) => {
+        const directionEnd = gameBoid.position.clone();
+        directionEnd.addScaledVector(gameBoid.direction, 0.25);
+        boid.directionLine.setLine(gameBoid.position, directionEnd);
+    };
+
+    const handleForceLine = (gameBoid, context) => {
+        if (context.config.showForceLine) {
+            updateForceLine(gameBoid);
+        } else {
+            hideForceLine();
+        }
+    };
+
+    const handleRepelLine = (gameBoid, context) => {
+        if (context.config.showRepelLine) {
+            updateRepelLine(gameBoid);
+        } else {
+            hideRepelLine();
+        }
+    };
+
+    const handleAttractLine = (gameBoid, context) => {
+        if (context.config.showAttractLine) {
+            updateAttractLine(gameBoid);
+        } else {
+            hideAttractLine();
+        }
+    };
+
+    const handleFollowLine = (gameBoid, context) => {
+        if (context.config.showFollowLine) {
+            updateFollowLine(gameBoid);
+        } else {
+            hideFollowLine();
+        }
+    };
+
+    const boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](boidGeometry, boidMaterial);
+    boidMesh.scale.set(0.25, 0.25, 0.25);
+    boid.debugAxis = createAxisGroup();
+    boidMesh.add(boid.debugAxis);
+    scene.add(boidMesh);
+
+    boid.mesh = boidMesh;
+
+    boid.update = (gameBoid, context) => {
+        boid.mesh.position.copy(gameBoid.position);
+
+        // updateDirectionLine(gameBoid);
+
+        handleForceLine(gameBoid, context);
+        handleRepelLine(gameBoid, context);
+        handleAttractLine(gameBoid, context);
+        handleFollowLine(gameBoid, context); 
+
+        updateFriendLines(gameBoid, context);
+
+        boid.debugAxis.visible = context.config.showAxis;
+
+        boid.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+    };
+
+    return boid;
+};
+
+const createSimpleView = (
+        scene, 
+        boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](1, 1, 1), 
+        boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 })) => {
+
+    const boid = {
+    };
+
+    const boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](boidGeometry, boidMaterial);
+
+    scene.add(boidMesh);
+
+    boid.mesh = boidMesh;
+
+    return boid;
+};
+
+const createDebugLine = (scene, color = null, depthTest = false) => {
+    const friendLine = {};
+
+    let material;
+    if (color) {
+        material = new __WEBPACK_IMPORTED_MODULE_0_three__["LineBasicMaterial"]({ color });
+        material.depthTest = depthTest;
+    }
+
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["Geometry"]();
+    geometry.vertices.push(
+        new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0),
+        new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Line"](geometry, material);
+
+    scene.add(mesh);
+
+    friendLine.setLine = (start, end) => {
+        mesh.visible = true;
+        geometry.vertices[0].copy(start);
+        geometry.vertices[1].copy(end);
+        geometry.verticesNeedUpdate = true;
+    };
+
+    friendLine.hide = () => {
+        mesh.visible = false;
+    };
+
+    friendLine.show = () => {
+        mesh.visible = true;
+    };
+
+    return friendLine;
+};
+
+const createFloor = () => {
+    var floorGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](100, 100, 10, 10);
+    var floorMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0x6464ff });
+    var floor = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](floorGeometry, floorMaterial);
+
+    floor.position.set(0, -0.5, 0);
+    floor.rotation.x = -90 * (Math.PI / 180);
+    return floor;
+};
+
+const createLights = () => {
+    var pointLights = [];
+    pointLights[0] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
+    pointLights[0].position.set(100, 10, 0);
+
+    pointLights[1] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
+    pointLights[1].position.set(0, 10, 0);
+
+    pointLights[2] = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, 1, 0);
+    pointLights[2].position.set(0, 0, 5);
+
+    return pointLights;
+};
+
+const createCamera = () => {
+    var camera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        150);
+    camera.updateProjectionMatrix();
+    camera.position.y = 3;
+    camera.position.z = 10;
+    camera.up = new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 1, 0);
+    camera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
+    return camera;
+};
+
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const randomBetween = (min, max) => {
+    return Math.random() * (max - min) + min;
+};
+
+const randomVec2 = (min, max) => {
+    return {
+        x: randomBetween(min, max),
+        y: randomBetween(min, max)
+    };
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = randomVec2;
+
+
+const randomDirection = () => {
+    const factor = 2 * Math.PI * Math.random();
+
+    return {
+        x: Math.cos(factor),
+        y: Math.sin(factor)
+    };
+};
+/* harmony export (immutable) */ __webpack_exports__["b"] = randomDirection;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__game__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__renderer__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__persistance__ = __webpack_require__(3);
+/* harmony export (immutable) */ __webpack_exports__["startUp"] = startUp;
+
+
+
+
+
+
+const orbitControls = __WEBPACK_IMPORTED_MODULE_1__js_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
+
+const context = {
+    config: {
+        showForceLine: false,
+        showRepelLine: false,
+        showAttractLine: false,
+        showFollowLine: false,
+        showFriendLines: false,
+        showAxis: false
+    }
+};
+
+const update = (delta, boidsViews, world) => {
+    world.update(delta);
+    for (const boidView of boidsViews) {
+        const boid = world.getBoid(boidView.tag);
+        boidView.update(boid, context);
+    }
+};
+
+// setup a bunch of boids that should flock
+const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
+    const numBoids = 500;
+
+    for (let i = 0; i < numBoids; i++) {
+        const boidView = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["a" /* createBoidView */])(scene, boidGeometry, boidMaterial);
+        boidView.tag = i;
+        boids.push(boidView);
+
+        world.addBoid(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__game__["a" /* createBoidWithRandomPositionAndDirection */])(-7, 7, 0.75, boidView.tag));
+    }
+};
+
+const boids = [];
+
+const setup = (scene, assetRoot = '') => {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__persistance__["a" /* initializeConfig */])(context.config);
+    const world = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__game__["b" /* createWorld */])();
+
+    const boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](0.1, 0.1, 0.1);
+    const boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({ color: 0xff6464 });
+
+    const loader = new __WEBPACK_IMPORTED_MODULE_0_three__["JSONLoader"]();
+    loader.load(`${assetRoot}/assets/models/parrot01.json`, geometry => { 
+        setupBoids(scene, world, geometry, boidMaterial, boids);
+     });
+    // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
+
+    scene.add(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["b" /* createFloor */])());
+
+    for (const light of __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["c" /* createLights */])()) {
+        scene.add(light);
+    }
+
+    var camera = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__renderer__["d" /* createCamera */])();
+
+    return { world, boids, camera };
+};
+
+const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
+    const internalRender = () => {
+        window.requestAnimationFrame(internalRender);
+
+        var delta = clock.getDelta();
+        update(delta, boids, world);
+
+        renderer.render(scene, camera);
+    };
+    return internalRender;
+};
+
+const KEYS = {
+    KEY_B: 66,
+    KEY_I: 73,
+    KEY_U: 85,
+    KEY_O: 79,
+    KEY_P: 80,
+    KEY_Y: 89
+};
+
+const toggleForceLine = () => {
+    context.config.showForceLine = !context.config.showForceLine;
+};
+
+const toggleAttractLine = () => {
+    context.config.showAttractLine = !context.config.showAttractLine;
+};
+
+const onDocumentKeyDown = (event) => {
+    console.log('keydown', event);
+    switch (event.keyCode) {
+        case KEYS.KEY_Y:
+            toggleForceLine();
+            break;
+        case KEYS.KEY_U:
+            context.config.showRepelLine = !context.config.showRepelLine;
+            break;
+        case KEYS.KEY_I:
+            toggleAttractLine();
+            break;
+        case KEYS.KEY_O:
+            context.config.showFollowLine = !context.config.showFollowLine;
+            break;
+        case KEYS.KEY_P:
+            context.config.showFriendLines = !context.config.showFriendLines;
+            break;
+        case KEYS.KEY_B:
+            context.config.showAxis = !context.config.showAxis;
+            break;
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__persistance__["b" /* storeConfigChanges */])(context.config);
+};
+
+const setupKeyboardListeners = () => {
+    document.addEventListener('keydown', onDocumentKeyDown, false);
+};
+
+let controls;
+
+
+function startUp(assetRoot = '') {
+
+    window.onload = () => {
+        var scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
+
+        var renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["WebGLRenderer"]();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+        document.body.appendChild(renderer.domElement);
+
+        var { world, boids, camera } = setup(scene, assetRoot);
+
+        controls = orbitControls(camera, renderer.domElement );
+        // controls.addEventListener( 'change', render );
+
+        setupKeyboardListeners();
+
+        var clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
+
+        var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
+
+        render();
+    };
+}
 
 /***/ })
 /******/ ]);
