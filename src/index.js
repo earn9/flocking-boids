@@ -48,7 +48,7 @@ const setup = (scene, assetRoot = '') => {
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
     const loader = new THREE.JSONLoader();
-    loader.load(`${assetRoot}/assets/models/parrot01.json`, geometry => { 
+    loader.load(`${assetRoot}/assets/models/test02.json`, geometry => { 
         setupBoids(scene, world, geometry, boidMaterial, boids);
      });
     // setupBoids(scene, world, boidGeometry, boidMaterial, boids);

@@ -8,8 +8,9 @@ const createBoid = (position, direction, speed, tag) => {
         position, 
         direction, 
         speed, 
-        maxSpeed: 2,
+        maxSpeed: 1.5,
         maxForce: 0.2,
+        minSpeed: 0.4,
         tag,
         mass: 1,
         friends: []
@@ -24,7 +25,7 @@ const createBoid = (position, direction, speed, tag) => {
         const velocity = boid.direction.clone();
         velocity.multiplyScalar(boid.speed * delta);
         velocity.add(acceleration);
-        velocity.clampLength(0, boid.maxSpeed * delta);
+        velocity.clampLength(boid.minSpeed * delta, boid.maxSpeed * delta);
 
         boid.position.add(velocity);
 
