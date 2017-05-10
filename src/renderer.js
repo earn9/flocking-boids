@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { randomBetween } from './mathUtils';
 
 const center = new THREE.Vector3(0, 0, 0);
 const xAxisNormal = new THREE.Vector3(1, 0, 0);
@@ -154,7 +155,8 @@ const createBoidView = (
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-    boidMesh.scale.set(0.25, 0.25, 0.25);
+    const scaleModel = randomBetween(0.2, 0.4);
+    boidMesh.scale.set(scaleModel, scaleModel, scaleModel);
     boid.debugAxis = createAxisGroup();
     boidMesh.add(boid.debugAxis);
     scene.add(boidMesh);
@@ -250,9 +252,6 @@ const createLights = () => {
 
     pointLights[1] = new THREE.PointLight(0xffffff, 1, 0);
     pointLights[1].position.set(0, 10, 0);
-
-    pointLights[2] = new THREE.PointLight(0xffffff, 1, 0);
-    pointLights[2].position.set(0, 0, 5);
 
     return pointLights;
 };
