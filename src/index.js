@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import orbit from '../js/three-orbit-controls';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
-import { createBoidView, createFloor, createLights, createCamera } from './renderer';
+import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
 
 const orbitControls = orbit(THREE);
@@ -48,12 +48,16 @@ const setup = (scene, assetRoot = '') => {
     const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
 
     const loader = new THREE.JSONLoader();
+    loader.load(`${assetRoot}/assets/models/skySphere.json`, (geometry, materials) => {
+        createSkyView(scene, geometry, materials);
+    });
     loader.load(`${assetRoot}/assets/models/test02.json`, geometry => { 
         setupBoids(scene, world, geometry, boidMaterial, boids);
      });
     // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
-
-    scene.add(createFloor());
+    loader.load(`${assetRoot}/assets/models/terain01.json`, geometry => {
+        scene.add(createFloor(geometry));
+    });
 
     for (const light of createLights()) {
         scene.add(light);
@@ -138,7 +142,8 @@ export function startUp(assetRoot = '') {
 
         var { world, boids, camera } = setup(scene, assetRoot);
 
-        controls = orbitControls(camera, renderer.domElement );
+        controls = new orbitControls(camera, renderer.domElement );
+        controls.target = new THREE.Vector3(0, 10, 0);
         // controls.addEventListener( 'change', render );
 
         setupKeyboardListeners();

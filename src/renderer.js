@@ -155,7 +155,7 @@ const createBoidView = (
     };
 
     const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-    const scaleModel = randomBetween(0.2, 0.4);
+    const scaleModel = randomBetween(0.2, 0.3);
     boidMesh.scale.set(scaleModel, scaleModel, scaleModel);
     boid.debugAxis = createAxisGroup();
     boidMesh.add(boid.debugAxis);
@@ -181,6 +181,14 @@ const createBoidView = (
     };
 
     return boid;
+};
+
+const createSkyView = (scene, geometry, material) => {
+    if (!material) {
+        material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
+    }
+    const skyMesh = new THREE.Mesh(geometry, material);
+    scene.add(skyMesh);
 };
 
 const createSimpleView = (
@@ -235,13 +243,12 @@ const createDebugLine = (scene, color = null, depthTest = false) => {
     return friendLine;
 };
 
-const createFloor = () => {
-    var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
-    var floorMaterial = new THREE.MeshPhongMaterial({ color: 0x6464ff });
+const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)) => {
+    var floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D });
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
-    floor.position.set(0, -0.5, 0);
-    floor.rotation.x = -90 * (Math.PI / 180);
+    floor.position.set(0, 0, 0);
+    // floor.rotation.x = -90 * (Math.PI / 180);
     return floor;
 };
 
@@ -263,11 +270,11 @@ const createCamera = () => {
         0.1,
         150);
     camera.updateProjectionMatrix();
-    camera.position.y = 3;
-    camera.position.z = 10;
+    camera.position.y = 2;
+    camera.position.z = 15;
     camera.up = new THREE.Vector3(0, 1, 0);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.lookAt(new THREE.Vector3(20, 20, 0));
     return camera;
 };
 
-export { createBoidView, createFloor, createLights, createCamera, createSimpleView };
+export { createBoidView, createFloor, createLights, createCamera, createSimpleView, createSkyView };

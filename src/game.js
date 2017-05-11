@@ -111,7 +111,7 @@ const createBoid = (position, direction, speed, tag) => {
 
 const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     const { x: xPos, y: yPos } = randomVec2(min, max);
-    const position = new Vector3(xPos, 0, yPos);
+    const position = new Vector3(xPos, 10, yPos);
 
     const { x: xDir, y: yDir } = randomDirection();
     const direction = new Vector3(xDir, 0, yDir);
