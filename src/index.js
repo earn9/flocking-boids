@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
-import PointerLockControler, { pointerLockSupported} from './pointerLockControls';
+import PointerLockControler, { pointerLockSupported, lockPointer } from './pointerLockControls';
 
 const context = {
     config: {
@@ -145,15 +145,14 @@ export function startUp(assetRoot = '') {
             controls.getObject().position.setX(0);
             controls.getObject().position.setY(1);
             controls.getObject().position.setZ(0);
-            controls.enabled = true;
 
-            document.body.addEventListener( 'click', function ( event ) {
-                const element = document.body;
-                // Ask the browser to lock the pointer
-                element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-                element.requestPointerLock();
-
-			}, false );
+            document.body.addEventListener(
+                'click', 
+                () => {
+                    controls.enabled = true;    
+                    lockPointer(document.body);
+                }, 
+                false);
         } else {
             console.log('pointer lock not supported');
         }
