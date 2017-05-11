@@ -1,10 +1,8 @@
 import * as THREE from 'three';
-import orbit from '../js/three-orbit-controls';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
-
-const orbitControls = orbit(THREE);
+import PointerLockControler, { pointerLockSupported} from './pointerLockControls';
 
 const context = {
     config: {
@@ -137,15 +135,28 @@ export function startUp(assetRoot = '') {
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-
         document.body.appendChild(renderer.domElement);
 
         var { world, boids, camera } = setup(scene, assetRoot);
 
-        controls = new orbitControls(camera, renderer.domElement );
-        controls.target = new THREE.Vector3(0, 10, 0);
-        // controls.addEventListener( 'change', render );
+        if (pointerLockSupported()) {
+            const controls = new PointerLockControler(camera);
+            scene.add(controls.getObject());
+            controls.getObject().position.setX(0);
+            controls.getObject().position.setY(1);
+            controls.getObject().position.setZ(0);
+            controls.enabled = true;
 
+            document.body.addEventListener( 'click', function ( event ) {
+                const element = document.body;
+                // Ask the browser to lock the pointer
+                element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+                element.requestPointerLock();
+
+			}, false );
+        } else {
+            console.log('pointer lock not supported');
+        }
         setupKeyboardListeners();
 
         var clock = new THREE.Clock();

@@ -270,10 +270,6 @@ const createCamera = () => {
         0.1,
         150);
     camera.updateProjectionMatrix();
-    camera.position.y = 2;
-    camera.position.z = 15;
-    camera.up = new THREE.Vector3(0, 1, 0);
-    camera.lookAt(new THREE.Vector3(20, 20, 0));
     return camera;
 };
 
