@@ -81,5 +81,18 @@ const lockPointer = (element) => {
     element.requestPointerLock();
 };
 
+const onPointerLockChanged = (document, pointerlockchange) => {
+    const element = document.body;
+    const changed = () => {
+        pointerlockchange(document.pointerLockElement === element ||
+            document.mozPointerLockElement === element ||
+            document.webkitPointerLockElement === element);
+        };
+    document.addEventListener('gotpointercapture', changed, false);
+    document.addEventListener('pointerlockchange', changed, false);
+    document.addEventListener('mozpointerlockchange', changed, false);
+    document.addEventListener('webkitpointerlockchange', changed, false);
+};
+
 export default PointerLockControls;
-export { pointerLockSupported, lockPointer };
+export { pointerLockSupported, lockPointer, onPointerLockChanged };

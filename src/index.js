@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
-import PointerLockControler, { pointerLockSupported, lockPointer } from './pointerLockControls';
+import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
 
 const context = {
     config: {
@@ -128,6 +128,7 @@ let controls;
 
 
 export function startUp(assetRoot = '') {
+    var blocker = document.getElementById( 'blocker' );
 
     window.onload = () => {
         var scene = new THREE.Scene();
@@ -146,11 +147,23 @@ export function startUp(assetRoot = '') {
             controls.getObject().position.setY(1);
             controls.getObject().position.setZ(0);
 
+            const element = document.body;
+
+            onPointerLockChanged(document.body, (isSourceElement) => {
+                if (isSourceElement) {
+                    controls.enabled = true;
+                    blocker.style.display = 'none';
+                } else {
+                    controls.enabled = false;
+                }
+            });
+
             document.body.addEventListener(
                 'click', 
                 () => {
                     controls.enabled = true;    
                     lockPointer(document.body);
+                    blocker.style.display = 'none';
                 }, 
                 false);
         } else {
