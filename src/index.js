@@ -149,12 +149,13 @@ export function startUp(assetRoot = '') {
 
             const element = document.body;
 
-            onPointerLockChanged(document.body, (isSourceElement) => {
+            onPointerLockChanged(document, (isSourceElement) => {
                 if (isSourceElement) {
                     controls.enabled = true;
                     blocker.style.display = 'none';
                 } else {
                     controls.enabled = false;
+                    blocker.style.display = '';
                 }
             });
 

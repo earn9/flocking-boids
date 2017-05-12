@@ -88,7 +88,6 @@ const onPointerLockChanged = (document, pointerlockchange) => {
             document.mozPointerLockElement === element ||
             document.webkitPointerLockElement === element);
         };
-    document.addEventListener('gotpointercapture', changed, false);
     document.addEventListener('pointerlockchange', changed, false);
     document.addEventListener('mozpointerlockchange', changed, false);
     document.addEventListener('webkitpointerlockchange', changed, false);
