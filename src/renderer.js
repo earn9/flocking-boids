@@ -253,14 +253,16 @@ const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)
 };
 
 const createLights = () => {
-    var pointLights = [];
-    pointLights[0] = new THREE.PointLight(0xffffff, 1, 0);
-    pointLights[0].position.set(100, 10, 0);
+    var lights = [];
+    const sunLight = new THREE.PointLight(0xf8df81, 1, 0);
+    sunLight.position.set(50, 50, 0);
+    lights.push(sunLight);
 
-    pointLights[1] = new THREE.PointLight(0xffffff, 1, 0);
-    pointLights[1].position.set(0, 10, 0);
+    const otherLight = new THREE.PointLight(0x9992f3, 1, 0);
+    otherLight.position.set(0, -1, 0);
+    lights.push(otherLight);
 
-    return pointLights;
+    return lights;
 };
 
 const createCamera = () => {
