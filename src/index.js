@@ -12,7 +12,8 @@ const context = {
         showFollowLine: false,
         showFriendLines: false,
         showAxis: false
-    }
+    },
+    simulationRunning: false
 };
 
 const update = (delta, boidsViews, world) => {
@@ -71,7 +72,9 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
         window.requestAnimationFrame(internalRender);
 
         var delta = clock.getDelta();
-        update(delta, boids, world);
+        if (context.simulationRunning) {
+            update(delta, boids, world);
+        }
 
         renderer.render(scene, camera);
     };
@@ -151,9 +154,11 @@ export function startUp(assetRoot = '') {
                 if (isSourceElement) {
                     controls.enabled = true;
                     blocker.style.display = 'none';
+                    context.simulationRunning = true;
                 } else {
                     controls.enabled = false;
                     blocker.style.display = '';
+                    context.simulationRunning = false;
                 }
             });
 
