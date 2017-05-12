@@ -32,7 +32,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
         boidView.tag = i;
         boids.push(boidView);
 
-        world.addBoid(createBoidWithRandomPositionAndDirection(-7, 7, 0.75, boidView.tag));
+        world.addBoid(createBoidWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
 
@@ -145,9 +145,7 @@ export function startUp(assetRoot = '') {
             scene.add(controls.getObject());
             controls.getObject().position.setX(0);
             controls.getObject().position.setY(1);
-            controls.getObject().position.setZ(0);
-
-            const element = document.body;
+            controls.getObject().position.setZ(25);
 
             onPointerLockChanged(document, (isSourceElement) => {
                 if (isSourceElement) {
