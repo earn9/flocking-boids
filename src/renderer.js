@@ -263,9 +263,8 @@ const createLights = () => {
     sunLight.position.set(50, 50, 0);
     lights.push(sunLight);
 
-    const otherLight = new THREE.PointLight(0x9992f3, 1, 0);
-    otherLight.position.set(0, -1, 0);
-    lights.push(otherLight);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    lights.push(ambientLight);
 
     return lights;
 };
