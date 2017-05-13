@@ -127,8 +127,15 @@ const setupKeyboardListeners = () => {
     document.addEventListener('keydown', onDocumentKeyDown, false);
 };
 
-let controls;
+const createHandleWindowResize = (camera, renderer) => 
+    () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
 
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+let controls;
 
 export function startUp(assetRoot = '') {
     var blocker = document.getElementById( 'blocker' );
@@ -142,6 +149,8 @@ export function startUp(assetRoot = '') {
         document.body.appendChild(renderer.domElement);
 
         var { world, boids, camera } = setup(scene, assetRoot);
+
+        window.onresize = createHandleWindowResize(camera, renderer);
 
         if (pointerLockSupported()) {
             const controls = new PointerLockControler(camera);
