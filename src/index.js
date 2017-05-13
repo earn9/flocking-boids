@@ -3,6 +3,7 @@ import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
 import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
+import CameraController from './CameraController';
 
 const context = {
     config: {
@@ -13,7 +14,8 @@ const context = {
         showFriendLines: false,
         showAxis: false
     },
-    simulationRunning: false
+    simulationRunning: false,
+    zoom: false
 };
 
 const update = (delta, boidsViews, world) => {
@@ -36,6 +38,8 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
         world.addBoid(createBoidWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
+
+const cameraKey = 'camera';
 
 const boids = [];
 
@@ -64,6 +68,8 @@ const setup = (scene, assetRoot = '') => {
 
     var camera = createCamera();
 
+    world.addController(new CameraController(camera), cameraKey);
+
     return { world, boids, camera };
 };
 
@@ -87,7 +93,8 @@ const KEYS = {
     KEY_U: 85,
     KEY_O: 79,
     KEY_P: 80,
-    KEY_Y: 89
+    KEY_Y: 89,
+    KEY_Z: 90
 };
 
 const toggleForceLine = () => {
@@ -98,33 +105,42 @@ const toggleAttractLine = () => {
     context.config.showAttractLine = !context.config.showAttractLine;
 };
 
-const onDocumentKeyDown = (event) => {
-    console.log('keydown', event);
-    switch (event.keyCode) {
-        case KEYS.KEY_Y:
-            toggleForceLine();
-            break;
-        case KEYS.KEY_U:
-            context.config.showRepelLine = !context.config.showRepelLine;
-            break;
-        case KEYS.KEY_I:
-            toggleAttractLine();
-            break;
-        case KEYS.KEY_O:
-            context.config.showFollowLine = !context.config.showFollowLine;
-            break;
-        case KEYS.KEY_P:
-            context.config.showFriendLines = !context.config.showFriendLines;
-            break;
-        case KEYS.KEY_B:
-            context.config.showAxis = !context.config.showAxis;
-            break;
-    }
-    storeConfigChanges(context.config);
-};
+const createOnDocumentKeyDown = cameraController => 
+    (event) => {
+        console.log('keydown', event);
+        switch (event.keyCode) {
+            case KEYS.KEY_Y:
+                toggleForceLine();
+                break;
+            case KEYS.KEY_U:
+                context.config.showRepelLine = !context.config.showRepelLine;
+                break;
+            case KEYS.KEY_I:
+                toggleAttractLine();
+                break;
+            case KEYS.KEY_O:
+                context.config.showFollowLine = !context.config.showFollowLine;
+                break;
+            case KEYS.KEY_P:
+                context.config.showFriendLines = !context.config.showFriendLines;
+                break;
+            case KEYS.KEY_B:
+                context.config.showAxis = !context.config.showAxis;
+                break;
+            case KEYS.KEY_Z:
+                context.zoom = !context.zoom;
+                if (context.zoom) {
+                    cameraController.zoomIn();
+                } else {
+                    cameraController.zoomOut();
+                }
 
-const setupKeyboardListeners = () => {
-    document.addEventListener('keydown', onDocumentKeyDown, false);
+        }
+        storeConfigChanges(context.config);
+    };
+
+const setupKeyboardListeners = cameraController => {
+    document.addEventListener('keydown', createOnDocumentKeyDown(cameraController), false);
 };
 
 const createHandleWindowResize = (camera, renderer) => 
@@ -182,7 +198,7 @@ export function startUp(assetRoot = '') {
         } else {
             console.log('pointer lock not supported');
         }
-        setupKeyboardListeners();
+        setupKeyboardListeners(world.getControllerByName(cameraKey));
 
         var clock = new THREE.Clock();
 
