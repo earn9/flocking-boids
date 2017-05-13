@@ -50,12 +50,12 @@ const setup = (scene, assetRoot = '') => {
     loader.load(`${assetRoot}/assets/models/skySphere.json`, (geometry, materials) => {
         createSkyView(scene, geometry, materials);
     });
-    loader.load(`${assetRoot}/assets/models/test02.json`, geometry => { 
-        setupBoids(scene, world, geometry, boidMaterial, boids);
+    loader.load(`${assetRoot}/assets/models/birdSimple02.json`, (geometry, materials) => { 
+        setupBoids(scene, world, geometry, materials[0], boids);
      });
     // setupBoids(scene, world, boidGeometry, boidMaterial, boids);
-    loader.load(`${assetRoot}/assets/models/terain01.json`, geometry => {
-        scene.add(createFloor(geometry));
+    loader.load(`${assetRoot}/assets/models/terain01.json`, (geometry, material) => {
+        scene.add(createFloor(geometry, material));
     });
 
     for (const light of createLights()) {

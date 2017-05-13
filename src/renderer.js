@@ -243,8 +243,13 @@ const createDebugLine = (scene, color = null, depthTest = false) => {
     return friendLine;
 };
 
-const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)) => {
-    var floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D });
+const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10), materials) => {
+    let floorMaterial;
+    if (materials) {
+        floorMaterial = materials[0];
+    } else {
+        floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D });
+    } 
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
     floor.position.set(0, 0, 0);
