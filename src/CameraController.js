@@ -40,4 +40,6 @@ export default class CameraController  {
     zoomOut() {
         this.currentState = ZoomState.Out;
     }
+
+
 }
