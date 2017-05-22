@@ -89,6 +89,7 @@ const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
 
 const KEYS = {
     KEY_B: 66,
+    KEY_F: 70,
     KEY_I: 73,
     KEY_U: 85,
     KEY_O: 79,
@@ -105,7 +106,7 @@ const toggleAttractLine = () => {
     context.config.showAttractLine = !context.config.showAttractLine;
 };
 
-const createOnDocumentKeyDown = cameraController => 
+const createOnDocumentKeyDown = (cameraController, domElement) => 
     (event) => {
         console.log('keydown', event);
         switch (event.keyCode) {
@@ -134,13 +135,22 @@ const createOnDocumentKeyDown = cameraController =>
                 } else {
                     cameraController.zoomOut();
                 }
+                break;
+            case KEYS.KEY_F:
+                context.fullscreen = !context.fullscreen;
+                if (context.fullscreen) {
+                    if (domElement.webkitRequestFullscreen) {
+                        domElement.webkitRequestFullscreen();
+                    }
+                }
+                break;
 
         }
         storeConfigChanges(context.config);
     };
 
-const setupKeyboardListeners = cameraController => {
-    document.addEventListener('keydown', createOnDocumentKeyDown(cameraController), false);
+const setupKeyboardListeners = (cameraController, domElement) => {
+    document.addEventListener('keydown', createOnDocumentKeyDown(cameraController, domElement), false);
 };
 
 const createHandleWindowResize = (camera, renderer) => 
@@ -173,7 +183,7 @@ export function startUp(assetRoot = '') {
             scene.add(controls.getObject());
             controls.getObject().position.setX(0);
             controls.getObject().position.setY(1);
-            controls.getObject().position.setZ(25);
+            controls.getObject().position.setZ(30);
 
             onPointerLockChanged(document, (isSourceElement) => {
                 if (isSourceElement) {
@@ -198,7 +208,7 @@ export function startUp(assetRoot = '') {
         } else {
             console.log('pointer lock not supported');
         }
-        setupKeyboardListeners(world.getControllerByName(cameraKey));
+        setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
 
         var clock = new THREE.Clock();
 
