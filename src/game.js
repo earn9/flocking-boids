@@ -149,8 +149,8 @@ const createWorld = () => {
     };
 
     world.forEachBoid = (boidAction) => {
-        for (const key in boids) {
-            boidAction(boids[key]);
+        for (var boid of Object.values(boids)) {
+            boidAction(boid);
         }
     };
 
