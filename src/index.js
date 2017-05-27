@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createWorld, createBoidWithRandomPositionAndDirection } from './game';
+import { World, Boid } from './game';
 import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
 import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
@@ -34,8 +34,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
         const boidView = createBoidView(scene, boidGeometry, boidMaterial);
         boidView.tag = i;
         boids.push(boidView);
-
-        world.addBoid(createBoidWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
+        world.addBoid(Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
 
@@ -45,10 +44,7 @@ const boids = [];
 
 const setup = (scene, assetRoot = '') => {
     initializeConfig(context.config);
-    const world = createWorld();
-
-    const boidGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 });
+    const world = new World();
 
     const loader = new THREE.JSONLoader();
     loader.load(`${assetRoot}/assets/models/skySphere.json`, (geometry, materials) => {

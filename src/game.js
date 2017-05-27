@@ -106,6 +106,16 @@ class Boid {
 
         this.integrate(totalSteeringForce, delta);
     } 
+
+    static createWithRandomPositionAndDirection(min, max, speed, tag) {
+        const { x: xPos, y: yPos } = randomVec2(min, max);
+        const position = new Vector3(xPos, 10, yPos);
+
+        const { x: xDir, y: yDir } = randomDirection();
+        const direction = new Vector3(xDir, 0, yDir);
+
+        return new Boid(position, direction, speed, tag);
+    }
 }
 
 class World {
@@ -161,21 +171,6 @@ class World {
         });
         return friends;
     }
-
 }
 
-const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
-    const { x: xPos, y: yPos } = randomVec2(min, max);
-    const position = new Vector3(xPos, 10, yPos);
-
-    const { x: xDir, y: yDir } = randomDirection();
-    const direction = new Vector3(xDir, 0, yDir);
-
-    return new Boid(position, direction, speed, tag);
-};
-
-const createWorld = () => {
-    return new World();
-};
-
-export { createWorld, createBoidWithRandomPositionAndDirection };
+export { World, Boid };
