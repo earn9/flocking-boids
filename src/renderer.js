@@ -45,9 +45,9 @@ const createFriendLines = (scene) => {
 
 class BoidView {
     constructor(
-        scene,
-        boidGeometry = new THREE.BoxGeometry(1, 1, 1),
-        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
+            scene,
+            boidGeometry = new THREE.BoxGeometry(1, 1, 1),
+            boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
         this.forceLine = createDebugLine(scene, 0xffffff);
         this.repelForceLine = createDebugLine(scene, 0xff0000);
         this.attractForceLine = createDebugLine(scene, 0x00ff00);
@@ -235,7 +235,7 @@ const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)
     if (materials) {
         floorMaterial = materials[0];
     } else {
-        floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D });
+        floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D, shininess: 0.0 });
     }
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
@@ -250,7 +250,7 @@ const createLights = () => {
     sunLight.position.set(50, 50, 0);
     lights.push(sunLight);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     lights.push(ambientLight);
 
     return lights;
