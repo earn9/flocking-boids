@@ -1,62 +1,63 @@
 import { Vector3 } from 'three';
 import { randomDirection, randomVec2 } from './mathUtils';
 
-const createBoid = (position, direction, speed, tag) => {
-    const friendDistance = 1;
+const friendDistance = 1;
 
-    const boid = { 
-        position, 
-        direction, 
-        speed, 
-        maxSpeed: 1.5,
-        maxForce: 0.2,
-        minSpeed: 0.4,
-        tag,
-        mass: 1,
-        friends: []
-    };
+class Boid {
 
-    const integrate = (steeringDirection, delta) => {
+    constructor(position, direction, speed, tag) {
+        this.position = position;
+        this.direction = direction;
+        this.speed = speed;
+        this.tag = tag;
+        this.maxSpeed = 1.5;
+        this.minSpeed = 0.4;
+        this.maxForce = 0.2;
+        this.mass = 1;
+        this.friends = [];
+    }
+
+    integrate(steeringDirection, delta) {
         const steeringForce = steeringDirection.clone();
-        steeringForce.clampLength(0, boid.maxForce * delta);
+        steeringForce.clampLength(0, this.maxForce * delta);
         const acceleration = steeringForce.clone();
-        acceleration.divideScalar(boid.mass);
+        acceleration.divideScalar(this.mass);
 
-        const velocity = boid.direction.clone();
-        velocity.multiplyScalar(boid.speed * delta);
+        const velocity = this.direction.clone();
+        velocity.multiplyScalar(this.speed * delta);
         velocity.add(acceleration);
-        velocity.clampLength(boid.minSpeed * delta, boid.maxSpeed * delta);
+        velocity.clampLength(this.minSpeed * delta, this.maxSpeed * delta);
 
-        boid.position.add(velocity);
+        this.position.add(velocity);
 
-        boid.speed = velocity.length() / delta;
+        this.speed = velocity.length() / delta;
         velocity.normalize();
-        boid.direction.copy(velocity);
-    };
+        this.direction.copy(velocity);      
+    }
 
-    const findLocalAveragePoint = () => {
+    findLocalAveragePoint() {
         const averagePosition = new Vector3(0, 0, 0);
-        for (const friend of boid.friends) {
+        for (const friend of this.friends) {
             averagePosition.add(friend.position);
         }        
-        averagePosition.divideScalar(boid.friends.length);
+        averagePosition.divideScalar(this.friends.length);
         return averagePosition;
-    };
+    }
 
-    const getForceTowardCenterOfFriends = () => {
-        const localCenter = findLocalAveragePoint();
-        if (boid.friends.length > 0) {
-            localCenter.sub(boid.position);
+    getForceTowardCenterOfFriends() {
+        const localCenter = this.findLocalAveragePoint();
+        if (this.friends.length > 0) {
+            localCenter.sub(this.position);
             localCenter.divideScalar(100);
         }
         return localCenter;
-    };
+    }
 
-    const getForceAwayFromNearby = () => {
+    getForceAwayFromNearby() {
         const result = new Vector3(0, 0, 0);
-        for (const friend of boid.friends) {
+        for (const friend of this.friends) {
             const vectorFromFriendToBoid = friend.position.clone();
-            vectorFromFriendToBoid.sub(boid.position);
+            vectorFromFriendToBoid.sub(this.position);
             const lengthFromFriendToBoid = vectorFromFriendToBoid.length();
             const inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
             const forceLength = inverseOfLengthFromFriendToBoid * -0.7;
@@ -66,48 +67,46 @@ const createBoid = (position, direction, speed, tag) => {
         }
         result.divideScalar(150);
         return result;
-    };
+    }
 
-    const getForceToMatchVelocity = () => {
+    getForceToMatchVelocity() {
         const result = new Vector3(0, 0, 0);
 
-        if (boid.friends.length === 0) {
+        if (this.friends.length === 0) {
             return result;
         }
 
-        for (const friend of boid.friends) {
+        for (const friend of this.friends) {
             result.add(friend.getVelocity());
         }
-        result.divideScalar(boid.friends.length);
+        result.divideScalar(this.friends.length);
 
-        result.sub(boid.getVelocity());
+        result.sub(this.getVelocity());
         result.divideScalar(320);
         return result;
-    };
+    }
 
-    boid.getVelocity = () => {
-        const velocity = boid.direction.clone();
-        velocity.multiplyScalar(boid.speed);
+    getVelocity() {
+        const velocity = this.direction.clone();
+        velocity.multiplyScalar(this.speed);
         return velocity;
-    };
+    }
 
-    boid.update = (delta, world) => {
-        boid.friends = world.findNearbyBoids(boid, friendDistance);
+    update(delta, world) {
+        this.friends = world.findNearbyBoids(this, friendDistance);
 
-        boid.forceToCenter = getForceTowardCenterOfFriends();
-        boid.forceAway = getForceAwayFromNearby(); 
-        boid.forceToMatchVelocity = getForceToMatchVelocity();
+        this.forceToCenter = this.getForceTowardCenterOfFriends();
+        this.forceAway = this.getForceAwayFromNearby(); 
+        this.forceToMatchVelocity = this.getForceToMatchVelocity();
 
         const totalSteeringForce = new Vector3(0, 0, 0);
-        totalSteeringForce.add(boid.forceToCenter);
-        totalSteeringForce.add(boid.forceAway);
-        totalSteeringForce.add(boid.forceToMatchVelocity);
+        totalSteeringForce.add(this.forceToCenter);
+        totalSteeringForce.add(this.forceAway);
+        totalSteeringForce.add(this.forceToMatchVelocity);
 
-        integrate(totalSteeringForce, delta);
-    };
-
-    return boid;
-};
+        this.integrate(totalSteeringForce, delta);
+    } 
+}
 
 const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     const { x: xPos, y: yPos } = randomVec2(min, max);
@@ -116,7 +115,7 @@ const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     const { x: xDir, y: yDir } = randomDirection();
     const direction = new Vector3(xDir, 0, yDir);
 
-    return createBoid(position, direction, speed, tag);
+    return new Boid(position, direction, speed, tag);
 };
 
 
@@ -176,4 +175,4 @@ const createWorld = () => {
     return world;
 };
 
-export { createBoid, createWorld, createBoidWithRandomPositionAndDirection };
+export { createWorld, createBoidWithRandomPositionAndDirection };
