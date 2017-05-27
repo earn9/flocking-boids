@@ -108,6 +108,62 @@ class Boid {
     } 
 }
 
+class World {
+    constructor() {
+        this.boids = {};
+        this.controllers = {};
+        this.nextControllerName = 0;        
+    }
+
+    addController(controller, name) {
+        if (!name) {
+            this.nextControllerName += 1;
+            name = this.nextControllerName;
+        }
+        this.controllers[name] = controller;
+    }
+
+    getControllerByName (name) {
+        return this.controllers[name];
+    }
+
+    addBoid(boid) {
+        this.boids[boid.tag] = boid;
+    }
+
+    update(delta) {
+        for (const controller of Object.values(this.controllers)) {
+            controller.update(delta);
+        }
+        for (const key in this.boids) {
+            this.boids[key].update(delta, this);
+        }
+    }
+
+    forEachBoid(boidAction) {
+        for (var boid of Object.values(this.boids)) {
+            boidAction(boid);
+        }
+    }
+
+    getBoid(key) {
+        return this.boids[key];
+    }
+
+    findNearbyBoids(fromBoid, cutoffDistance) {
+        const friends = [];
+        this.forEachBoid(otherBoid => {
+            if (fromBoid === otherBoid) return;
+            const newDist = fromBoid.position.distanceTo(otherBoid.position);
+            if (newDist < cutoffDistance) {
+                friends.push(otherBoid);
+            }
+        });
+        return friends;
+    }
+
+}
+
 const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     const { x: xPos, y: yPos } = randomVec2(min, max);
     const position = new Vector3(xPos, 10, yPos);
@@ -118,61 +174,8 @@ const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
     return new Boid(position, direction, speed, tag);
 };
 
-
 const createWorld = () => {
-    const boids = {};
-    const world = {
-        controllers: {}
-    };
-
-    world.nextControllerName = 0;
-    world.addController = (controller, name) => {
-        if (!name) {
-            world.nextControllerName += 1;
-            name = world.nextControllerName;
-        }
-        world.controllers[name] = controller;
-    };
-
-    world.getControllerByName = (name) => world.controllers[name];
-
-    world.addBoid = (boid) => {
-        boids[boid.tag] = boid;
-    };
-
-    world.update = (delta) => {
-        for (const controller of Object.values(world.controllers)) {
-            controller.update(delta);
-        }
-        for (const key in boids) {
-            boids[key].update(delta, world);
-        }
-    };
-
-    world.forEachBoid = (boidAction) => {
-        for (var boid of Object.values(boids)) {
-            boidAction(boid);
-        }
-    };
-
-    world.getBoid = (key) => {
-        return boids[key];
-    };
-
-    world.findNearbyBoids = (fromBoid, cutoffDistance) => {
-        const friends = [];
-        world.forEachBoid(otherBoid => {
-            if (fromBoid === otherBoid) return;
-            const newDist = fromBoid.position.distanceTo(otherBoid.position);
-            if (newDist < cutoffDistance) {
-                friends.push(otherBoid);
-            }
-        });
-        return friends;
-    };
-
-
-    return world;
+    return new World();
 };
 
 export { createWorld, createBoidWithRandomPositionAndDirection };
