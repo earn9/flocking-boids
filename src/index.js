@@ -180,6 +180,7 @@ export function startUp(assetRoot = '') {
 
         if (pointerLockSupported()) {
             const controls = new PointerLockControler(camera);
+            world.getControllerByName(cameraKey).setPointerLockControls(controls);
             scene.add(controls.getObject());
             controls.getObject().position.setX(0);
             controls.getObject().position.setY(1);

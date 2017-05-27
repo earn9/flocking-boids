@@ -123,14 +123,16 @@ const createBoidWithRandomPositionAndDirection = (min, max, speed, tag) => {
 const createWorld = () => {
     const boids = {};
     const world = {
-        controllers: []
+        controllers: {}
     };
 
+    world.nextControllerName = 0;
     world.addController = (controller, name) => {
-        world.controllers.push(controller);
-        if (name) {
-            world.controllers[name] = controller;
+        if (!name) {
+            world.nextControllerName += 1;
+            name = world.nextControllerName;
         }
+        world.controllers[name] = controller;
     };
 
     world.getControllerByName = (name) => world.controllers[name];
@@ -140,7 +142,7 @@ const createWorld = () => {
     };
 
     world.update = (delta) => {
-        for (const controller of world.controllers) {
+        for (const controller of Object.values(world.controllers)) {
             controller.update(delta);
         }
         for (const key in boids) {

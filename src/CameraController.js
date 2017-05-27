@@ -13,6 +13,12 @@ export default class CameraController  {
         this.InFov = 15;
     }
 
+    setPointerLockControls(pointerLockControls) {
+        this.pointerLockControls = pointerLockControls;
+        this.OutMovement = pointerLockControls.movementFactor;
+        this.InMovement = pointerLockControls.movementFactor / 8;
+    }
+
     update(delta) {
         switch (this.currentState) {
             case ZoomState.None:
@@ -21,12 +27,14 @@ export default class CameraController  {
                 if (this.camera.fov === this.InFov) return;
                 console.log('zooming in');
                 this.camera.fov = this.InFov;
+                this.pointerLockControls.movementFactor = this.InMovement;
                 this.camera.updateProjectionMatrix();
                 return;
             case ZoomState.Out:
                 if (this.camera.fov === this.OutFov) return;
                 console.log('zooming out');
                 this.camera.fov = this.OutFov;
+                this.pointerLockControls.movementFactor = this.OutMovement;
                 this.camera.updateProjectionMatrix();
                 return;
         }
