@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { World, Boid } from './game';
-import { createBoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
+import { BoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistance';
 import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
 import CameraController from './CameraController';
@@ -31,7 +31,7 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
     const numBoids = 500;
 
     for (let i = 0; i < numBoids; i++) {
-        const boidView = createBoidView(scene, boidGeometry, boidMaterial);
+        const boidView = new BoidView(scene, boidGeometry, boidMaterial);
         boidView.tag = i;
         boids.push(boidView);
         world.addBoid(Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
@@ -156,8 +156,6 @@ const createHandleWindowResize = (camera, renderer) =>
 
         renderer.setSize(window.innerWidth, window.innerHeight);
     };
-
-let controls;
 
 export function startUp(assetRoot = '') {
     var blocker = document.getElementById( 'blocker' );

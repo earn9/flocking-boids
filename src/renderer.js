@@ -32,156 +32,143 @@ const getRotationMatrix = (direction) => {
     return rotationMatrix;
 };
 
-const createBoidView = (
-        scene, 
-        boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
-        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
+const createFriendLines = (scene) => {
+    const lineColor = Math.random() * 0xffffff;
+    const friendLines = [];
+    for (let i = 0; i < 10; i++) {
+        friendLines[i] = createDebugLine(scene, lineColor);
+        friendLines[i].hide();
+    }
+    return friendLines;
+};
 
-    const createFriendLines = () => {
-        const lineColor = Math.random() * 0xffffff;
-        const friendLines = [];
-        for (let i = 0; i < 10; i++) {
-            friendLines[i] = createDebugLine(scene, lineColor);
-            friendLines[i].hide();
-        }
-        return friendLines;
-    };
 
-    const boid = {
-        directionLine: createDebugLine(scene, 0xaf4484, true),
-        forceLine: createDebugLine(scene, 0xffffff),
-        repelForceLine: createDebugLine(scene, 0xff0000),
-        attractForceLine: createDebugLine(scene, 0x00ff00),
-        followForceLine: createDebugLine(scene, 0x0000ff),
-        friendLines: createFriendLines(),
-    };
+class BoidView {
+    constructor(
+        scene,
+        boidGeometry = new THREE.BoxGeometry(1, 1, 1),
+        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
+        this.forceLine = createDebugLine(scene, 0xffffff);
+        this.repelForceLine = createDebugLine(scene, 0xff0000);
+        this.attractForceLine = createDebugLine(scene, 0x00ff00);
+        this.followForceLine = createDebugLine(scene, 0x0000ff);
+        this.friendLines = createFriendLines(scene);
 
-    boid.directionLine.visible = false;
+        this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+        this.scaleModel = randomBetween(0.2, 0.3);
+        this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
+        this.debugAxis = createAxisGroup();
+        this.boidMesh.add(this.debugAxis);
+        scene.add(this.boidMesh);
 
-    const updateForceLine = (gameBoid) => {
+        this.mesh = this.boidMesh;
+    }
+
+    update(gameBoid, context) {
+        this.mesh.position.copy(gameBoid.position);
+
+        this._handleForceLine(gameBoid, context);
+        this._handleRepelLine(gameBoid, context);
+        this._handleAttractLine(gameBoid, context);
+        this._handleFollowLine(gameBoid, context);
+
+        this._updateFriendLines(gameBoid, context);
+
+        this.debugAxis.visible = context.config.showAxis;
+
+        this.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+    }
+
+    _hideForceLine() {
+        this.forceLine.hide();
+    }
+
+    _hideRepelLine() {
+        this.repelForceLine.hide();
+    }
+
+    _hideAttractLine() {
+        this.attractForceLine.hide();
+    }
+
+    _hideFollowLine() {
+        this.followForceLine.hide();
+    }
+
+    _updateForceLine(gameBoid) {
         const forceVector = gameBoid.position.clone();
         forceVector.add(gameBoid.getVelocity());
-        boid.forceLine.setLine(gameBoid.position, forceVector);
-    };
+        this.forceLine.setLine(gameBoid.position, forceVector);
+    }
 
-    const hideForceLine = () => {
-        boid.forceLine.hide();
-    };
-
-    const hideRepelLine = () => {
-        boid.repelForceLine.hide();
-    };
-
-    const hideAttractLine = () => {
-        boid.attractForceLine.hide();
-    };
-
-    const hideFollowLine = () => {
-        boid.followForceLine.hide();
-    };
-
-    const updateRepelLine = (gameBoid) => {
+    _updateRepelLine(gameBoid) {
         const forceVector = gameBoid.position.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
-        
-        boid.repelForceLine.setLine(gameBoid.position, forceVector);
-    };
 
-    const updateFollowLine = (gameBoid) => {
+        this.repelForceLine.setLine(gameBoid.position, forceVector);
+    }
+
+    _updateFollowLine(gameBoid) {
         const followVector = gameBoid.position.clone();
         followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
 
-        boid.followForceLine.setLine(gameBoid.position, followVector);
-    };
+        this.followForceLine.setLine(gameBoid.position, followVector);
+    }
 
-    const updateFriendLines = (gameBoid, context) => {
+    _updateFriendLines(gameBoid, context) {
         let friendLineIndex = 0;
         if (context.config.showFriendLines) {
             for (const friend of gameBoid.friends) {
-                if (friendLineIndex < boid.friendLines.length) {
-                    boid.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+                if (friendLineIndex < this.friendLines.length) {
+                    this.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
                 }
                 friendLineIndex++;
             }
         }
         for (let i = friendLineIndex; i < 10; i++) {
-            boid.friendLines[i].hide();
+            this.friendLines[i].hide();
         }
-    };
+    }
 
-    const updateAttractLine = (gameBoid) => {
+    _updateAttractLine(gameBoid) {
         const forceVector = gameBoid.position.clone();
         forceVector.addScaledVector(gameBoid.forceToCenter, 100);
 
-        boid.attractForceLine.setLine(gameBoid.position, forceVector);
-    };
+        this.attractForceLine.setLine(gameBoid.position, forceVector);
+    }
 
-    const updateDirectionLine = (gameBoid) => {
-        const directionEnd = gameBoid.position.clone();
-        directionEnd.addScaledVector(gameBoid.direction, 0.25);
-        boid.directionLine.setLine(gameBoid.position, directionEnd);
-    };
-
-    const handleForceLine = (gameBoid, context) => {
+    _handleForceLine(gameBoid, context) {
         if (context.config.showForceLine) {
-            updateForceLine(gameBoid);
+            this._updateForceLine(gameBoid);
         } else {
-            hideForceLine();
+            this._hideForceLine();
         }
-    };
+    }
 
-    const handleRepelLine = (gameBoid, context) => {
+    _handleRepelLine(gameBoid, context) {
         if (context.config.showRepelLine) {
-            updateRepelLine(gameBoid);
+            this._updateRepelLine(gameBoid);
         } else {
-            hideRepelLine();
+            this._hideRepelLine();
         }
-    };
+    }
 
-    const handleAttractLine = (gameBoid, context) => {
+    _handleAttractLine(gameBoid, context) {
         if (context.config.showAttractLine) {
-            updateAttractLine(gameBoid);
+            this._updateAttractLine(gameBoid);
         } else {
-            hideAttractLine();
+            this._hideAttractLine();
         }
-    };
+    }
 
-    const handleFollowLine = (gameBoid, context) => {
+    _handleFollowLine(gameBoid, context) {
         if (context.config.showFollowLine) {
-            updateFollowLine(gameBoid);
+            this._updateFollowLine(gameBoid);
         } else {
-            hideFollowLine();
+            this._hideFollowLine();
         }
-    };
-
-    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-    const scaleModel = randomBetween(0.2, 0.3);
-    boidMesh.scale.set(scaleModel, scaleModel, scaleModel);
-    boid.debugAxis = createAxisGroup();
-    boidMesh.add(boid.debugAxis);
-    scene.add(boidMesh);
-
-    boid.mesh = boidMesh;
-
-    boid.update = (gameBoid, context) => {
-        boid.mesh.position.copy(gameBoid.position);
-
-        // updateDirectionLine(gameBoid);
-
-        handleForceLine(gameBoid, context);
-        handleRepelLine(gameBoid, context);
-        handleAttractLine(gameBoid, context);
-        handleFollowLine(gameBoid, context); 
-
-        updateFriendLines(gameBoid, context);
-
-        boid.debugAxis.visible = context.config.showAxis;
-
-        boid.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
-    };
-
-    return boid;
-};
+    }
+}
 
 const createSkyView = (scene, geometry, material) => {
     if (!material) {
@@ -192,9 +179,9 @@ const createSkyView = (scene, geometry, material) => {
 };
 
 const createSimpleView = (
-        scene, 
-        boidGeometry = new THREE.BoxGeometry(1, 1, 1), 
-        boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
+    scene,
+    boidGeometry = new THREE.BoxGeometry(1, 1, 1),
+    boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
 
     const boid = {
     };
@@ -249,7 +236,7 @@ const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)
         floorMaterial = materials[0];
     } else {
         floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D });
-    } 
+    }
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
     floor.position.set(0, 0, 0);
@@ -279,4 +266,4 @@ const createCamera = () => {
     return camera;
 };
 
-export { createBoidView, createFloor, createLights, createCamera, createSimpleView, createSkyView };
+export { BoidView, createFloor, createLights, createCamera, createSimpleView, createSkyView };
