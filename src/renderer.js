@@ -178,23 +178,6 @@ const createSkyView = (scene, geometry, material) => {
     scene.add(skyMesh);
 };
 
-const createSimpleView = (
-    scene,
-    boidGeometry = new THREE.BoxGeometry(1, 1, 1),
-    boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) => {
-
-    const boid = {
-    };
-
-    const boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
-
-    scene.add(boidMesh);
-
-    boid.mesh = boidMesh;
-
-    return boid;
-};
-
 const createDebugLine = (scene, color = null, depthTest = false) => {
     const friendLine = {};
 
@@ -266,4 +249,4 @@ const createCamera = () => {
     return camera;
 };
 
-export { BoidView, createFloor, createLights, createCamera, createSimpleView, createSkyView };
+export { BoidView, createFloor, createLights, createCamera, createSkyView };
