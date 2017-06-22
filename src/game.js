@@ -1,7 +1,18 @@
 import { Vector3 } from 'three';
 import { randomDirection, randomVec2 } from './mathUtils';
+import { seek } from './steering';
 
 const friendDistance = 1;
+const yOffset = 10;
+const flockingCenter = new Vector3(0, yOffset, 0);
+
+const BoidStates = {
+    flocking: 'flocking',
+    returning: 'returning'
+};
+
+const maxDistance = 50;
+const startFlockingAgainDistance = 45;
 
 class Boid {
 
@@ -11,10 +22,12 @@ class Boid {
         this.speed = speed;
         this.tag = tag;
         this.maxSpeed = 1.5;
-        this.minSpeed = 0.4;
-        this.maxForce = 0.2;
+        this.minSpeed = 0.7;
+        this.maxForce = 0.1;
         this.mass = 1;
         this.friends = [];
+        this.maxDistanceFromCenter = 10;
+        this.state = BoidStates.flocking;
     }
 
     integrate(steeringDirection, delta) {
@@ -92,24 +105,47 @@ class Boid {
         return velocity;
     }
 
+    selectState() {
+        const distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+        if (distanceToFlockingCenter > maxDistance && this.state === BoidStates.flocking) {
+            return BoidStates.returning;
+        } 
+        
+        if (distanceToFlockingCenter < startFlockingAgainDistance && this.state === BoidStates.returning) {
+            return BoidStates.flocking;
+        }
+
+        return this.state;        
+    }
+
     update(delta, world) {
         this.friends = world.findNearbyBoids(this, friendDistance);
 
-        this.forceToCenter = this.getForceTowardCenterOfFriends();
-        this.forceAway = this.getForceAwayFromNearby(); 
-        this.forceToMatchVelocity = this.getForceToMatchVelocity();
+        this.state = this.selectState();
 
-        const totalSteeringForce = new Vector3(0, 0, 0);
-        totalSteeringForce.add(this.forceToCenter);
-        totalSteeringForce.add(this.forceAway);
-        totalSteeringForce.add(this.forceToMatchVelocity);
+        const totalSteeringForce = new Vector3();
+        switch (this.state) {
+            case BoidStates.flocking:
+                this.forceToCenter = this.getForceTowardCenterOfFriends();
+                this.forceAway = this.getForceAwayFromNearby(); 
+                this.forceToMatchVelocity = this.getForceToMatchVelocity();
+                totalSteeringForce.add(this.forceToCenter);
+                totalSteeringForce.add(this.forceAway);
+                totalSteeringForce.add(this.forceToMatchVelocity);
+                break;
+            case BoidStates.returning:
+                this.forceAway = this.getForceAwayFromNearby(); 
+                totalSteeringForce.add(this.forceAway);
+                totalSteeringForce.add(seek(this.position, flockingCenter, this.speed, delta));
+                break;
+        }
 
         this.integrate(totalSteeringForce, delta);
     } 
 
     static createWithRandomPositionAndDirection(min, max, speed, tag) {
         const { x: xPos, y: yPos } = randomVec2(min, max);
-        const position = new Vector3(xPos, 10, yPos);
+        const position = new Vector3(xPos, yOffset, yPos);
 
         const { x: xDir, y: yDir } = randomDirection();
         const direction = new Vector3(xDir, 0, yDir);

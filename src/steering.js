@@ -73,4 +73,4 @@ const createVehicle = (position, direction, speed, target, tag, strategy = SEEK_
     return vehicle;
 };
 
-export { createVehicle, SEEK_STEERING, FLEE_STEERING };
+export { createVehicle, SEEK_STEERING, FLEE_STEERING, seek };
