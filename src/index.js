@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { World, Boid } from './game';
 import { BoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
-import { initializeConfig, storeConfigChanges } from './persistance';
+import { initializeConfig, storeConfigChanges } from './persistence';
 import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
 import CameraController from './CameraController';
 
