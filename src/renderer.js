@@ -105,15 +105,25 @@ class BoidView {
     _updateRepelLine(gameBoid) {
         const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
-
+        forceVector.add(this.mesh.position);
+        this.boidMesh.worldToLocal(forceVector);
         this.repelForceLine.setLine(center, forceVector);
     }
 
     _updateFollowLine(gameBoid) {
-        const followVector = center.clone();
-        followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
-
-        this.followForceLine.setLine(center, followVector);
+        const forceVector = center.clone();
+        forceVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
+        forceVector.add(this.mesh.position);
+        this.boidMesh.worldToLocal(forceVector);
+        this.followForceLine.setLine(center, forceVector);
+    }
+    
+    _updateAttractLine(gameBoid) {
+        const forceVector = center.clone();
+        forceVector.addScaledVector(gameBoid.forceToCenter, 100);
+        forceVector.add(this.mesh.position);
+        this.boidMesh.worldToLocal(forceVector);
+        this.attractForceLine.setLine(center, forceVector);
     }
 
     _updateFriendLines(gameBoid, context) {
@@ -131,13 +141,6 @@ class BoidView {
         for (let i = friendLineIndex; i < 10; i++) {
             this.friendLines[i].hide();
         }
-    }
-
-    _updateAttractLine(gameBoid) {
-        const forceVector = center.clone();
-        forceVector.addScaledVector(gameBoid.forceToCenter, 100);
-
-        this.attractForceLine.setLine(center, forceVector);
     }
 
     _handleForceLine(gameBoid, context) {
