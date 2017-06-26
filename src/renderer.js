@@ -54,7 +54,7 @@ class BoidView {
         this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
         this.debugAxis = createAxisGroup();
         this.boidMesh.add(this.debugAxis);
-        this.forceLine = createDebugLine(scene, 0xffffff);
+        this.forceLine = createDebugLine(this.boidMesh, 0xffffff);
         this.repelForceLine = createDebugLine(this.boidMesh, 0xff0000);
         this.attractForceLine = createDebugLine(this.boidMesh, 0x00ff00);
         this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
@@ -96,10 +96,10 @@ class BoidView {
     }
 
     _updateForceLine(gameBoid) {
-        const forceVector = gameBoid.position.clone();
-        forceVector.add(gameBoid.getVelocity());
-        //this.forceLine.setPosition(gameBoid.position);
-        this.forceLine.setLine(gameBoid.position, forceVector);
+        const forceVector = gameBoid.getVelocity().clone();
+        forceVector.add(this.mesh.position);
+        this.boidMesh.worldToLocal(forceVector);
+        this.forceLine.setLine(center, forceVector);
     }
 
     _updateRepelLine(gameBoid) {
