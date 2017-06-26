@@ -48,17 +48,17 @@ class BoidView {
             scene,
             boidGeometry = new THREE.BoxGeometry(1, 1, 1),
             boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
-        this.forceLine = createDebugLine(scene, 0xffffff);
-        this.repelForceLine = createDebugLine(scene, 0xff0000);
-        this.attractForceLine = createDebugLine(scene, 0x00ff00);
-        this.followForceLine = createDebugLine(scene, 0x0000ff);
-        this.friendLines = createFriendLines(scene);
 
         this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
         this.scaleModel = randomBetween(0.2, 0.3);
         this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
         this.debugAxis = createAxisGroup();
         this.boidMesh.add(this.debugAxis);
+        this.forceLine = createDebugLine(scene, 0xffffff);
+        this.repelForceLine = createDebugLine(this.boidMesh, 0xff0000);
+        this.attractForceLine = createDebugLine(this.boidMesh, 0x00ff00);
+        this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
+        this.friendLines = createFriendLines(this.boidMesh);
         scene.add(this.boidMesh);
 
         this.mesh = this.boidMesh;
@@ -98,21 +98,22 @@ class BoidView {
     _updateForceLine(gameBoid) {
         const forceVector = gameBoid.position.clone();
         forceVector.add(gameBoid.getVelocity());
+        //this.forceLine.setPosition(gameBoid.position);
         this.forceLine.setLine(gameBoid.position, forceVector);
     }
 
     _updateRepelLine(gameBoid) {
-        const forceVector = gameBoid.position.clone();
+        const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
 
-        this.repelForceLine.setLine(gameBoid.position, forceVector);
+        this.repelForceLine.setLine(center, forceVector);
     }
 
     _updateFollowLine(gameBoid) {
-        const followVector = gameBoid.position.clone();
+        const followVector = center.clone();
         followVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
 
-        this.followForceLine.setLine(gameBoid.position, followVector);
+        this.followForceLine.setLine(center, followVector);
     }
 
     _updateFriendLines(gameBoid, context) {
@@ -120,7 +121,9 @@ class BoidView {
         if (context.config.showFriendLines) {
             for (const friend of gameBoid.friends) {
                 if (friendLineIndex < this.friendLines.length) {
-                    this.friendLines[friendLineIndex].setLine(gameBoid.position, friend.position);
+                    const localFriendPosition = friend.position.clone();
+                    this.mesh.worldToLocal(localFriendPosition);
+                    this.friendLines[friendLineIndex].setLine(center, localFriendPosition);
                 }
                 friendLineIndex++;
             }
@@ -131,10 +134,10 @@ class BoidView {
     }
 
     _updateAttractLine(gameBoid) {
-        const forceVector = gameBoid.position.clone();
+        const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceToCenter, 100);
 
-        this.attractForceLine.setLine(gameBoid.position, forceVector);
+        this.attractForceLine.setLine(center, forceVector);
     }
 
     _handleForceLine(gameBoid, context) {
@@ -210,6 +213,10 @@ const createDebugLine = (scene, color = null, depthTest = false) => {
         mesh.visible = true;
     };
 
+    friendLine.setPosition = (position) => {
+        mesh.position.copy(position);
+    };
+
     return friendLine;
 };
 
@@ -223,7 +230,6 @@ const createFloor = (floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10)
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 
     floor.position.set(0, 0, 0);
-    // floor.rotation.x = -90 * (Math.PI / 180);
     return floor;
 };
 
