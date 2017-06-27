@@ -4,9 +4,9 @@ module.exports = {
     entry: './src/index.js',
     output: {
         library: 'Boids',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'docs/assets/javascript'),
         libraryTarget: 'var',
-        filename: 'bundle.js'
+        filename: 'bundle03.js'
     },
     devtool: 'source-map',
     module: {
