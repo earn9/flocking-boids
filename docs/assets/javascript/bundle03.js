@@ -45745,7 +45745,6 @@ var createHandleWindowResize = function createHandleWindowResize(camera, rendere
 function startUp() {
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-    var blocker = document.getElementById('blocker');
 
     window.onload = function () {
         var scene = new THREE.Scene();
@@ -45770,6 +45769,8 @@ function startUp() {
             controls.getObject().position.setY(1);
             controls.getObject().position.setZ(30);
 
+            var blocker = document.getElementById('blocker');
+
             (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
                 if (isSourceElement) {
                     controls.enabled = true;
@@ -45785,7 +45786,6 @@ function startUp() {
             document.body.addEventListener('click', function () {
                 controls.enabled = true;
                 (0, _pointerLockControls.lockPointer)(document.body);
-                blocker.style.display = 'none';
             }, false);
         } else {
             console.log('pointer lock not supported');

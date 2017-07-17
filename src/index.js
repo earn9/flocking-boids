@@ -159,7 +159,6 @@ const createHandleWindowResize = (camera, renderer) =>
     };
 
 export function startUp(assetRoot = '') {
-    var blocker = document.getElementById( 'blocker' );
 
     window.onload = () => {
         var scene = new THREE.Scene();
@@ -180,6 +179,8 @@ export function startUp(assetRoot = '') {
             controls.getObject().position.setX(0);
             controls.getObject().position.setY(1);
             controls.getObject().position.setZ(30);
+            
+            var blocker = document.getElementById( 'blocker' );
 
             onPointerLockChanged(document, (isSourceElement) => {
                 if (isSourceElement) {
@@ -198,7 +199,6 @@ export function startUp(assetRoot = '') {
                 () => {
                     controls.enabled = true;    
                     lockPointer(document.body);
-                    blocker.style.display = 'none';
                 }, 
                 false);
         } else {
