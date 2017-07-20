@@ -49,7 +49,20 @@ class BoidView {
             boidGeometry = new THREE.BoxGeometry(1, 1, 1),
             boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
 
-        this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+        boidMaterial.skinning = true;
+        if (boidGeometry.animations) {
+            this.boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
+            this.mixer = new THREE.AnimationMixer(this.boidMesh);
+            this.animationClips = boidGeometry.animations;
+            this.flappingClip = THREE.AnimationClip.findByName(this.animationClips, 'Flapping');
+            this.flappingAction = this.mixer.clipAction(this.flappingClip);
+            this.flappingAction
+                .startAt(this.mixer.time + randomBetween(0, 1))
+                .play();
+        } else {
+            this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+        }
+
         this.scaleModel = randomBetween(0.2, 0.3);
         this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
         this.debugAxis = createAxisGroup();
@@ -59,12 +72,13 @@ class BoidView {
         this.attractForceLine = createDebugLine(this.boidMesh, 0x00ff00);
         this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
         this.friendLines = createFriendLines(this.boidMesh);
+
         scene.add(this.boidMesh);
 
         this.mesh = this.boidMesh;
     }
 
-    update(gameBoid, context) {
+    update(gameBoid, context, delta) {
         this.mesh.position.copy(gameBoid.position);
 
         this._handleForceLine(gameBoid, context);
@@ -77,6 +91,10 @@ class BoidView {
         this.debugAxis.visible = context.config.showAxis;
 
         this.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+
+        if (this.mixer) {
+            this.mixer.update(delta);
+        }
     }
 
     _hideForceLine() {

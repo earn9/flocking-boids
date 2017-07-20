@@ -22,7 +22,7 @@ const update = (delta, boidsViews, world) => {
     world.update(delta);
     for (const boidView of boidsViews) {
         const boid = world.getBoid(boidView.tag);
-        boidView.update(boid, context);
+        boidView.update(boid, context, delta);
     }
 };
 

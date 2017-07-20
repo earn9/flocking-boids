@@ -44568,7 +44568,18 @@ var BoidView = function () {
         (0, _classCallCheck3.default)(this, BoidView);
 
 
-        this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+        boidMaterial.skinning = true;
+        if (boidGeometry.animations) {
+            this.boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
+            this.mixer = new THREE.AnimationMixer(this.boidMesh);
+            this.animationClips = boidGeometry.animations;
+            this.flappingClip = THREE.AnimationClip.findByName(this.animationClips, 'Flapping');
+            this.flappingAction = this.mixer.clipAction(this.flappingClip);
+            this.flappingAction.startAt(this.mixer.time + (0, _mathUtils.randomBetween)(0, 1)).play();
+        } else {
+            this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+        }
+
         this.scaleModel = (0, _mathUtils.randomBetween)(0.2, 0.3);
         this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
         this.debugAxis = createAxisGroup();
@@ -44578,6 +44589,7 @@ var BoidView = function () {
         this.attractForceLine = createDebugLine(this.boidMesh, 0x00ff00);
         this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
         this.friendLines = createFriendLines(this.boidMesh);
+
         scene.add(this.boidMesh);
 
         this.mesh = this.boidMesh;
@@ -44585,7 +44597,7 @@ var BoidView = function () {
 
     (0, _createClass3.default)(BoidView, [{
         key: 'update',
-        value: function update(gameBoid, context) {
+        value: function update(gameBoid, context, delta) {
             this.mesh.position.copy(gameBoid.position);
 
             this._handleForceLine(gameBoid, context);
@@ -44598,6 +44610,10 @@ var BoidView = function () {
             this.debugAxis.visible = context.config.showAxis;
 
             this.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+
+            if (this.mixer) {
+                this.mixer.update(delta);
+            }
         }
     }, {
         key: '_hideForceLine',
@@ -45565,7 +45581,7 @@ var update = function update(delta, boidsViews, world) {
             var boidView = _step.value;
 
             var boid = world.getBoid(boidView.tag);
-            boidView.update(boid, context);
+            boidView.update(boid, context, delta);
         }
     } catch (err) {
         _didIteratorError = true;
