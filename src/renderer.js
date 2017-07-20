@@ -48,9 +48,9 @@ class BoidView {
             scene,
             boidGeometry = new THREE.BoxGeometry(1, 1, 1),
             boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
-
-        boidMaterial.skinning = true;
+                
         if (boidGeometry.animations) {
+            boidMaterial.skinning = true;
             this.boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
             this.mixer = new THREE.AnimationMixer(this.boidMesh);
             this.animationClips = boidGeometry.animations;
