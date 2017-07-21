@@ -42,26 +42,38 @@ const createFriendLines = (scene) => {
     return friendLines;
 };
 
+const getClipAction = (mixer, animationClips, clipName) => {
+    const clip = THREE.AnimationClip.findByName(animationClips, clipName);
+    const result = mixer.clipAction(clip);
+    if (!result) {
+        throw new Error(`Could not find clip ${clipName}`);
+    }
+    return result;
+};
+
+const flappingActionName = 'Flapping';
+const glidingActionName = 'Gliding';
 
 class BoidView {
+
     constructor(
             scene,
             boidGeometry = new THREE.BoxGeometry(1, 1, 1),
             boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
-                
-        if (boidGeometry.animations) {
-            boidMaterial.skinning = true;
-            this.boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
-            this.mixer = new THREE.AnimationMixer(this.boidMesh);
-            this.animationClips = boidGeometry.animations;
-            this.flappingClip = THREE.AnimationClip.findByName(this.animationClips, 'Flapping');
-            this.flappingAction = this.mixer.clipAction(this.flappingClip);
-            this.flappingAction
-                .startAt(this.mixer.time + randomBetween(0, 1))
-                .play();
-        } else {
-            this.boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
+
+        if (!boidGeometry.animations) {
+            throw new Error('boidGeometry must contain animations');
         }
+
+        boidMaterial.skinning = true;
+        this.boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
+        this.mixer = new THREE.AnimationMixer(this.boidMesh);
+        this.animationClips = boidGeometry.animations;
+        this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
+        this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
+        this.flappingAction
+            .startAt(this.mixer.time + randomBetween(0, 1))
+            .play();
 
         this.scaleModel = randomBetween(0.2, 0.3);
         this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
@@ -73,12 +85,24 @@ class BoidView {
         this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
         this.friendLines = createFriendLines(this.boidMesh);
 
+        this._timeTillThink = randomBetween(5, 10);
+        this._timeSinceThink = 0;
+
+        this._currentActionName = 'Flapping';
+
         scene.add(this.boidMesh);
 
         this.mesh = this.boidMesh;
     }
 
     update(gameBoid, context, delta) {
+        this._timeSinceThink += delta;
+
+        if (this._timeSinceThink > this._timeTillThink) {
+            this._think();
+            this._timeSinceThink = 0;
+        }
+
         this.mesh.position.copy(gameBoid.position);
 
         this._handleForceLine(gameBoid, context);
@@ -94,6 +118,19 @@ class BoidView {
 
         if (this.mixer) {
             this.mixer.update(delta);
+        }
+    }
+
+    _think() {
+        console.log(`boid thinking ${this._currentActionName}.`);
+        if (this._currentActionName === flappingActionName) {
+            this.glidingAction.enabled = true;
+            this.flappingAction.crossFadeTo(this.glidingAction, 0.5);
+            this._currentActionName = glidingActionName;
+        } else {
+            this.flappingAction.enabled = true;
+            this.glidingAction.crossFadeTo(this.flappingAction, 0.5);
+            this._currentActionName = flappingActionName;
         }
     }
 
