@@ -43943,392 +43943,7 @@ var CameraController = function () {
 exports.default = CameraController;
 
 /***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Boid = exports.World = undefined;
-
-var _values = __webpack_require__(39);
-
-var _values2 = _interopRequireDefault(_values);
-
-var _getIterator2 = __webpack_require__(12);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _classCallCheck2 = __webpack_require__(13);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(14);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _three = __webpack_require__(5);
-
-var _mathUtils = __webpack_require__(21);
-
-var _steering = __webpack_require__(37);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var friendDistance = 1;
-var yOffset = 10;
-var flockingCenter = new _three.Vector3(0, yOffset, 0);
-
-var BoidStates = {
-    flocking: 'flocking',
-    returning: 'returning'
-};
-
-var maxDistance = 50;
-var startFlockingAgainDistance = 45;
-
-var Boid = function () {
-    function Boid(position, direction, speed, tag) {
-        (0, _classCallCheck3.default)(this, Boid);
-
-        this.position = position;
-        this.direction = direction;
-        this.speed = speed;
-        this.tag = tag;
-        this.maxSpeed = 1.5;
-        this.minSpeed = 0.7;
-        this.maxForce = 0.1;
-        this.mass = 1;
-        this.friends = [];
-        this.maxDistanceFromCenter = 10;
-        this.state = BoidStates.flocking;
-    }
-
-    (0, _createClass3.default)(Boid, [{
-        key: 'integrate',
-        value: function integrate(steeringDirection, delta) {
-            var steeringForce = steeringDirection.clone();
-            steeringForce.clampLength(0, this.maxForce * delta);
-            var acceleration = steeringForce.clone();
-            acceleration.divideScalar(this.mass);
-
-            var velocity = this.direction.clone();
-            velocity.multiplyScalar(this.speed * delta);
-            velocity.add(acceleration);
-            velocity.clampLength(this.minSpeed * delta, this.maxSpeed * delta);
-
-            this.position.add(velocity);
-
-            this.speed = velocity.length() / delta;
-            velocity.normalize();
-            this.direction.copy(velocity);
-        }
-    }, {
-        key: 'findLocalAveragePoint',
-        value: function findLocalAveragePoint() {
-            var averagePosition = new _three.Vector3(0, 0, 0);
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)(this.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var friend = _step.value;
-
-                    averagePosition.add(friend.position);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            averagePosition.divideScalar(this.friends.length);
-            return averagePosition;
-        }
-    }, {
-        key: 'getForceTowardCenterOfFriends',
-        value: function getForceTowardCenterOfFriends() {
-            var localCenter = this.findLocalAveragePoint();
-            if (this.friends.length > 0) {
-                localCenter.sub(this.position);
-                localCenter.divideScalar(100);
-            }
-            return localCenter;
-        }
-    }, {
-        key: 'getForceAwayFromNearby',
-        value: function getForceAwayFromNearby() {
-            var result = new _three.Vector3(0, 0, 0);
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = (0, _getIterator3.default)(this.friends), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var friend = _step2.value;
-
-                    var vectorFromFriendToBoid = friend.position.clone();
-                    vectorFromFriendToBoid.sub(this.position);
-                    var lengthFromFriendToBoid = vectorFromFriendToBoid.length();
-                    var inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
-                    var forceLength = inverseOfLengthFromFriendToBoid * -0.7;
-                    vectorFromFriendToBoid.setLength(forceLength);
-
-                    result.add(vectorFromFriendToBoid);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
-            result.divideScalar(150);
-            return result;
-        }
-    }, {
-        key: 'getForceToMatchVelocity',
-        value: function getForceToMatchVelocity() {
-            var result = new _three.Vector3(0, 0, 0);
-
-            if (this.friends.length === 0) {
-                return result;
-            }
-
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = (0, _getIterator3.default)(this.friends), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var friend = _step3.value;
-
-                    result.add(friend.getVelocity());
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            result.divideScalar(this.friends.length);
-
-            result.sub(this.getVelocity());
-            result.divideScalar(320);
-            return result;
-        }
-    }, {
-        key: 'getVelocity',
-        value: function getVelocity() {
-            var velocity = this.direction.clone();
-            velocity.multiplyScalar(this.speed);
-            return velocity;
-        }
-    }, {
-        key: 'selectState',
-        value: function selectState() {
-            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
-            if (distanceToFlockingCenter > maxDistance && this.state === BoidStates.flocking) {
-                return BoidStates.returning;
-            }
-
-            if (distanceToFlockingCenter < startFlockingAgainDistance && this.state === BoidStates.returning) {
-                return BoidStates.flocking;
-            }
-
-            return this.state;
-        }
-    }, {
-        key: 'update',
-        value: function update(delta, world) {
-            this.friends = world.findNearbyBoids(this, friendDistance);
-
-            this.state = this.selectState();
-
-            var totalSteeringForce = new _three.Vector3();
-            switch (this.state) {
-                case BoidStates.flocking:
-                    this.forceToCenter = this.getForceTowardCenterOfFriends();
-                    this.forceAway = this.getForceAwayFromNearby();
-                    this.forceToMatchVelocity = this.getForceToMatchVelocity();
-                    totalSteeringForce.add(this.forceToCenter);
-                    totalSteeringForce.add(this.forceAway);
-                    totalSteeringForce.add(this.forceToMatchVelocity);
-                    break;
-                case BoidStates.returning:
-                    this.forceAway = this.getForceAwayFromNearby();
-                    totalSteeringForce.add(this.forceAway);
-                    totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
-                    break;
-            }
-
-            this.integrate(totalSteeringForce, delta);
-        }
-    }], [{
-        key: 'createWithRandomPositionAndDirection',
-        value: function createWithRandomPositionAndDirection(min, max, speed, tag) {
-            var _randomVec = (0, _mathUtils.randomVec2)(min, max),
-                xPos = _randomVec.x,
-                yPos = _randomVec.y;
-
-            var position = new _three.Vector3(xPos, yOffset, yPos);
-
-            var _randomDirection = (0, _mathUtils.randomDirection)(),
-                xDir = _randomDirection.x,
-                yDir = _randomDirection.y;
-
-            var direction = new _three.Vector3(xDir, 0, yDir);
-
-            return new Boid(position, direction, speed, tag);
-        }
-    }]);
-    return Boid;
-}();
-
-var World = function () {
-    function World() {
-        (0, _classCallCheck3.default)(this, World);
-
-        this.boids = {};
-        this.controllers = {};
-        this.nextControllerName = 0;
-    }
-
-    (0, _createClass3.default)(World, [{
-        key: 'addController',
-        value: function addController(controller, name) {
-            if (!name) {
-                this.nextControllerName += 1;
-                name = this.nextControllerName;
-            }
-            this.controllers[name] = controller;
-        }
-    }, {
-        key: 'getControllerByName',
-        value: function getControllerByName(name) {
-            return this.controllers[name];
-        }
-    }, {
-        key: 'addBoid',
-        value: function addBoid(boid) {
-            this.boids[boid.tag] = boid;
-        }
-    }, {
-        key: 'update',
-        value: function update(delta) {
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = (0, _getIterator3.default)((0, _values2.default)(this.controllers)), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var controller = _step4.value;
-
-                    controller.update(delta);
-                }
-            } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
-                    }
-                } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
-                    }
-                }
-            }
-
-            for (var key in this.boids) {
-                this.boids[key].update(delta, this);
-            }
-        }
-    }, {
-        key: 'forEachBoid',
-        value: function forEachBoid(boidAction) {
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
-
-            try {
-                for (var _iterator5 = (0, _getIterator3.default)((0, _values2.default)(this.boids)), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var boid = _step5.value;
-
-                    boidAction(boid);
-                }
-            } catch (err) {
-                _didIteratorError5 = true;
-                _iteratorError5 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
-                    }
-                } finally {
-                    if (_didIteratorError5) {
-                        throw _iteratorError5;
-                    }
-                }
-            }
-        }
-    }, {
-        key: 'getBoid',
-        value: function getBoid(key) {
-            return this.boids[key];
-        }
-    }, {
-        key: 'findNearbyBoids',
-        value: function findNearbyBoids(fromBoid, cutoffDistance) {
-            var friends = [];
-            this.forEachBoid(function (otherBoid) {
-                if (fromBoid === otherBoid) return;
-                var newDist = fromBoid.position.distanceTo(otherBoid.position);
-                if (newDist < cutoffDistance) {
-                    friends.push(otherBoid);
-                }
-            });
-            return friends;
-        }
-    }]);
-    return World;
-}();
-
-exports.World = World;
-exports.Boid = Boid;
-
-/***/ }),
+/* 33 */,
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44876,105 +44491,7 @@ exports.createCamera = createCamera;
 exports.createSkyView = createSkyView;
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.seek = exports.FLEE_STEERING = exports.SEEK_STEERING = exports.createVehicle = undefined;
-
-var _defineProperty2 = __webpack_require__(40);
-
-var _defineProperty3 = _interopRequireDefault(_defineProperty2);
-
-var _strategies;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var SEEK_STEERING = 'seek';
-var FLEE_STEERING = 'flee';
-
-var seek = function seek(currentPosition, targetPosition, speed, delta) {
-    var desiredVelocity = targetPosition.clone();
-    desiredVelocity.sub(currentPosition);
-    desiredVelocity.normalize();
-    desiredVelocity.multiplyScalar(speed * delta);
-    return desiredVelocity;
-};
-
-var flee = function flee(currentPosition, targetPosition, speed, delta) {
-    var desiredVelocity = currentPosition.clone();
-    desiredVelocity.sub(targetPosition);
-    desiredVelocity.normalize();
-    desiredVelocity.multiplyScalar(speed * delta);
-    return desiredVelocity;
-};
-
-var strategies = (_strategies = {}, (0, _defineProperty3.default)(_strategies, SEEK_STEERING, seek), (0, _defineProperty3.default)(_strategies, FLEE_STEERING, flee), _strategies);
-
-var createVehicle = function createVehicle(position, direction, speed, target, tag) {
-    var strategy = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : SEEK_STEERING;
-
-    var vehicle = {
-        position: position,
-        direction: direction,
-        speed: speed,
-        maxSpeed: 5,
-        maxForce: 0.2,
-        target: target,
-        tag: tag,
-        mass: 1,
-        strategy: strategy,
-        friends: []
-    };
-
-    var integrate = function integrate(steeringDirection, delta) {
-        var steeringForce = steeringDirection.clone();
-        steeringForce.clampLength(0, vehicle.maxForce * delta);
-        var acceleration = steeringForce.clone();
-        acceleration.divideScalar(vehicle.mass);
-
-        var velocity = vehicle.direction.clone();
-        velocity.multiplyScalar(vehicle.speed * delta);
-        velocity.add(acceleration);
-        velocity.clampLength(0, vehicle.maxSpeed * delta);
-
-        vehicle.position.add(velocity);
-
-        vehicle.speed = velocity.length() / delta;
-        velocity.normalize();
-        vehicle.direction.copy(velocity);
-    };
-
-    vehicle.update = function (delta) {
-        var desiredVelocity = strategies[vehicle.strategy](vehicle.position, vehicle.target, vehicle.maxSpeed, delta);
-
-        var steering = desiredVelocity.clone();
-        //console.log("steering: " + JSON.stringify(steering));
-        var velocity = vehicle.direction.clone();
-        velocity.multiplyScalar(vehicle.speed * delta);
-        steering.sub(velocity);
-
-        integrate(steering, delta);
-
-        //console.log("position: " + JSON.stringify(vehicle.position));
-        //console.log("direction: " + JSON.stringify(vehicle.direction));
-        //console.log("speed: " + JSON.stringify(vehicle.speed));
-    };
-
-    return vehicle;
-};
-
-exports.createVehicle = createVehicle;
-exports.SEEK_STEERING = SEEK_STEERING;
-exports.FLEE_STEERING = FLEE_STEERING;
-exports.seek = seek;
-
-/***/ }),
+/* 37 */,
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45577,7 +45094,9 @@ var _three = __webpack_require__(5);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _game = __webpack_require__(33);
+var _world = __webpack_require__(79);
+
+var _boid = __webpack_require__(77);
 
 var _renderer = __webpack_require__(36);
 
@@ -45647,7 +45166,7 @@ var setupBoids = function setupBoids(scene, world, boidGeometry, boidMaterial) {
         var boidView = new _renderer.BoidView(scene, boidGeometry, boidMaterial);
         boidView.tag = i;
         boids.push(boidView);
-        world.addBoid(_game.Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
+        world.addBoid(_boid.Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
 
@@ -45659,7 +45178,7 @@ var setup = function setup(scene) {
     var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
     (0, _persistence.initializeConfig)(context.config);
-    var world = new _game.World();
+    var world = new _world.World();
 
     var loader = new THREE.JSONLoader();
     loader.load(assetRoot + '/assets/models/skySphere.json', function (geometry, materials) {
@@ -45853,6 +45372,518 @@ function startUp() {
         render();
     };
 }
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Boid = undefined;
+
+var _getIterator2 = __webpack_require__(12);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(13);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(14);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _three = __webpack_require__(5);
+
+var _mathUtils = __webpack_require__(21);
+
+var _steering = __webpack_require__(78);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var friendDistance = 1;
+var yOffset = 10;
+var flockingCenter = new _three.Vector3(0, yOffset, 0);
+
+var BoidStates = {
+    flocking: 'flocking',
+    returning: 'returning'
+};
+
+var maxDistance = 50;
+var startFlockingAgainDistance = 45;
+
+var Boid = function () {
+    function Boid(position, direction, speed, tag) {
+        (0, _classCallCheck3.default)(this, Boid);
+
+        this.position = position;
+        this.direction = direction;
+        this.speed = speed;
+        this.tag = tag;
+        this.maxSpeed = 1.5;
+        this.minSpeed = 0.7;
+        this.maxForce = 0.1;
+        this.mass = 1;
+        this.friends = [];
+        this.maxDistanceFromCenter = 10;
+        this.state = BoidStates.flocking;
+    }
+
+    (0, _createClass3.default)(Boid, [{
+        key: 'integrate',
+        value: function integrate(steeringDirection, delta) {
+            var steeringForce = steeringDirection.clone();
+            steeringForce.clampLength(0, this.maxForce * delta);
+            var acceleration = steeringForce.clone();
+            acceleration.divideScalar(this.mass);
+
+            var velocity = this.direction.clone();
+            velocity.multiplyScalar(this.speed * delta);
+            velocity.add(acceleration);
+            velocity.clampLength(this.minSpeed * delta, this.maxSpeed * delta);
+
+            this.position.add(velocity);
+
+            this.speed = velocity.length() / delta;
+            velocity.normalize();
+            this.direction.copy(velocity);
+        }
+    }, {
+        key: 'findLocalAveragePoint',
+        value: function findLocalAveragePoint() {
+            var averagePosition = new _three.Vector3(0, 0, 0);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var friend = _step.value;
+
+                    averagePosition.add(friend.position);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            averagePosition.divideScalar(this.friends.length);
+            return averagePosition;
+        }
+    }, {
+        key: 'getForceTowardCenterOfFriends',
+        value: function getForceTowardCenterOfFriends() {
+            var localCenter = this.findLocalAveragePoint();
+            if (this.friends.length > 0) {
+                localCenter.sub(this.position);
+                localCenter.divideScalar(100);
+            }
+            return localCenter;
+        }
+    }, {
+        key: 'getForceAwayFromNearby',
+        value: function getForceAwayFromNearby() {
+            var result = new _three.Vector3(0, 0, 0);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)(this.friends), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var friend = _step2.value;
+
+                    var vectorFromFriendToBoid = friend.position.clone();
+                    vectorFromFriendToBoid.sub(this.position);
+                    var lengthFromFriendToBoid = vectorFromFriendToBoid.length();
+                    var inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
+                    var forceLength = inverseOfLengthFromFriendToBoid * -0.7;
+                    vectorFromFriendToBoid.setLength(forceLength);
+
+                    result.add(vectorFromFriendToBoid);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            result.divideScalar(150);
+            return result;
+        }
+    }, {
+        key: 'getForceToMatchVelocity',
+        value: function getForceToMatchVelocity() {
+            var result = new _three.Vector3(0, 0, 0);
+
+            if (this.friends.length === 0) {
+                return result;
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = (0, _getIterator3.default)(this.friends), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var friend = _step3.value;
+
+                    result.add(friend.getVelocity());
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            result.divideScalar(this.friends.length);
+
+            result.sub(this.getVelocity());
+            result.divideScalar(320);
+            return result;
+        }
+    }, {
+        key: 'getVelocity',
+        value: function getVelocity() {
+            var velocity = this.direction.clone();
+            velocity.multiplyScalar(this.speed);
+            return velocity;
+        }
+    }, {
+        key: 'selectState',
+        value: function selectState() {
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter > maxDistance && this.state === BoidStates.flocking) {
+                return BoidStates.returning;
+            }
+
+            if (distanceToFlockingCenter < startFlockingAgainDistance && this.state === BoidStates.returning) {
+                return BoidStates.flocking;
+            }
+
+            return this.state;
+        }
+    }, {
+        key: 'update',
+        value: function update(delta, world) {
+            this.friends = world.findNearbyBoids(this, friendDistance);
+
+            this.state = this.selectState();
+
+            var totalSteeringForce = new _three.Vector3();
+            switch (this.state) {
+                case BoidStates.flocking:
+                    this.forceToCenter = this.getForceTowardCenterOfFriends();
+                    this.forceAway = this.getForceAwayFromNearby();
+                    this.forceToMatchVelocity = this.getForceToMatchVelocity();
+                    totalSteeringForce.add(this.forceToCenter);
+                    totalSteeringForce.add(this.forceAway);
+                    totalSteeringForce.add(this.forceToMatchVelocity);
+                    break;
+                case BoidStates.returning:
+                    this.forceAway = this.getForceAwayFromNearby();
+                    totalSteeringForce.add(this.forceAway);
+                    totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
+                    break;
+            }
+
+            this.integrate(totalSteeringForce, delta);
+        }
+    }], [{
+        key: 'createWithRandomPositionAndDirection',
+        value: function createWithRandomPositionAndDirection(min, max, speed, tag) {
+            var _randomVec = (0, _mathUtils.randomVec2)(min, max),
+                xPos = _randomVec.x,
+                yPos = _randomVec.y;
+
+            var position = new _three.Vector3(xPos, yOffset, yPos);
+
+            var _randomDirection = (0, _mathUtils.randomDirection)(),
+                xDir = _randomDirection.x,
+                yDir = _randomDirection.y;
+
+            var direction = new _three.Vector3(xDir, 0, yDir);
+
+            return new Boid(position, direction, speed, tag);
+        }
+    }]);
+    return Boid;
+}();
+
+exports.Boid = Boid;
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.seek = exports.FLEE_STEERING = exports.SEEK_STEERING = exports.createVehicle = undefined;
+
+var _defineProperty2 = __webpack_require__(40);
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _strategies;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SEEK_STEERING = 'seek';
+var FLEE_STEERING = 'flee';
+
+var seek = function seek(currentPosition, targetPosition, speed, delta) {
+    var desiredVelocity = targetPosition.clone();
+    desiredVelocity.sub(currentPosition);
+    desiredVelocity.normalize();
+    desiredVelocity.multiplyScalar(speed * delta);
+    return desiredVelocity;
+};
+
+var flee = function flee(currentPosition, targetPosition, speed, delta) {
+    var desiredVelocity = currentPosition.clone();
+    desiredVelocity.sub(targetPosition);
+    desiredVelocity.normalize();
+    desiredVelocity.multiplyScalar(speed * delta);
+    return desiredVelocity;
+};
+
+var strategies = (_strategies = {}, (0, _defineProperty3.default)(_strategies, SEEK_STEERING, seek), (0, _defineProperty3.default)(_strategies, FLEE_STEERING, flee), _strategies);
+
+var createVehicle = function createVehicle(position, direction, speed, target, tag) {
+    var strategy = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : SEEK_STEERING;
+
+    var vehicle = {
+        position: position,
+        direction: direction,
+        speed: speed,
+        maxSpeed: 5,
+        maxForce: 0.2,
+        target: target,
+        tag: tag,
+        mass: 1,
+        strategy: strategy,
+        friends: []
+    };
+
+    var integrate = function integrate(steeringDirection, delta) {
+        var steeringForce = steeringDirection.clone();
+        steeringForce.clampLength(0, vehicle.maxForce * delta);
+        var acceleration = steeringForce.clone();
+        acceleration.divideScalar(vehicle.mass);
+
+        var velocity = vehicle.direction.clone();
+        velocity.multiplyScalar(vehicle.speed * delta);
+        velocity.add(acceleration);
+        velocity.clampLength(0, vehicle.maxSpeed * delta);
+
+        vehicle.position.add(velocity);
+
+        vehicle.speed = velocity.length() / delta;
+        velocity.normalize();
+        vehicle.direction.copy(velocity);
+    };
+
+    vehicle.update = function (delta) {
+        var desiredVelocity = strategies[vehicle.strategy](vehicle.position, vehicle.target, vehicle.maxSpeed, delta);
+
+        var steering = desiredVelocity.clone();
+        //console.log("steering: " + JSON.stringify(steering));
+        var velocity = vehicle.direction.clone();
+        velocity.multiplyScalar(vehicle.speed * delta);
+        steering.sub(velocity);
+
+        integrate(steering, delta);
+
+        //console.log("position: " + JSON.stringify(vehicle.position));
+        //console.log("direction: " + JSON.stringify(vehicle.direction));
+        //console.log("speed: " + JSON.stringify(vehicle.speed));
+    };
+
+    return vehicle;
+};
+
+exports.createVehicle = createVehicle;
+exports.SEEK_STEERING = SEEK_STEERING;
+exports.FLEE_STEERING = FLEE_STEERING;
+exports.seek = seek;
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.World = undefined;
+
+var _values = __webpack_require__(39);
+
+var _values2 = _interopRequireDefault(_values);
+
+var _getIterator2 = __webpack_require__(12);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(13);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(14);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var World = function () {
+    function World() {
+        (0, _classCallCheck3.default)(this, World);
+
+        this.boids = {};
+        this.controllers = {};
+        this.nextControllerName = 0;
+    }
+
+    (0, _createClass3.default)(World, [{
+        key: "addController",
+        value: function addController(controller, name) {
+            if (!name) {
+                this.nextControllerName += 1;
+                name = this.nextControllerName;
+            }
+            this.controllers[name] = controller;
+        }
+    }, {
+        key: "getControllerByName",
+        value: function getControllerByName(name) {
+            return this.controllers[name];
+        }
+    }, {
+        key: "addBoid",
+        value: function addBoid(boid) {
+            this.boids[boid.tag] = boid;
+        }
+    }, {
+        key: "update",
+        value: function update(delta) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)((0, _values2.default)(this.controllers)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var controller = _step.value;
+
+                    controller.update(delta);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            for (var key in this.boids) {
+                this.boids[key].update(delta, this);
+            }
+        }
+    }, {
+        key: "forEachBoid",
+        value: function forEachBoid(boidAction) {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)((0, _values2.default)(this.boids)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var boid = _step2.value;
+
+                    boidAction(boid);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    }, {
+        key: "getBoid",
+        value: function getBoid(key) {
+            return this.boids[key];
+        }
+    }, {
+        key: "findNearbyBoids",
+        value: function findNearbyBoids(fromBoid, cutoffDistance) {
+            var friends = [];
+            this.forEachBoid(function (otherBoid) {
+                if (fromBoid === otherBoid) return;
+                var newDist = fromBoid.position.distanceTo(otherBoid.position);
+                if (newDist < cutoffDistance) {
+                    friends.push(otherBoid);
+                }
+            });
+            return friends;
+        }
+    }]);
+    return World;
+}();
+
+exports.World = World;
 
 /***/ })
 /******/ ]);

@@ -1,10 +1,12 @@
 import { Vector3 } from 'three';
-import { randomDirection, randomVec2 } from './mathUtils';
+
+import { randomDirection, randomVec2 } from '../mathUtils';
 import { seek } from './steering';
 
 const friendDistance = 1;
 const yOffset = 10;
 const flockingCenter = new Vector3(0, yOffset, 0);
+
 
 const BoidStates = {
     flocking: 'flocking',
@@ -13,6 +15,7 @@ const BoidStates = {
 
 const maxDistance = 50;
 const startFlockingAgainDistance = 45;
+
 
 class Boid {
 
@@ -154,59 +157,4 @@ class Boid {
     }
 }
 
-class World {
-    constructor() {
-        this.boids = {};
-        this.controllers = {};
-        this.nextControllerName = 0;        
-    }
-
-    addController(controller, name) {
-        if (!name) {
-            this.nextControllerName += 1;
-            name = this.nextControllerName;
-        }
-        this.controllers[name] = controller;
-    }
-
-    getControllerByName (name) {
-        return this.controllers[name];
-    }
-
-    addBoid(boid) {
-        this.boids[boid.tag] = boid;
-    }
-
-    update(delta) {
-        for (const controller of Object.values(this.controllers)) {
-            controller.update(delta);
-        }
-        for (const key in this.boids) {
-            this.boids[key].update(delta, this);
-        }
-    }
-
-    forEachBoid(boidAction) {
-        for (var boid of Object.values(this.boids)) {
-            boidAction(boid);
-        }
-    }
-
-    getBoid(key) {
-        return this.boids[key];
-    }
-
-    findNearbyBoids(fromBoid, cutoffDistance) {
-        const friends = [];
-        this.forEachBoid(otherBoid => {
-            if (fromBoid === otherBoid) return;
-            const newDist = fromBoid.position.distanceTo(otherBoid.position);
-            if (newDist < cutoffDistance) {
-                friends.push(otherBoid);
-            }
-        });
-        return friends;
-    }
-}
-
-export { World, Boid };
+export { Boid };
