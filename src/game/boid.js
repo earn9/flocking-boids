@@ -31,6 +31,7 @@ class Boid {
         this.friends = [];
         this.maxDistanceFromCenter = 10;
         this.state = BoidStates.flocking;
+        this.getMovementVector = this.flock;
     }
 
     integrate(steeringDirection, delta) {
@@ -121,29 +122,45 @@ class Boid {
         return this.state;        
     }
 
+    flock() {
+        const totalSteeringForce = new Vector3();
+
+        this.forceToCenter = this.getForceTowardCenterOfFriends();
+        this.forceAway = this.getForceAwayFromNearby(); 
+        this.forceToMatchVelocity = this.getForceToMatchVelocity();
+        totalSteeringForce.add(this.forceToCenter);
+        totalSteeringForce.add(this.forceAway);
+        totalSteeringForce.add(this.forceToMatchVelocity);
+
+        const distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+        if (distanceToFlockingCenter > maxDistance) {
+            this.getMovementVector = this.turnBack;
+        } 
+
+        return totalSteeringForce;
+    }
+
+    turnBack(delta) {
+        const totalSteeringForce = new Vector3();
+
+        this.forceAway = this.getForceAwayFromNearby(); 
+        totalSteeringForce.add(this.forceAway);
+        totalSteeringForce.add(seek(this.position, flockingCenter, this.speed, delta));
+
+        const distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+        if (distanceToFlockingCenter < startFlockingAgainDistance) {
+            this.getMovementVector = this.flock;
+        }
+
+        return totalSteeringForce;
+    }
+
     update(delta, world) {
         this.friends = world.findNearbyBoids(this, friendDistance);
 
-        this.state = this.selectState();
+        const movementVector = this.getMovementVector(delta);
 
-        const totalSteeringForce = new Vector3();
-        switch (this.state) {
-            case BoidStates.flocking:
-                this.forceToCenter = this.getForceTowardCenterOfFriends();
-                this.forceAway = this.getForceAwayFromNearby(); 
-                this.forceToMatchVelocity = this.getForceToMatchVelocity();
-                totalSteeringForce.add(this.forceToCenter);
-                totalSteeringForce.add(this.forceAway);
-                totalSteeringForce.add(this.forceToMatchVelocity);
-                break;
-            case BoidStates.returning:
-                this.forceAway = this.getForceAwayFromNearby(); 
-                totalSteeringForce.add(this.forceAway);
-                totalSteeringForce.add(seek(this.position, flockingCenter, this.speed, delta));
-                break;
-        }
-
-        this.integrate(totalSteeringForce, delta);
+        this.integrate(movementVector, delta);
     } 
 
     static createWithRandomPositionAndDirection(min, max, speed, tag) {

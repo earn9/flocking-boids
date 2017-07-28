@@ -45432,6 +45432,7 @@ var Boid = function () {
         this.friends = [];
         this.maxDistanceFromCenter = 10;
         this.state = BoidStates.flocking;
+        this.getMovementVector = this.flock;
     }
 
     (0, _createClass3.default)(Boid, [{
@@ -45596,30 +45597,48 @@ var Boid = function () {
             return this.state;
         }
     }, {
+        key: 'flock',
+        value: function flock() {
+            var totalSteeringForce = new _three.Vector3();
+
+            this.forceToCenter = this.getForceTowardCenterOfFriends();
+            this.forceAway = this.getForceAwayFromNearby();
+            this.forceToMatchVelocity = this.getForceToMatchVelocity();
+            totalSteeringForce.add(this.forceToCenter);
+            totalSteeringForce.add(this.forceAway);
+            totalSteeringForce.add(this.forceToMatchVelocity);
+
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter > maxDistance) {
+                this.getMovementVector = this.turnBack;
+            }
+
+            return totalSteeringForce;
+        }
+    }, {
+        key: 'turnBack',
+        value: function turnBack(delta) {
+            var totalSteeringForce = new _three.Vector3();
+
+            this.forceAway = this.getForceAwayFromNearby();
+            totalSteeringForce.add(this.forceAway);
+            totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
+
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter < startFlockingAgainDistance) {
+                this.getMovementVector = this.flock;
+            }
+
+            return totalSteeringForce;
+        }
+    }, {
         key: 'update',
         value: function update(delta, world) {
             this.friends = world.findNearbyBoids(this, friendDistance);
 
-            this.state = this.selectState();
+            var movementVector = this.getMovementVector(delta);
 
-            var totalSteeringForce = new _three.Vector3();
-            switch (this.state) {
-                case BoidStates.flocking:
-                    this.forceToCenter = this.getForceTowardCenterOfFriends();
-                    this.forceAway = this.getForceAwayFromNearby();
-                    this.forceToMatchVelocity = this.getForceToMatchVelocity();
-                    totalSteeringForce.add(this.forceToCenter);
-                    totalSteeringForce.add(this.forceAway);
-                    totalSteeringForce.add(this.forceToMatchVelocity);
-                    break;
-                case BoidStates.returning:
-                    this.forceAway = this.getForceAwayFromNearby();
-                    totalSteeringForce.add(this.forceAway);
-                    totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
-                    break;
-            }
-
-            this.integrate(totalSteeringForce, delta);
+            this.integrate(movementVector, delta);
         }
     }], [{
         key: 'createWithRandomPositionAndDirection',
