@@ -43,22 +43,27 @@ const cameraKey = 'camera';
 
 const boids = [];
 
+const loadAsync = (loader, url) => {
+    return new Promise((resolve, reject) => {
+        loader.load(url, (geometry, materials) => {
+            resolve({ geometry, materials });
+        });
+    });
+};
+
 const setup = (scene, assetRoot = '') => {
     initializeConfig(context.config);
     const world = new World();
 
     const loader = new THREE.JSONLoader();
-    loader.load(`${assetRoot}/assets/models/skySphere.json`, (geometry, materials) => {
-        createSkyView(scene, geometry, materials);
-    });
+    loadAsync(loader, `${assetRoot}/assets/models/skySphere.json`)
+        .then(loadedData => createSkyView(scene, loadedData.geometry, loadedData.materials));
 
-    loader.load(`${assetRoot}/assets/models/birdSimple02.json`, (geometry, materials) => { 
-        setupBoids(scene, world, geometry, materials[0], boids);
-    });
+    loadAsync(loader, `${assetRoot}/assets/models/birdSimple02.json`)
+        .then(loadedData => setupBoids(scene, world, loadedData.geometry, loadedData.materials[0], boids));
 
-    loader.load(`${assetRoot}/assets/models/terain01.json`, (geometry, material) => {
-        scene.add(createFloor(geometry, material));
-    });
+    loadAsync(loader, `${assetRoot}/assets/models/terain01.json`)
+        .then(loadedData => scene.add(createFloor(loadedData.geometry, loadedData.material)));
 
     for (const light of createLights()) {
         scene.add(light);
