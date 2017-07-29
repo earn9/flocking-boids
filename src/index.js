@@ -53,6 +53,10 @@ function loadAsync(loader, url, onProgress = () => {}) {
     });
 }
 
+function noDecimal(number) {
+    return number.toFixed(0);
+}
+
 function loadResourceAsync(loader, url, onSuccess) {
     return loadAsync(loader, url,
             (url, loaded, total) => console.log(`loading ${url}: ${noDecimal(loaded/total * 100)}%`))
@@ -60,14 +64,7 @@ function loadResourceAsync(loader, url, onSuccess) {
         .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
 }
 
-function noDecimal(number) {
-    return number.toFixed(0);
-}
-
-function setup(scene, assetRoot = '') {
-    initializeConfig(context.config);
-    const world = new World();
-
+function loadAllResources(scene, world, assetRoot) {
     const loader = new THREE.JSONLoader();
     
     const loadSkySphere = loadResourceAsync(
@@ -88,8 +85,16 @@ function setup(scene, assetRoot = '') {
         loadedData => scene.add(createFloor(loadedData.geometry, loadedData.material))
     );
 
-    Promise.all([loadSkySphere, loadBird, loadTerrain])
-        .then(() => console.log('done loading!'));
+    return Promise.all([loadSkySphere, loadBird, loadTerrain]);
+        // .then(() => console.log('done loading!'));
+}
+
+async function setup(scene, assetRoot = '') {
+    initializeConfig(context.config);
+    const world = new World();
+
+    await loadAllResources(scene, world, assetRoot);
+    console.log('loading done!');
 
     for (const light of createLights()) {
         scene.add(light);
@@ -192,7 +197,7 @@ const createHandleWindowResize = (camera, renderer) =>
 
 export function startUp(assetRoot = '') {
 
-    window.onload = () => {
+    window.onload = async () => {
         var scene = new THREE.Scene();
 
         var renderer = new THREE.WebGLRenderer();
@@ -200,8 +205,10 @@ export function startUp(assetRoot = '') {
 
         document.body.appendChild(renderer.domElement);
 
-        var { world, boids, camera } = setup(scene, assetRoot);
+        var { world, boids, camera } = await setup(scene, assetRoot);
 
+        console.log('setup complete');
+        
         window.onresize = createHandleWindowResize(camera, renderer);
 
         if (pointerLockSupported()) {
