@@ -14,3 +14,6 @@ Done so far
 -----------
 
 * Fixed debug lines.
+* There are two animations:
+    * Flapping and 
+    * Gliding

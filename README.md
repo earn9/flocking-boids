@@ -1,6 +1,11 @@
 # Flocking Boids
 
+See this project's progress on it's [github.io](https://liquidvapour.github.io/flocking-boids/) page.
+
+The current version of the app can be see [here](https://liquidvapour.github.io/flocking-boids/game03/).
+
 A Boids implementation for WebGL writen using threejs.org
+
 
 ## References
 
