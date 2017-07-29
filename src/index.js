@@ -43,27 +43,53 @@ const cameraKey = 'camera';
 
 const boids = [];
 
-const loadAsync = (loader, url) => {
+function loadAsync(loader, url, onProgress = () => {}) {
     return new Promise((resolve, reject) => {
         loader.load(url, (geometry, materials) => {
             resolve({ geometry, materials });
-        });
+        },
+        request => onProgress(url, request.loaded, request.total), 
+        err => reject({ url, err }));
     });
-};
+}
 
-const setup = (scene, assetRoot = '') => {
+function loadResourceAsync(loader, url, onSuccess) {
+    return loadAsync(loader, url,
+            (url, loaded, total) => console.log(`loading ${url}: ${noDecimal(loaded/total * 100)}%`))
+        .then(loadedData => onSuccess(loadedData))
+        .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
+}
+
+function noDecimal(number) {
+    return number.toFixed(0);
+}
+
+function setup(scene, assetRoot = '') {
     initializeConfig(context.config);
     const world = new World();
 
     const loader = new THREE.JSONLoader();
-    loadAsync(loader, `${assetRoot}/assets/models/skySphere.json`)
-        .then(loadedData => createSkyView(scene, loadedData.geometry, loadedData.materials));
+    
+    const loadSkySphere = loadResourceAsync(
+        loader,
+        `${assetRoot}/assets/models/skySphere.json`,
+        skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials)
+    );
 
-    loadAsync(loader, `${assetRoot}/assets/models/birdSimple02.json`)
-        .then(loadedData => setupBoids(scene, world, loadedData.geometry, loadedData.materials[0], boids));
+    const loadBird = loadResourceAsync(
+        loader,
+        `${assetRoot}/assets/models/birdSimple02.json`,
+        loadedData => setupBoids(scene, world, loadedData.geometry, loadedData.materials[0], boids)
+    );
 
-    loadAsync(loader, `${assetRoot}/assets/models/terain01.json`)
-        .then(loadedData => scene.add(createFloor(loadedData.geometry, loadedData.material)));
+    const loadTerrain = loadResourceAsync(
+        loader,
+        `${assetRoot}/assets/models/terain01.json`,
+        loadedData => scene.add(createFloor(loadedData.geometry, loadedData.material))
+    );
+
+    Promise.all([loadSkySphere, loadBird, loadTerrain])
+        .then(() => console.log('done loading!'));
 
     for (const light of createLights()) {
         scene.add(light);
@@ -74,7 +100,7 @@ const setup = (scene, assetRoot = '') => {
     world.addController(new CameraController(camera), cameraKey);
 
     return { world, boids, camera };
-};
+}
 
 const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
     const internalRender = () => {
