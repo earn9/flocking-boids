@@ -44478,14 +44478,6 @@ var _asyncToGenerator2 = __webpack_require__(99);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _stringify = __webpack_require__(43);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-var _promise = __webpack_require__(45);
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _getIterator2 = __webpack_require__(14);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
@@ -44511,6 +44503,10 @@ var _pointerLockControls2 = _interopRequireDefault(_pointerLockControls);
 var _CameraController = __webpack_require__(94);
 
 var _CameraController2 = _interopRequireDefault(_CameraController);
+
+var _resources = __webpack_require__(100);
+
+var _resources2 = _interopRequireDefault(_resources);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -44576,42 +44572,6 @@ var cameraKey = 'camera';
 
 var boids = [];
 
-var loadAsync = function loadAsync(loader, url) {
-    var onProgress = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-    return new _promise2.default(function (resolve, reject) {
-        loader.load(url, function (geometry, materials) {
-            resolve({ geometry: geometry, materials: materials });
-        }, function (request) {
-            return onProgress(url, request.loaded, request.total);
-        }, function (err) {
-            return reject({ url: url, err: err });
-        });
-    });
-};
-
-var noDecimal = function noDecimal(number) {
-    return number.toFixed(0);
-};
-
-var loadResourceAsync = function loadResourceAsync(loader, url, onSuccess) {
-    return loadAsync(loader, url, function (url, loaded, total) {
-        return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
-    }).then(function (loadedData) {
-        return onSuccess(loadedData);
-    }).catch(function (err) {
-        return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
-    });
-};
-
-var loadAllResources = function loadAllResources(resources) {
-    var loader = new THREE.JSONLoader();
-
-    return _promise2.default.all(resources.map(function (x) {
-        return loadResourceAsync(loader, x.url, x.onSuccess);
-    }));
-};
-
 var setup = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
         var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
@@ -44641,7 +44601,7 @@ var setup = function () {
                             }
                         }];
                         _context.next = 5;
-                        return loadAllResources(resources);
+                        return (0, _resources2.default)(resources);
 
                     case 5:
 
@@ -44706,7 +44666,7 @@ var setup = function () {
         }, _callee, undefined, [[9, 13, 17, 25], [18,, 20, 24]]);
     }));
 
-    return function setup(_x4) {
+    return function setup(_x3) {
         return _ref.apply(this, arguments);
     };
 }();
@@ -47919,6 +47879,67 @@ exports.default = function (fn) {
     });
   };
 };
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _stringify = __webpack_require__(43);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = __webpack_require__(45);
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _three = __webpack_require__(15);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var loadAsync = function loadAsync(loader, url) {
+    var onProgress = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+    return new _promise2.default(function (resolve, reject) {
+        loader.load(url, function (geometry, materials) {
+            resolve({ geometry: geometry, materials: materials });
+        }, function (request) {
+            return onProgress(url, request.loaded, request.total);
+        }, function (err) {
+            return reject({ url: url, err: err });
+        });
+    });
+};
+
+var noDecimal = function noDecimal(number) {
+    return number.toFixed(0);
+};
+
+var loadResourceAsync = function loadResourceAsync(loader, url, onSuccess) {
+    return loadAsync(loader, url, function (url, loaded, total) {
+        return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
+    }).then(function (loadedData) {
+        return onSuccess(loadedData);
+    }).catch(function (err) {
+        return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
+    });
+};
+
+var loadAllResources = function loadAllResources(resources) {
+    var loader = new _three.JSONLoader();
+
+    return _promise2.default.all(resources.map(function (x) {
+        return loadResourceAsync(loader, x.url, x.onSuccess);
+    }));
+};
+
+exports.default = loadAllResources;
 
 /***/ })
 /******/ ]);
