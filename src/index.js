@@ -64,35 +64,33 @@ const loadResourceAsync = (loader, url, onSuccess) => {
         .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
 };
 
-const loadAllResources = (scene, world, assetRoot) => {
+const loadAllResources = (resources) => {
     const loader = new THREE.JSONLoader();
     
-    const loadSkySphere = loadResourceAsync(
-        loader,
-        `${assetRoot}/assets/models/skySphere.json`,
-        skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials)
-    );
-
-    const loadBird = loadResourceAsync(
-        loader,
-        `${assetRoot}/assets/models/birdSimple02.json`,
-        loadedData => setupBoids(scene, world, loadedData.geometry, loadedData.materials[0], boids)
-    );
-
-    const loadTerrain = loadResourceAsync(
-        loader,
-        `${assetRoot}/assets/models/terain01.json`,
-        loadedData => scene.add(createFloor(loadedData.geometry, loadedData.material))
-    );
-
-    return Promise.all([loadSkySphere, loadBird, loadTerrain]);
+    return Promise.all(resources.map(x => loadResourceAsync(loader, x.url, x.onSuccess)));
 };
 
 const setup = async (scene, assetRoot = '') => {
     initializeConfig(context.config);
     const world = new World();
 
-    await loadAllResources(scene, world, assetRoot);
+    const resources = [
+        { 
+            url: `${assetRoot}/assets/models/skySphere.json`,
+            onSuccess: skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials)
+        },
+        { 
+            url: `${assetRoot}/assets/models/birdSimple02.json`,
+            onSuccess: bird => setupBoids(scene, world, bird.geometry, bird.materials[0], boids)
+        },
+        { 
+            url: `${assetRoot}/assets/models/terain01.json`,
+            onSuccess: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
+        }
+    ];
+
+    await loadAllResources(resources);
+
     console.log('loading done!');
 
     for (const light of createLights()) {
