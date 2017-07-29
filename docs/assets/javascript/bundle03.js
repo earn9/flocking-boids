@@ -46611,10 +46611,9 @@ var BoidView = function () {
     return BoidView;
 }();
 
-var createSkyView = function createSkyView(scene, geometry, material) {
-    if (!material) {
-        material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
-    }
+var createSkyView = function createSkyView(scene, geometry) {
+    var material = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
+
     var skyMesh = new THREE.Mesh(geometry, material);
     scene.add(skyMesh);
 };

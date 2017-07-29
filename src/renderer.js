@@ -231,10 +231,7 @@ class BoidView {
     }
 }
 
-const createSkyView = (scene, geometry, material) => {
-    if (!material) {
-        material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
-    }
+const createSkyView = (scene, geometry, material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 })) => {
     const skyMesh = new THREE.Mesh(geometry, material);
     scene.add(skyMesh);
 };
