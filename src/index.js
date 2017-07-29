@@ -43,7 +43,7 @@ const cameraKey = 'camera';
 
 const boids = [];
 
-function loadAsync(loader, url, onProgress = () => {}) {
+const loadAsync = (loader, url, onProgress = () => {}) => {
     return new Promise((resolve, reject) => {
         loader.load(url, (geometry, materials) => {
             resolve({ geometry, materials });
@@ -51,20 +51,20 @@ function loadAsync(loader, url, onProgress = () => {}) {
         request => onProgress(url, request.loaded, request.total), 
         err => reject({ url, err }));
     });
-}
+};
 
-function noDecimal(number) {
+const noDecimal = (number) => {
     return number.toFixed(0);
-}
+};
 
-function loadResourceAsync(loader, url, onSuccess) {
+const loadResourceAsync = (loader, url, onSuccess) => {
     return loadAsync(loader, url,
             (url, loaded, total) => console.log(`loading ${url}: ${noDecimal(loaded/total * 100)}%`))
         .then(loadedData => onSuccess(loadedData))
         .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
-}
+};
 
-function loadAllResources(scene, world, assetRoot) {
+const loadAllResources = (scene, world, assetRoot) => {
     const loader = new THREE.JSONLoader();
     
     const loadSkySphere = loadResourceAsync(
@@ -86,10 +86,9 @@ function loadAllResources(scene, world, assetRoot) {
     );
 
     return Promise.all([loadSkySphere, loadBird, loadTerrain]);
-        // .then(() => console.log('done loading!'));
-}
+};
 
-async function setup(scene, assetRoot = '') {
+const setup = async (scene, assetRoot = '') => {
     initializeConfig(context.config);
     const world = new World();
 
@@ -105,7 +104,7 @@ async function setup(scene, assetRoot = '') {
     world.addController(new CameraController(camera), cameraKey);
 
     return { world, boids, camera };
-}
+};
 
 const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
     const internalRender = () => {
@@ -208,7 +207,7 @@ export function startUp(assetRoot = '') {
         var { world, boids, camera } = await setup(scene, assetRoot);
 
         console.log('setup complete');
-        
+
         window.onresize = createHandleWindowResize(camera, renderer);
 
         if (pointerLockSupported()) {

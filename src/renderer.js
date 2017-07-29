@@ -2,9 +2,7 @@ import * as THREE from 'three';
 import { randomBetween } from './mathUtils';
 
 const center = new THREE.Vector3(0, 0, 0);
-const xAxisNormal = new THREE.Vector3(1, 0, 0);
 const yAxisNormal = new THREE.Vector3(0, 1, 0);
-const zAxisNormal = new THREE.Vector3(0, 0, 1);
 
 const xAxisHalfNormal = new THREE.Vector3(0.5, 0, 0);
 const yAxisHalfNormal = new THREE.Vector3(0, 0.5, 0);
@@ -122,7 +120,6 @@ class BoidView {
     }
 
     _think() {
-        console.log(`boid thinking ${this._currentActionName}.`);
         if (this._currentActionName === flappingActionName) {
             this.glidingAction.enabled = true;
             this.flappingAction.crossFadeTo(this.glidingAction, 0.5);

@@ -44490,88 +44490,6 @@ var _getIterator2 = __webpack_require__(14);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var setup = function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
-        var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-        var world, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
-
-        return _regenerator2.default.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        (0, _persistence.initializeConfig)(context.config);
-                        world = new _world.World();
-                        _context.next = 4;
-                        return loadAllResources(scene, world, assetRoot);
-
-                    case 4:
-                        console.log('loading done!');
-
-                        _iteratorNormalCompletion2 = true;
-                        _didIteratorError2 = false;
-                        _iteratorError2 = undefined;
-                        _context.prev = 8;
-                        for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                            light = _step2.value;
-
-                            scene.add(light);
-                        }
-
-                        _context.next = 16;
-                        break;
-
-                    case 12:
-                        _context.prev = 12;
-                        _context.t0 = _context['catch'](8);
-                        _didIteratorError2 = true;
-                        _iteratorError2 = _context.t0;
-
-                    case 16:
-                        _context.prev = 16;
-                        _context.prev = 17;
-
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-
-                    case 19:
-                        _context.prev = 19;
-
-                        if (!_didIteratorError2) {
-                            _context.next = 22;
-                            break;
-                        }
-
-                        throw _iteratorError2;
-
-                    case 22:
-                        return _context.finish(19);
-
-                    case 23:
-                        return _context.finish(16);
-
-                    case 24:
-                        camera = (0, _renderer.createCamera)();
-
-
-                        world.addController(new _CameraController2.default(camera), cameraKey);
-
-                        return _context.abrupt('return', { world: world, boids: boids, camera: camera });
-
-                    case 27:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
-    }));
-
-    return function setup(_x4) {
-        return _ref.apply(this, arguments);
-    };
-}();
-
 exports.startUp = startUp;
 
 var _three = __webpack_require__(15);
@@ -44658,7 +44576,7 @@ var cameraKey = 'camera';
 
 var boids = [];
 
-function loadAsync(loader, url) {
+var loadAsync = function loadAsync(loader, url) {
     var onProgress = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
     return new _promise2.default(function (resolve, reject) {
@@ -44670,13 +44588,13 @@ function loadAsync(loader, url) {
             return reject({ url: url, err: err });
         });
     });
-}
+};
 
-function noDecimal(number) {
+var noDecimal = function noDecimal(number) {
     return number.toFixed(0);
-}
+};
 
-function loadResourceAsync(loader, url, onSuccess) {
+var loadResourceAsync = function loadResourceAsync(loader, url, onSuccess) {
     return loadAsync(loader, url, function (url, loaded, total) {
         return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
     }).then(function (loadedData) {
@@ -44684,9 +44602,9 @@ function loadResourceAsync(loader, url, onSuccess) {
     }).catch(function (err) {
         return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
     });
-}
+};
 
-function loadAllResources(scene, world, assetRoot) {
+var loadAllResources = function loadAllResources(scene, world, assetRoot) {
     var loader = new THREE.JSONLoader();
 
     var loadSkySphere = loadResourceAsync(loader, assetRoot + '/assets/models/skySphere.json', function (skySphere) {
@@ -44702,8 +44620,89 @@ function loadAllResources(scene, world, assetRoot) {
     });
 
     return _promise2.default.all([loadSkySphere, loadBird, loadTerrain]);
-    // .then(() => console.log('done loading!'));
-}
+};
+
+var setup = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
+        var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+        var world, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
+
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        (0, _persistence.initializeConfig)(context.config);
+                        world = new _world.World();
+                        _context.next = 4;
+                        return loadAllResources(scene, world, assetRoot);
+
+                    case 4:
+                        console.log('loading done!');
+
+                        _iteratorNormalCompletion2 = true;
+                        _didIteratorError2 = false;
+                        _iteratorError2 = undefined;
+                        _context.prev = 8;
+                        for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            light = _step2.value;
+
+                            scene.add(light);
+                        }
+
+                        _context.next = 16;
+                        break;
+
+                    case 12:
+                        _context.prev = 12;
+                        _context.t0 = _context['catch'](8);
+                        _didIteratorError2 = true;
+                        _iteratorError2 = _context.t0;
+
+                    case 16:
+                        _context.prev = 16;
+                        _context.prev = 17;
+
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+
+                    case 19:
+                        _context.prev = 19;
+
+                        if (!_didIteratorError2) {
+                            _context.next = 22;
+                            break;
+                        }
+
+                        throw _iteratorError2;
+
+                    case 22:
+                        return _context.finish(19);
+
+                    case 23:
+                        return _context.finish(16);
+
+                    case 24:
+                        camera = (0, _renderer.createCamera)();
+
+
+                        world.addController(new _CameraController2.default(camera), cameraKey);
+
+                        return _context.abrupt('return', { world: world, boids: boids, camera: camera });
+
+                    case 27:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined, [[8, 12, 16, 24], [17,, 19, 23]]);
+    }));
+
+    return function setup(_x4) {
+        return _ref.apply(this, arguments);
+    };
+}();
 
 var createRenderLoop = function createRenderLoop(clock, boids, scene, camera, renderer, world) {
     var internalRender = function internalRender() {
@@ -46422,9 +46421,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var center = new THREE.Vector3(0, 0, 0);
-var xAxisNormal = new THREE.Vector3(1, 0, 0);
 var yAxisNormal = new THREE.Vector3(0, 1, 0);
-var zAxisNormal = new THREE.Vector3(0, 0, 1);
 
 var xAxisHalfNormal = new THREE.Vector3(0.5, 0, 0);
 var yAxisHalfNormal = new THREE.Vector3(0, 0.5, 0);
@@ -46543,7 +46540,6 @@ var BoidView = function () {
     }, {
         key: '_think',
         value: function _think() {
-            console.log('boid thinking ' + this._currentActionName + '.');
             if (this._currentActionName === flappingActionName) {
                 this.glidingAction.enabled = true;
                 this.flappingAction.crossFadeTo(this.glidingAction, 0.5);
