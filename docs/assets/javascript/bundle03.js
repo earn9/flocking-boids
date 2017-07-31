@@ -44572,11 +44572,30 @@ var cameraKey = 'camera';
 
 var boids = [];
 
+var createResourcesDescription = function createResourcesDescription(scene, world, assetRoot) {
+    return [{
+        url: assetRoot + '/assets/models/skySphere.json',
+        onSuccess: function onSuccess(skySphere) {
+            return (0, _renderer.createSkyView)(scene, skySphere.geometry, skySphere.materials);
+        }
+    }, {
+        url: assetRoot + '/assets/models/birdSimple02.json',
+        onSuccess: function onSuccess(bird) {
+            return setupBoids(scene, world, bird.geometry, bird.materials[0], boids);
+        }
+    }, {
+        url: assetRoot + '/assets/models/terain01.json',
+        onSuccess: function onSuccess(terrain) {
+            return scene.add((0, _renderer.createFloor)(terrain.geometry, terrain.material));
+        }
+    }];
+};
+
 var setup = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
         var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
-        var world, resources, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
+        var world, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
             while (1) {
@@ -44584,73 +44603,57 @@ var setup = function () {
                     case 0:
                         (0, _persistence.initializeConfig)(context.config);
                         world = new _world.World();
-                        resources = [{
-                            url: assetRoot + '/assets/models/skySphere.json',
-                            onSuccess: function onSuccess(skySphere) {
-                                return (0, _renderer.createSkyView)(scene, skySphere.geometry, skySphere.materials);
-                            }
-                        }, {
-                            url: assetRoot + '/assets/models/birdSimple02.json',
-                            onSuccess: function onSuccess(bird) {
-                                return setupBoids(scene, world, bird.geometry, bird.materials[0], boids);
-                            }
-                        }, {
-                            url: assetRoot + '/assets/models/terain01.json',
-                            onSuccess: function onSuccess(terrain) {
-                                return scene.add((0, _renderer.createFloor)(terrain.geometry, terrain.material));
-                            }
-                        }];
-                        _context.next = 5;
-                        return (0, _resources2.default)(resources);
+                        _context.next = 4;
+                        return (0, _resources2.default)(createResourcesDescription(scene, world, assetRoot));
 
-                    case 5:
+                    case 4:
 
                         console.log('loading done!');
 
                         _iteratorNormalCompletion2 = true;
                         _didIteratorError2 = false;
                         _iteratorError2 = undefined;
-                        _context.prev = 9;
+                        _context.prev = 8;
                         for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                             light = _step2.value;
 
                             scene.add(light);
                         }
 
-                        _context.next = 17;
+                        _context.next = 16;
                         break;
 
-                    case 13:
-                        _context.prev = 13;
-                        _context.t0 = _context['catch'](9);
+                    case 12:
+                        _context.prev = 12;
+                        _context.t0 = _context['catch'](8);
                         _didIteratorError2 = true;
                         _iteratorError2 = _context.t0;
 
-                    case 17:
+                    case 16:
+                        _context.prev = 16;
                         _context.prev = 17;
-                        _context.prev = 18;
 
                         if (!_iteratorNormalCompletion2 && _iterator2.return) {
                             _iterator2.return();
                         }
 
-                    case 20:
-                        _context.prev = 20;
+                    case 19:
+                        _context.prev = 19;
 
                         if (!_didIteratorError2) {
-                            _context.next = 23;
+                            _context.next = 22;
                             break;
                         }
 
                         throw _iteratorError2;
 
+                    case 22:
+                        return _context.finish(19);
+
                     case 23:
-                        return _context.finish(20);
+                        return _context.finish(16);
 
                     case 24:
-                        return _context.finish(17);
-
-                    case 25:
                         camera = (0, _renderer.createCamera)();
 
 
@@ -44658,12 +44661,12 @@ var setup = function () {
 
                         return _context.abrupt('return', { world: world, boids: boids, camera: camera });
 
-                    case 28:
+                    case 27:
                     case 'end':
                         return _context.stop();
                 }
             }
-        }, _callee, undefined, [[9, 13, 17, 25], [18,, 20, 24]]);
+        }, _callee, undefined, [[8, 12, 16, 24], [17,, 19, 23]]);
     }));
 
     return function setup(_x3) {

@@ -44,11 +44,8 @@ const cameraKey = 'camera';
 
 const boids = [];
 
-const setup = async (scene, assetRoot = '') => {
-    initializeConfig(context.config);
-    const world = new World();
-
-    const resources = [
+const createResourcesDescription = (scene, world, assetRoot) => {
+    return [
         { 
             url: `${assetRoot}/assets/models/skySphere.json`,
             onSuccess: skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials)
@@ -62,8 +59,14 @@ const setup = async (scene, assetRoot = '') => {
             onSuccess: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
         }
     ];
+};
 
-    await loadAllResources(resources);
+const setup = async (scene, assetRoot = '') => {
+    initializeConfig(context.config);
+    const world = new World();
+
+
+    await loadAllResources(createResourcesDescription(scene, world, assetRoot));
 
     console.log('loading done!');
 
