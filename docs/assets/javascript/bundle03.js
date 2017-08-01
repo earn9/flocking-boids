@@ -44570,32 +44570,38 @@ var setupBoids = function setupBoids(scene, world, boidGeometry, boidMaterial) {
 
 var cameraKey = 'camera';
 
-var boids = [];
-
-var createResourcesDescription = function createResourcesDescription(scene, world, assetRoot) {
+var createResourcesDescription = function createResourcesDescription(assetRoot) {
     return [{
-        url: assetRoot + '/assets/models/skySphere.json',
-        onSuccess: function onSuccess(skySphere) {
-            return (0, _renderer.createSkyView)(scene, skySphere.geometry, skySphere.materials);
-        }
+        name: 'skySphere',
+        url: assetRoot + '/assets/models/skySphere.json'
     }, {
-        url: assetRoot + '/assets/models/birdSimple02.json',
-        onSuccess: function onSuccess(bird) {
-            return setupBoids(scene, world, bird.geometry, bird.materials[0], boids);
-        }
+        name: 'bird',
+        url: assetRoot + '/assets/models/birdSimple02.json'
     }, {
-        url: assetRoot + '/assets/models/terain01.json',
-        onSuccess: function onSuccess(terrain) {
-            return scene.add((0, _renderer.createFloor)(terrain.geometry, terrain.material));
-        }
+        name: 'terrain',
+        url: assetRoot + '/assets/models/terain01.json'
     }];
+};
+
+var createResourcesStrategies = function createResourcesStrategies(scene, world, boids) {
+    return {
+        skySphere: function skySphere(_skySphere) {
+            return (0, _renderer.createSkyView)(scene, _skySphere.geometry, _skySphere.materials);
+        },
+        bird: function bird(_bird) {
+            return setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
+        },
+        terrain: function terrain(_terrain) {
+            return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
+        }
+    };
 };
 
 var setup = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
         var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
-        var world, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
+        var world, boids, resources, resourceStratergies, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
 
         return _regenerator2.default.wrap(function _callee$(_context) {
             while (1) {
@@ -44603,57 +44609,62 @@ var setup = function () {
                     case 0:
                         (0, _persistence.initializeConfig)(context.config);
                         world = new _world.World();
-                        _context.next = 4;
-                        return (0, _resources2.default)(createResourcesDescription(scene, world, assetRoot));
+                        boids = [];
+                        _context.next = 5;
+                        return (0, _resources2.default)(createResourcesDescription(assetRoot));
 
-                    case 4:
+                    case 5:
+                        resources = _context.sent;
+                        resourceStratergies = createResourcesStrategies(scene, world, boids);
 
-                        console.log('loading done!');
+                        resources.forEach(function (x) {
+                            return resourceStratergies[x.name](x);
+                        });
 
                         _iteratorNormalCompletion2 = true;
                         _didIteratorError2 = false;
                         _iteratorError2 = undefined;
-                        _context.prev = 8;
+                        _context.prev = 11;
                         for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                             light = _step2.value;
 
                             scene.add(light);
                         }
 
-                        _context.next = 16;
+                        _context.next = 19;
                         break;
 
-                    case 12:
-                        _context.prev = 12;
-                        _context.t0 = _context['catch'](8);
+                    case 15:
+                        _context.prev = 15;
+                        _context.t0 = _context['catch'](11);
                         _didIteratorError2 = true;
                         _iteratorError2 = _context.t0;
 
-                    case 16:
-                        _context.prev = 16;
-                        _context.prev = 17;
+                    case 19:
+                        _context.prev = 19;
+                        _context.prev = 20;
 
                         if (!_iteratorNormalCompletion2 && _iterator2.return) {
                             _iterator2.return();
                         }
 
-                    case 19:
-                        _context.prev = 19;
+                    case 22:
+                        _context.prev = 22;
 
                         if (!_didIteratorError2) {
-                            _context.next = 22;
+                            _context.next = 25;
                             break;
                         }
 
                         throw _iteratorError2;
 
-                    case 22:
+                    case 25:
+                        return _context.finish(22);
+
+                    case 26:
                         return _context.finish(19);
 
-                    case 23:
-                        return _context.finish(16);
-
-                    case 24:
+                    case 27:
                         camera = (0, _renderer.createCamera)();
 
 
@@ -44661,12 +44672,12 @@ var setup = function () {
 
                         return _context.abrupt('return', { world: world, boids: boids, camera: camera });
 
-                    case 27:
+                    case 30:
                     case 'end':
                         return _context.stop();
                 }
             }
-        }, _callee, undefined, [[8, 12, 16, 24], [17,, 19, 23]]);
+        }, _callee, undefined, [[11, 15, 19, 27], [20,, 22, 26]]);
     }));
 
     return function setup(_x3) {
@@ -47894,6 +47905,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _regenerator = __webpack_require__(96);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(99);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
 var _stringify = __webpack_require__(43);
 
 var _stringify2 = _interopRequireDefault(_stringify);
@@ -47906,12 +47925,12 @@ var _three = __webpack_require__(15);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var loadAsync = function loadAsync(loader, url) {
-    var onProgress = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+var loadAsync = function loadAsync(loader, name, url) {
+    var onProgress = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
 
     return new _promise2.default(function (resolve, reject) {
         loader.load(url, function (geometry, materials) {
-            resolve({ geometry: geometry, materials: materials });
+            resolve({ name: name, geometry: geometry, materials: materials });
         }, function (request) {
             return onProgress(url, request.loaded, request.total);
         }, function (err) {
@@ -47924,23 +47943,45 @@ var noDecimal = function noDecimal(number) {
     return number.toFixed(0);
 };
 
-var loadResourceAsync = function loadResourceAsync(loader, url, onSuccess) {
-    return loadAsync(loader, url, function (url, loaded, total) {
+var loadResourceAsync = function loadResourceAsync(loader, name, url) {
+    return loadAsync(loader, name, url, function (url, loaded, total) {
         return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
-    }).then(function (loadedData) {
-        return onSuccess(loadedData);
     }).catch(function (err) {
         return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
     });
 };
 
-var loadAllResources = function loadAllResources(resources) {
-    var loader = new _three.JSONLoader();
+var loadAllResources = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(resources) {
+        var loader, allResources;
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        loader = new _three.JSONLoader();
+                        _context.next = 3;
+                        return _promise2.default.all(resources.map(function (x) {
+                            return loadResourceAsync(loader, x.name, x.url);
+                        }));
 
-    return _promise2.default.all(resources.map(function (x) {
-        return loadResourceAsync(loader, x.url, x.onSuccess);
+                    case 3:
+                        allResources = _context.sent;
+
+                        console.log('loading done!');
+                        return _context.abrupt('return', allResources);
+
+                    case 6:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined);
     }));
-};
+
+    return function loadAllResources(_x2) {
+        return _ref.apply(this, arguments);
+    };
+}();
 
 exports.default = loadAllResources;
 

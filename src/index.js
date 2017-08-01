@@ -42,33 +42,41 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
 
 const cameraKey = 'camera';
 
-const boids = [];
 
-const createResourcesDescription = (scene, world, assetRoot) => {
+const createResourcesDescription = (assetRoot) => {
     return [
         { 
-            url: `${assetRoot}/assets/models/skySphere.json`,
-            onSuccess: skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials)
+            name: 'skySphere',
+            url: `${assetRoot}/assets/models/skySphere.json`
         },
         { 
-            url: `${assetRoot}/assets/models/birdSimple02.json`,
-            onSuccess: bird => setupBoids(scene, world, bird.geometry, bird.materials[0], boids)
+            name: 'bird',
+            url: `${assetRoot}/assets/models/birdSimple02.json`
         },
         { 
-            url: `${assetRoot}/assets/models/terain01.json`,
-            onSuccess: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
+            name: 'terrain',
+            url: `${assetRoot}/assets/models/terain01.json`
         }
     ];
+};
+
+const createResourcesStrategies = (scene, world, boids) => {
+    return { 
+        skySphere: skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials),
+        bird: bird => setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
+        terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
+    };
 };
 
 const setup = async (scene, assetRoot = '') => {
     initializeConfig(context.config);
     const world = new World();
 
+    const boids = [];
+    const resources = await loadAllResources(createResourcesDescription(assetRoot));
 
-    await loadAllResources(createResourcesDescription(scene, world, assetRoot));
-
-    console.log('loading done!');
+    const resourceStratergies = createResourcesStrategies(scene, world, boids);
+    resources.forEach(x => resourceStratergies[x.name](x));
 
     for (const light of createLights()) {
         scene.add(light);
