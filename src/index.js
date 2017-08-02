@@ -62,7 +62,7 @@ const createResourcesDescription = (assetRoot) => {
 
 const createResourcesStrategies = (scene, world, boids) => {
     return { 
-        skySphere: skySphere => createSkyView(scene, skySphere.geometry, skySphere.materials),
+        skySphere: skySphere => scene.add(createSkyView(skySphere.geometry, skySphere.materials)),
         bird: bird => setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
         terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
     };

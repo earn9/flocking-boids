@@ -228,9 +228,8 @@ class BoidView {
     }
 }
 
-const createSkyView = (scene, geometry, material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 })) => {
-    const skyMesh = new THREE.Mesh(geometry, material);
-    scene.add(skyMesh);
+const createSkyView = (geometry, material = new THREE.MeshPhongMaterial({ color: 0x6C4BE7 })) => {
+    return new THREE.Mesh(geometry, material);
 };
 
 const createDebugLine = (scene, color = null, depthTest = false) => {
