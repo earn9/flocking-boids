@@ -1,6 +1,6 @@
 class World {
     constructor() {
-        this.boids = {};
+        this.boids = [];
         this.controllers = {};
         this.nextControllerName = 0;        
     }
@@ -18,21 +18,15 @@ class World {
     }
 
     addBoid(boid) {
-        this.boids[boid.tag] = boid;
+        this.boids.push(boid);
     }
 
     update(delta) {
         for (const controller of Object.values(this.controllers)) {
             controller.update(delta);
         }
-        for (const key in this.boids) {
-            this.boids[key].update(delta, this);
-        }
-    }
-
-    forEachBoid(boidAction) {
-        for (var boid of Object.values(this.boids)) {
-            boidAction(boid);
+        for (const boid of this.boids) {
+            boid.update(delta, this);
         }
     }
 
@@ -42,7 +36,7 @@ class World {
 
     findNearbyBoids(fromBoid, cutoffDistance) {
         const friends = [];
-        this.forEachBoid(otherBoid => {
+        this.boids.forEach(otherBoid => {
             if (fromBoid === otherBoid) return;
             const newDist = fromBoid.position.distanceTo(otherBoid.position);
             if (newDist < cutoffDistance) {

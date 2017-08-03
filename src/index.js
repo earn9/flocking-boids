@@ -23,8 +23,7 @@ const context = {
 const update = (delta, boidsViews, world) => {
     world.update(delta);
     for (const boidView of boidsViews) {
-        const boid = world.getBoid(boidView.tag);
-        boidView.update(boid, context, delta);
+        boidView.update(context, delta);
     }
 };
 
@@ -33,15 +32,14 @@ const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
     const numBoids = 500;
 
     for (let i = 0; i < numBoids; i++) {
-        const boidView = new BoidView(scene, boidGeometry, boidMaterial);
-        boidView.tag = i;
+        const gameBoid = Boid.createWithRandomPositionAndDirection(-20, 20, 1);
+        world.addBoid(gameBoid);
+        const boidView = new BoidView(scene, boidGeometry, boidMaterial, gameBoid);
         boids.push(boidView);
-        world.addBoid(Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
 
 const cameraKey = 'camera';
-
 
 const createResourcesDescription = (assetRoot) => {
     return [

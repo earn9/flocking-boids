@@ -57,8 +57,11 @@ class BoidView {
     constructor(
             scene,
             boidGeometry = new THREE.BoxGeometry(1, 1, 1),
-            boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 })) {
+            boidMaterial = new THREE.MeshPhongMaterial({ color: 0xff6464 }),
+            gameBoid
+        ) {
 
+        this.gameBoid = gameBoid;
         if (!boidGeometry.animations) {
             throw new Error('boidGeometry must contain animations');
         }
@@ -93,7 +96,7 @@ class BoidView {
         this.mesh = this.boidMesh;
     }
 
-    update(gameBoid, context, delta) {
+    update(context, delta) {
         this._timeSinceThink += delta;
 
         if (this._timeSinceThink > this._timeTillThink) {
@@ -101,21 +104,21 @@ class BoidView {
             this._timeSinceThink = 0;
         }
 
-        this.mesh.position.copy(gameBoid.position);
+        this.mesh.position.copy(this.gameBoid.position);
 
-        this._handleForceLine(gameBoid, context);
-        this._handleRepelLine(gameBoid, context);
-        this._handleAttractLine(gameBoid, context);
-        this._handleFollowLine(gameBoid, context);
+        this._handleForceLine(this.gameBoid, context);
+        this._handleRepelLine(this.gameBoid, context);
+        this._handleAttractLine(this.gameBoid, context);
+        this._handleFollowLine(this.gameBoid, context);
 
-        this._updateFriendLines(gameBoid, context);
+        this._updateFriendLines(this.gameBoid, context);
 
         this.debugAxis.visible = context.config.showAxis;
 
-        this.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+        this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
 
         if (this.mixer) {
-            this.mixer.update(delta);
+            //this.mixer.update(delta);
         }
     }
 

@@ -44619,8 +44619,7 @@ var update = function update(delta, boidsViews, world) {
         for (var _iterator = (0, _getIterator3.default)(boidsViews), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var boidView = _step.value;
 
-            var boid = world.getBoid(boidView.tag);
-            boidView.update(boid, context, delta);
+            boidView.update(context, delta);
         }
     } catch (err) {
         _didIteratorError = true;
@@ -44645,10 +44644,10 @@ var setupBoids = function setupBoids(scene, world, boidGeometry, boidMaterial) {
     var numBoids = 500;
 
     for (var i = 0; i < numBoids; i++) {
-        var boidView = new _renderer.BoidView(scene, boidGeometry, boidMaterial);
-        boidView.tag = i;
+        var gameBoid = _boid.Boid.createWithRandomPositionAndDirection(-20, 20, 1);
+        world.addBoid(gameBoid);
+        var boidView = new _renderer.BoidView(scene, boidGeometry, boidMaterial, gameBoid);
         boids.push(boidView);
-        world.addBoid(_boid.Boid.createWithRandomPositionAndDirection(-20, 20, 1, boidView.tag));
     }
 };
 
@@ -46611,7 +46610,7 @@ var World = function () {
     function World() {
         (0, _classCallCheck3.default)(this, World);
 
-        this.boids = {};
+        this.boids = [];
         this.controllers = {};
         this.nextControllerName = 0;
     }
@@ -46633,7 +46632,7 @@ var World = function () {
     }, {
         key: "addBoid",
         value: function addBoid(boid) {
-            this.boids[boid.tag] = boid;
+            this.boids.push(boid);
         }
     }, {
         key: "update",
@@ -46663,22 +46662,15 @@ var World = function () {
                 }
             }
 
-            for (var key in this.boids) {
-                this.boids[key].update(delta, this);
-            }
-        }
-    }, {
-        key: "forEachBoid",
-        value: function forEachBoid(boidAction) {
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator2 = (0, _getIterator3.default)((0, _values2.default)(this.boids)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                for (var _iterator2 = (0, _getIterator3.default)(this.boids), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var boid = _step2.value;
 
-                    boidAction(boid);
+                    boid.update(delta, this);
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -46704,7 +46696,7 @@ var World = function () {
         key: "findNearbyBoids",
         value: function findNearbyBoids(fromBoid, cutoffDistance) {
             var friends = [];
-            this.forEachBoid(function (otherBoid) {
+            this.boids.forEach(function (otherBoid) {
                 if (fromBoid === otherBoid) return;
                 var newDist = fromBoid.position.distanceTo(otherBoid.position);
                 if (newDist < cutoffDistance) {
@@ -46836,13 +46828,12 @@ var maxDistance = 50;
 var startFlockingAgainDistance = 45;
 
 var Boid = function () {
-    function Boid(position, direction, speed, tag) {
+    function Boid(position, direction, speed) {
         (0, _classCallCheck3.default)(this, Boid);
 
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        this.tag = tag;
         this.maxSpeed = 1.5;
         this.minSpeed = 0.7;
         this.maxForce = 0.1;
@@ -47060,7 +47051,7 @@ var Boid = function () {
         }
     }], [{
         key: 'createWithRandomPositionAndDirection',
-        value: function createWithRandomPositionAndDirection(min, max, speed, tag) {
+        value: function createWithRandomPositionAndDirection(min, max, speed) {
             var _randomVec = (0, _mathUtils.randomVec2)(min, max),
                 xPos = _randomVec.x,
                 yPos = _randomVec.y;
@@ -47073,7 +47064,7 @@ var Boid = function () {
 
             var direction = new _three.Vector3(xDir, 0, yDir);
 
-            return new Boid(position, direction, speed, tag);
+            return new Boid(position, direction, speed);
         }
     }]);
     return Boid;
@@ -47299,9 +47290,11 @@ var BoidView = function () {
     function BoidView(scene) {
         var boidGeometry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new THREE.BoxGeometry(1, 1, 1);
         var boidMaterial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new THREE.MeshPhongMaterial({ color: 0xff6464 });
+        var gameBoid = arguments[3];
         (0, _classCallCheck3.default)(this, BoidView);
 
 
+        this.gameBoid = gameBoid;
         if (!boidGeometry.animations) {
             throw new Error('boidGeometry must contain animations');
         }
@@ -47336,7 +47329,7 @@ var BoidView = function () {
 
     (0, _createClass3.default)(BoidView, [{
         key: 'update',
-        value: function update(gameBoid, context, delta) {
+        value: function update(context, delta) {
             this._timeSinceThink += delta;
 
             if (this._timeSinceThink > this._timeTillThink) {
@@ -47344,21 +47337,21 @@ var BoidView = function () {
                 this._timeSinceThink = 0;
             }
 
-            this.mesh.position.copy(gameBoid.position);
+            this.mesh.position.copy(this.gameBoid.position);
 
-            this._handleForceLine(gameBoid, context);
-            this._handleRepelLine(gameBoid, context);
-            this._handleAttractLine(gameBoid, context);
-            this._handleFollowLine(gameBoid, context);
+            this._handleForceLine(this.gameBoid, context);
+            this._handleRepelLine(this.gameBoid, context);
+            this._handleAttractLine(this.gameBoid, context);
+            this._handleFollowLine(this.gameBoid, context);
 
-            this._updateFriendLines(gameBoid, context);
+            this._updateFriendLines(this.gameBoid, context);
 
             this.debugAxis.visible = context.config.showAxis;
 
-            this.mesh.setRotationFromMatrix(getRotationMatrix(gameBoid.direction));
+            this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
 
             if (this.mixer) {
-                this.mixer.update(delta);
+                //this.mixer.update(delta);
             }
         }
     }, {

@@ -19,11 +19,10 @@ const startFlockingAgainDistance = 45;
 
 class Boid {
 
-    constructor(position, direction, speed, tag) {
+    constructor(position, direction, speed) {
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        this.tag = tag;
         this.maxSpeed = 1.5;
         this.minSpeed = 0.7;
         this.maxForce = 0.1;
@@ -163,14 +162,14 @@ class Boid {
         this.integrate(movementVector, delta);
     } 
 
-    static createWithRandomPositionAndDirection(min, max, speed, tag) {
+    static createWithRandomPositionAndDirection(min, max, speed) {
         const { x: xPos, y: yPos } = randomVec2(min, max);
         const position = new Vector3(xPos, yOffset, yPos);
 
         const { x: xDir, y: yDir } = randomDirection();
         const direction = new Vector3(xDir, 0, yDir);
 
-        return new Boid(position, direction, speed, tag);
+        return new Boid(position, direction, speed);
     }
 }
 
