@@ -7,100 +7,7 @@ import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockC
 import CameraController from './CameraController';
 import loadAllResources from './resources';
 
-const context = {
-    config: {
-        showForceLine: false,
-        showRepelLine: false,
-        showAttractLine: false,
-        showFollowLine: false,
-        showFriendLines: false,
-        showAxis: false
-    },
-    simulationRunning: false,
-    zoom: false
-};
-
-const update = (delta, boidsViews, world) => {
-    world.update(delta);
-    for (const boidView of boidsViews) {
-        boidView.update(context, delta);
-    }
-};
-
-// setup a bunch of boids that should flock
-const setupBoids = (scene, world, boidGeometry, boidMaterial, boids = []) => {
-    const numBoids = 500;
-
-    for (let i = 0; i < numBoids; i++) {
-        const gameBoid = Boid.createWithRandomPositionAndDirection(-20, 20, 1);
-        world.addBoid(gameBoid);
-        const boidView = new BoidView(scene, boidGeometry, boidMaterial, gameBoid);
-        boids.push(boidView);
-    }
-};
-
 const cameraKey = 'camera';
-
-const createResourcesDescription = (assetRoot) => {
-    return [
-        { 
-            name: 'skySphere',
-            url: `${assetRoot}/assets/models/skySphere.json`
-        },
-        { 
-            name: 'bird',
-            url: `${assetRoot}/assets/models/birdSimple02.json`
-        },
-        { 
-            name: 'terrain',
-            url: `${assetRoot}/assets/models/terain01.json`
-        }
-    ];
-};
-
-const createResourcesStrategies = (scene, world, boids) => {
-    return { 
-        skySphere: skySphere => scene.add(createSkyView(skySphere.geometry, skySphere.materials)),
-        bird: bird => setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
-        terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
-    };
-};
-
-const setup = async (scene, assetRoot = '') => {
-    initializeConfig(context.config);
-    const world = new World();
-
-    const boids = [];
-    const resources = await loadAllResources(createResourcesDescription(assetRoot));
-
-    const resourceStratergies = createResourcesStrategies(scene, world, boids);
-    resources.forEach(x => resourceStratergies[x.name](x));
-
-    for (const light of createLights()) {
-        scene.add(light);
-    }
-
-    var camera = createCamera();
-
-    world.addController(new CameraController(camera), cameraKey);
-
-    return { world, boids, camera };
-};
-
-const createRenderLoop = (clock, boids, scene, camera, renderer, world) => {
-    const internalRender = () => {
-        window.requestAnimationFrame(internalRender);
-
-        var delta = clock.getDelta();
-        if (context.simulationRunning) {
-            update(delta, boids, world);
-        }
-
-        renderer.render(scene, camera);
-    };
-    return internalRender;
-};
-
 const KEYS = {
     KEY_B: 66,
     KEY_F: 70,
@@ -112,123 +19,225 @@ const KEYS = {
     KEY_Z: 90
 };
 
-const toggleForceLine = () => {
-    context.config.showForceLine = !context.config.showForceLine;
-};
+class Program {
+    constructor() {
+        this.context = {
+            config: {
+                showForceLine: false,
+                showRepelLine: false,
+                showAttractLine: false,
+                showFollowLine: false,
+                showFriendLines: false,
+                showAxis: false
+            },
+            simulationRunning: false,
+            zoom: false
+        };
+    }
 
-const toggleAttractLine = () => {
-    context.config.showAttractLine = !context.config.showAttractLine;
-};
-
-const createOnDocumentKeyDown = (cameraController, domElement) => 
-    (event) => {
-        console.log('keydown', event);
-        switch (event.keyCode) {
-            case KEYS.KEY_Y:
-                toggleForceLine();
-                break;
-            case KEYS.KEY_U:
-                context.config.showRepelLine = !context.config.showRepelLine;
-                break;
-            case KEYS.KEY_I:
-                toggleAttractLine();
-                break;
-            case KEYS.KEY_O:
-                context.config.showFollowLine = !context.config.showFollowLine;
-                break;
-            case KEYS.KEY_P:
-                context.config.showFriendLines = !context.config.showFriendLines;
-                break;
-            case KEYS.KEY_B:
-                context.config.showAxis = !context.config.showAxis;
-                break;
-            case KEYS.KEY_Z:
-                context.zoom = !context.zoom;
-                if (context.zoom) {
-                    cameraController.zoomIn();
-                } else {
-                    cameraController.zoomOut();
-                }
-                break;
-            case KEYS.KEY_F:
-                context.fullscreen = !context.fullscreen;
-                if (context.fullscreen) {
-                    if (domElement.webkitRequestFullscreen) {
-                        domElement.webkitRequestFullscreen();
-                    }
-                }
-                break;
-
+    update(delta, boidsViews, world) {
+        world.update(delta);
+        for (const boidView of boidsViews) {
+            boidView.update(this.context, delta);
         }
-        storeConfigChanges(context.config);
-    };
+    }
 
-const setupKeyboardListeners = (cameraController, domElement) => {
-    document.addEventListener('keydown', createOnDocumentKeyDown(cameraController, domElement), false);
-};
+    setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
+        const numBoids = 500;
 
-const createHandleWindowResize = (camera, renderer) => 
-    () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        for (let i = 0; i < numBoids; i++) {
+            const gameBoid = Boid.createWithRandomPositionAndDirection(-20, 20, 1);
+            world.addBoid(gameBoid);
+            const boidView = new BoidView(scene, boidGeometry, boidMaterial, gameBoid);
+            boids.push(boidView);
+        }
+    }
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    };
+    async setup(scene, assetRoot = '') {
+        initializeConfig(this.context.config);
+        const world = new World();
+
+        const boids = [];
+        const resources = await loadAllResources(this._createResourcesDescription(assetRoot));
+
+        const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
+        resources.forEach(x => resourceStratergies[x.name](x));
+
+        for (const light of createLights()) {
+            scene.add(light);
+        }
+
+        var camera = createCamera();
+
+        world.addController(new CameraController(camera), cameraKey);
+
+        return { world, boids, camera };
+    }
+
+    createRenderLoop(clock, boids, scene, camera, renderer, world) {
+        const internalRender = () => {
+            window.requestAnimationFrame(internalRender);
+
+            var delta = clock.getDelta();
+            if (this.context.simulationRunning) {
+                this.update(delta, boids, world);
+            }
+
+            renderer.render(scene, camera);
+        };
+        return internalRender;
+    }
+
+    toggleForceLine() {
+        this.context.config.showForceLine = !this.context.config.showForceLine;
+    }
+
+    toggleAttractLine() {
+        this.context.config.showAttractLine = !this.context.config.showAttractLine;
+    }
+
+
+    _createResourcesDescription(assetRoot) {
+        return [
+            {
+                name: 'skySphere',
+                url: `${assetRoot}/assets/models/skySphere.json`
+            },
+            {
+                name: 'bird',
+                url: `${assetRoot}/assets/models/birdSimple02.json`
+            },
+            {
+                name: 'terrain',
+                url: `${assetRoot}/assets/models/terain01.json`
+            }
+        ];
+    }
+
+    _createResourcesStrategies(scene, world, boids) {
+        return {
+            skySphere: skySphere => scene.add(createSkyView(skySphere.geometry, skySphere.materials)),
+            bird: bird => this.setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
+            terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
+        };
+    }
+
+    createOnDocumentKeyDown(cameraController, domElement) {
+        return (event) => {
+            console.log('keydown', event);
+            switch (event.keyCode) {
+                case KEYS.KEY_Y:
+                    this.toggleForceLine();
+                    break;
+                case KEYS.KEY_U:
+                    this.context.config.showRepelLine = !this.context.config.showRepelLine;
+                    break;
+                case KEYS.KEY_I:
+                    this.toggleAttractLine();
+                    break;
+                case KEYS.KEY_O:
+                    this.context.config.showFollowLine = !this.context.config.showFollowLine;
+                    break;
+                case KEYS.KEY_P:
+                    this.context.config.showFriendLines = !this.context.config.showFriendLines;
+                    break;
+                case KEYS.KEY_B:
+                    this.context.config.showAxis = !this.context.config.showAxis;
+                    break;
+                case KEYS.KEY_Z:
+                    this.context.zoom = !this.context.zoom;
+                    if (this.context.zoom) {
+                        cameraController.zoomIn();
+                    } else {
+                        cameraController.zoomOut();
+                    }
+                    break;
+                case KEYS.KEY_F:
+                    this.context.fullscreen = !this.context.fullscreen;
+                    if (this.context.fullscreen) {
+                        if (domElement.webkitRequestFullscreen) {
+                            domElement.webkitRequestFullscreen();
+                        }
+                    }
+                    break;
+
+            }
+            storeConfigChanges(this.context.config);
+        };
+    }
+
+    setupKeyboardListeners(cameraController, domElement) {
+        document.addEventListener('keydown', this.createOnDocumentKeyDown(cameraController, domElement), false);
+    }
+
+    createHandleWindowResize(camera, renderer) {
+        return () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+    }
+
+    run(assetRoot) {
+        window.onload = async () => {
+            var scene = new THREE.Scene();
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            document.body.appendChild(renderer.domElement);
+
+            var { world, boids, camera } = await this.setup(scene, assetRoot);
+
+            console.log('setup complete');
+
+            window.onresize = this.createHandleWindowResize(camera, renderer);
+
+            if (pointerLockSupported()) {
+                const controls = new PointerLockControler(camera);
+                world.getControllerByName(cameraKey).setPointerLockControls(controls);
+                scene.add(controls.getObject());
+                controls.getObject().position.setX(0);
+                controls.getObject().position.setY(1);
+                controls.getObject().position.setZ(30);
+
+                var blocker = document.getElementById('blocker');
+
+                onPointerLockChanged(document, (isSourceElement) => {
+                    if (isSourceElement) {
+                        controls.enabled = true;
+                        blocker.style.display = 'none';
+                        this.context.simulationRunning = true;
+                    } else {
+                        controls.enabled = false;
+                        blocker.style.display = '';
+                        this.context.simulationRunning = false;
+                    }
+                });
+
+                document.body.addEventListener(
+                    'click',
+                    () => {
+                        controls.enabled = true;
+                        lockPointer(document.body);
+                    },
+                    false);
+            } else {
+                console.log('pointer lock not supported');
+            }
+            this.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+
+            var clock = new THREE.Clock();
+
+            var render = this.createRenderLoop(clock, boids, scene, camera, renderer, world);
+
+            render();
+        };
+    }
+}
 
 export function startUp(assetRoot = '') {
 
-    window.onload = async () => {
-        var scene = new THREE.Scene();
-
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        document.body.appendChild(renderer.domElement);
-
-        var { world, boids, camera } = await setup(scene, assetRoot);
-
-        console.log('setup complete');
-
-        window.onresize = createHandleWindowResize(camera, renderer);
-
-        if (pointerLockSupported()) {
-            const controls = new PointerLockControler(camera);
-            world.getControllerByName(cameraKey).setPointerLockControls(controls);
-            scene.add(controls.getObject());
-            controls.getObject().position.setX(0);
-            controls.getObject().position.setY(1);
-            controls.getObject().position.setZ(30);
-            
-            var blocker = document.getElementById( 'blocker' );
-
-            onPointerLockChanged(document, (isSourceElement) => {
-                if (isSourceElement) {
-                    controls.enabled = true;
-                    blocker.style.display = 'none';
-                    context.simulationRunning = true;
-                } else {
-                    controls.enabled = false;
-                    blocker.style.display = '';
-                    context.simulationRunning = false;
-                }
-            });
-
-            document.body.addEventListener(
-                'click', 
-                () => {
-                    controls.enabled = true;    
-                    lockPointer(document.body);
-                }, 
-                false);
-        } else {
-            console.log('pointer lock not supported');
-        }
-        setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
-
-        var clock = new THREE.Clock();
-
-        var render = createRenderLoop(clock, boids, scene, camera, renderer, world);
-
-        render();
-    };
+    new Program().run(assetRoot);
 }

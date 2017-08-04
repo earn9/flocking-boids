@@ -44566,6 +44566,14 @@ var _getIterator2 = __webpack_require__(15);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
+var _classCallCheck2 = __webpack_require__(16);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(17);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
 exports.startUp = startUp;
 
 var _three = __webpack_require__(9);
@@ -44596,192 +44604,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var context = {
-    config: {
-        showForceLine: false,
-        showRepelLine: false,
-        showAttractLine: false,
-        showFollowLine: false,
-        showFriendLines: false,
-        showAxis: false
-    },
-    simulationRunning: false,
-    zoom: false
-};
-
-var update = function update(delta, boidsViews, world) {
-    world.update(delta);
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = (0, _getIterator3.default)(boidsViews), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var boidView = _step.value;
-
-            boidView.update(context, delta);
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-};
-
-// setup a bunch of boids that should flock
-var setupBoids = function setupBoids(scene, world, boidGeometry, boidMaterial) {
-    var boids = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
-
-    var numBoids = 500;
-
-    for (var i = 0; i < numBoids; i++) {
-        var gameBoid = _boid.Boid.createWithRandomPositionAndDirection(-20, 20, 1);
-        world.addBoid(gameBoid);
-        var boidView = new _renderer.BoidView(scene, boidGeometry, boidMaterial, gameBoid);
-        boids.push(boidView);
-    }
-};
-
 var cameraKey = 'camera';
-
-var createResourcesDescription = function createResourcesDescription(assetRoot) {
-    return [{
-        name: 'skySphere',
-        url: assetRoot + '/assets/models/skySphere.json'
-    }, {
-        name: 'bird',
-        url: assetRoot + '/assets/models/birdSimple02.json'
-    }, {
-        name: 'terrain',
-        url: assetRoot + '/assets/models/terain01.json'
-    }];
-};
-
-var createResourcesStrategies = function createResourcesStrategies(scene, world, boids) {
-    return {
-        skySphere: function skySphere(_skySphere) {
-            return scene.add((0, _renderer.createSkyView)(_skySphere.geometry, _skySphere.materials));
-        },
-        bird: function bird(_bird) {
-            return setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
-        },
-        terrain: function terrain(_terrain) {
-            return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
-        }
-    };
-};
-
-var setup = function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
-        var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-        var world, boids, resources, resourceStratergies, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
-
-        return _regenerator2.default.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        (0, _persistence.initializeConfig)(context.config);
-                        world = new _world.World();
-                        boids = [];
-                        _context.next = 5;
-                        return (0, _resources2.default)(createResourcesDescription(assetRoot));
-
-                    case 5:
-                        resources = _context.sent;
-                        resourceStratergies = createResourcesStrategies(scene, world, boids);
-
-                        resources.forEach(function (x) {
-                            return resourceStratergies[x.name](x);
-                        });
-
-                        _iteratorNormalCompletion2 = true;
-                        _didIteratorError2 = false;
-                        _iteratorError2 = undefined;
-                        _context.prev = 11;
-                        for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                            light = _step2.value;
-
-                            scene.add(light);
-                        }
-
-                        _context.next = 19;
-                        break;
-
-                    case 15:
-                        _context.prev = 15;
-                        _context.t0 = _context['catch'](11);
-                        _didIteratorError2 = true;
-                        _iteratorError2 = _context.t0;
-
-                    case 19:
-                        _context.prev = 19;
-                        _context.prev = 20;
-
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-
-                    case 22:
-                        _context.prev = 22;
-
-                        if (!_didIteratorError2) {
-                            _context.next = 25;
-                            break;
-                        }
-
-                        throw _iteratorError2;
-
-                    case 25:
-                        return _context.finish(22);
-
-                    case 26:
-                        return _context.finish(19);
-
-                    case 27:
-                        camera = (0, _renderer.createCamera)();
-
-
-                        world.addController(new _CameraController2.default(camera), cameraKey);
-
-                        return _context.abrupt('return', { world: world, boids: boids, camera: camera });
-
-                    case 30:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, undefined, [[11, 15, 19, 27], [20,, 22, 26]]);
-    }));
-
-    return function setup(_x3) {
-        return _ref.apply(this, arguments);
-    };
-}();
-
-var createRenderLoop = function createRenderLoop(clock, boids, scene, camera, renderer, world) {
-    var internalRender = function internalRender() {
-        window.requestAnimationFrame(internalRender);
-
-        var delta = clock.getDelta();
-        if (context.simulationRunning) {
-            update(delta, boids, world);
-        }
-
-        renderer.render(scene, camera);
-    };
-    return internalRender;
-};
-
 var KEYS = {
     KEY_B: 66,
     KEY_F: 70,
@@ -44793,151 +44616,367 @@ var KEYS = {
     KEY_Z: 90
 };
 
-var toggleForceLine = function toggleForceLine() {
-    context.config.showForceLine = !context.config.showForceLine;
-};
+var Program = function () {
+    function Program() {
+        (0, _classCallCheck3.default)(this, Program);
 
-var toggleAttractLine = function toggleAttractLine() {
-    context.config.showAttractLine = !context.config.showAttractLine;
-};
+        this.context = {
+            config: {
+                showForceLine: false,
+                showRepelLine: false,
+                showAttractLine: false,
+                showFollowLine: false,
+                showFriendLines: false,
+                showAxis: false
+            },
+            simulationRunning: false,
+            zoom: false
+        };
+    }
 
-var createOnDocumentKeyDown = function createOnDocumentKeyDown(cameraController, domElement) {
-    return function (event) {
-        console.log('keydown', event);
-        switch (event.keyCode) {
-            case KEYS.KEY_Y:
-                toggleForceLine();
-                break;
-            case KEYS.KEY_U:
-                context.config.showRepelLine = !context.config.showRepelLine;
-                break;
-            case KEYS.KEY_I:
-                toggleAttractLine();
-                break;
-            case KEYS.KEY_O:
-                context.config.showFollowLine = !context.config.showFollowLine;
-                break;
-            case KEYS.KEY_P:
-                context.config.showFriendLines = !context.config.showFriendLines;
-                break;
-            case KEYS.KEY_B:
-                context.config.showAxis = !context.config.showAxis;
-                break;
-            case KEYS.KEY_Z:
-                context.zoom = !context.zoom;
-                if (context.zoom) {
-                    cameraController.zoomIn();
-                } else {
-                    cameraController.zoomOut();
+    (0, _createClass3.default)(Program, [{
+        key: 'update',
+        value: function update(delta, boidsViews, world) {
+            world.update(delta);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(boidsViews), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var boidView = _step.value;
+
+                    boidView.update(this.context, delta);
                 }
-                break;
-            case KEYS.KEY_F:
-                context.fullscreen = !context.fullscreen;
-                if (context.fullscreen) {
-                    if (domElement.webkitRequestFullscreen) {
-                        domElement.webkitRequestFullscreen();
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
                     }
                 }
-                break;
-
+            }
         }
-        (0, _persistence.storeConfigChanges)(context.config);
-    };
-};
+    }, {
+        key: 'setupBoids',
+        value: function setupBoids(scene, world, boidGeometry, boidMaterial) {
+            var boids = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
 
-var setupKeyboardListeners = function setupKeyboardListeners(cameraController, domElement) {
-    document.addEventListener('keydown', createOnDocumentKeyDown(cameraController, domElement), false);
-};
+            var numBoids = 500;
 
-var createHandleWindowResize = function createHandleWindowResize(camera, renderer) {
-    return function () {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+            for (var i = 0; i < numBoids; i++) {
+                var gameBoid = _boid.Boid.createWithRandomPositionAndDirection(-20, 20, 1);
+                world.addBoid(gameBoid);
+                var boidView = new _renderer.BoidView(scene, boidGeometry, boidMaterial, gameBoid);
+                boids.push(boidView);
+            }
+        }
+    }, {
+        key: 'setup',
+        value: function () {
+            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
+                var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-};
+                var world, boids, resources, resourceStratergies, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
+
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                (0, _persistence.initializeConfig)(this.context.config);
+                                world = new _world.World();
+                                boids = [];
+                                _context.next = 5;
+                                return (0, _resources2.default)(this._createResourcesDescription(assetRoot));
+
+                            case 5:
+                                resources = _context.sent;
+                                resourceStratergies = this._createResourcesStrategies(scene, world, boids);
+
+                                resources.forEach(function (x) {
+                                    return resourceStratergies[x.name](x);
+                                });
+
+                                _iteratorNormalCompletion2 = true;
+                                _didIteratorError2 = false;
+                                _iteratorError2 = undefined;
+                                _context.prev = 11;
+                                for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                    light = _step2.value;
+
+                                    scene.add(light);
+                                }
+
+                                _context.next = 19;
+                                break;
+
+                            case 15:
+                                _context.prev = 15;
+                                _context.t0 = _context['catch'](11);
+                                _didIteratorError2 = true;
+                                _iteratorError2 = _context.t0;
+
+                            case 19:
+                                _context.prev = 19;
+                                _context.prev = 20;
+
+                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                    _iterator2.return();
+                                }
+
+                            case 22:
+                                _context.prev = 22;
+
+                                if (!_didIteratorError2) {
+                                    _context.next = 25;
+                                    break;
+                                }
+
+                                throw _iteratorError2;
+
+                            case 25:
+                                return _context.finish(22);
+
+                            case 26:
+                                return _context.finish(19);
+
+                            case 27:
+                                camera = (0, _renderer.createCamera)();
+
+
+                                world.addController(new _CameraController2.default(camera), cameraKey);
+
+                                return _context.abrupt('return', { world: world, boids: boids, camera: camera });
+
+                            case 30:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this, [[11, 15, 19, 27], [20,, 22, 26]]);
+            }));
+
+            function setup(_x3) {
+                return _ref.apply(this, arguments);
+            }
+
+            return setup;
+        }()
+    }, {
+        key: 'createRenderLoop',
+        value: function createRenderLoop(clock, boids, scene, camera, renderer, world) {
+            var _this = this;
+
+            var internalRender = function internalRender() {
+                window.requestAnimationFrame(internalRender);
+
+                var delta = clock.getDelta();
+                if (_this.context.simulationRunning) {
+                    _this.update(delta, boids, world);
+                }
+
+                renderer.render(scene, camera);
+            };
+            return internalRender;
+        }
+    }, {
+        key: 'toggleForceLine',
+        value: function toggleForceLine() {
+            this.context.config.showForceLine = !this.context.config.showForceLine;
+        }
+    }, {
+        key: 'toggleAttractLine',
+        value: function toggleAttractLine() {
+            this.context.config.showAttractLine = !this.context.config.showAttractLine;
+        }
+    }, {
+        key: '_createResourcesDescription',
+        value: function _createResourcesDescription(assetRoot) {
+            return [{
+                name: 'skySphere',
+                url: assetRoot + '/assets/models/skySphere.json'
+            }, {
+                name: 'bird',
+                url: assetRoot + '/assets/models/birdSimple02.json'
+            }, {
+                name: 'terrain',
+                url: assetRoot + '/assets/models/terain01.json'
+            }];
+        }
+    }, {
+        key: '_createResourcesStrategies',
+        value: function _createResourcesStrategies(scene, world, boids) {
+            var _this2 = this;
+
+            return {
+                skySphere: function skySphere(_skySphere) {
+                    return scene.add((0, _renderer.createSkyView)(_skySphere.geometry, _skySphere.materials));
+                },
+                bird: function bird(_bird) {
+                    return _this2.setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
+                },
+                terrain: function terrain(_terrain) {
+                    return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
+                }
+            };
+        }
+    }, {
+        key: 'createOnDocumentKeyDown',
+        value: function createOnDocumentKeyDown(cameraController, domElement) {
+            var _this3 = this;
+
+            return function (event) {
+                console.log('keydown', event);
+                switch (event.keyCode) {
+                    case KEYS.KEY_Y:
+                        _this3.toggleForceLine();
+                        break;
+                    case KEYS.KEY_U:
+                        _this3.context.config.showRepelLine = !_this3.context.config.showRepelLine;
+                        break;
+                    case KEYS.KEY_I:
+                        _this3.toggleAttractLine();
+                        break;
+                    case KEYS.KEY_O:
+                        _this3.context.config.showFollowLine = !_this3.context.config.showFollowLine;
+                        break;
+                    case KEYS.KEY_P:
+                        _this3.context.config.showFriendLines = !_this3.context.config.showFriendLines;
+                        break;
+                    case KEYS.KEY_B:
+                        _this3.context.config.showAxis = !_this3.context.config.showAxis;
+                        break;
+                    case KEYS.KEY_Z:
+                        _this3.context.zoom = !_this3.context.zoom;
+                        if (_this3.context.zoom) {
+                            cameraController.zoomIn();
+                        } else {
+                            cameraController.zoomOut();
+                        }
+                        break;
+                    case KEYS.KEY_F:
+                        _this3.context.fullscreen = !_this3.context.fullscreen;
+                        if (_this3.context.fullscreen) {
+                            if (domElement.webkitRequestFullscreen) {
+                                domElement.webkitRequestFullscreen();
+                            }
+                        }
+                        break;
+
+                }
+                (0, _persistence.storeConfigChanges)(_this3.context.config);
+            };
+        }
+    }, {
+        key: 'setupKeyboardListeners',
+        value: function setupKeyboardListeners(cameraController, domElement) {
+            document.addEventListener('keydown', this.createOnDocumentKeyDown(cameraController, domElement), false);
+        }
+    }, {
+        key: 'createHandleWindowResize',
+        value: function createHandleWindowResize(camera, renderer) {
+            return function () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+        }
+    }, {
+        key: 'run',
+        value: function run(assetRoot) {
+            var _this4 = this;
+
+            window.onload = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+                var scene, renderer, _ref3, world, boids, camera, controls, blocker, clock, render;
+
+                return _regenerator2.default.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                scene = new THREE.Scene();
+                                renderer = new THREE.WebGLRenderer();
+
+                                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                                document.body.appendChild(renderer.domElement);
+
+                                _context2.next = 6;
+                                return _this4.setup(scene, assetRoot);
+
+                            case 6:
+                                _ref3 = _context2.sent;
+                                world = _ref3.world;
+                                boids = _ref3.boids;
+                                camera = _ref3.camera;
+
+
+                                console.log('setup complete');
+
+                                window.onresize = _this4.createHandleWindowResize(camera, renderer);
+
+                                if ((0, _pointerLockControls.pointerLockSupported)()) {
+                                    controls = new _pointerLockControls2.default(camera);
+
+                                    world.getControllerByName(cameraKey).setPointerLockControls(controls);
+                                    scene.add(controls.getObject());
+                                    controls.getObject().position.setX(0);
+                                    controls.getObject().position.setY(1);
+                                    controls.getObject().position.setZ(30);
+
+                                    blocker = document.getElementById('blocker');
+
+
+                                    (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
+                                        if (isSourceElement) {
+                                            controls.enabled = true;
+                                            blocker.style.display = 'none';
+                                            _this4.context.simulationRunning = true;
+                                        } else {
+                                            controls.enabled = false;
+                                            blocker.style.display = '';
+                                            _this4.context.simulationRunning = false;
+                                        }
+                                    });
+
+                                    document.body.addEventListener('click', function () {
+                                        controls.enabled = true;
+                                        (0, _pointerLockControls.lockPointer)(document.body);
+                                    }, false);
+                                } else {
+                                    console.log('pointer lock not supported');
+                                }
+                                _this4.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+
+                                clock = new THREE.Clock();
+                                render = _this4.createRenderLoop(clock, boids, scene, camera, renderer, world);
+
+
+                                render();
+
+                            case 17:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, _this4);
+            }));
+        }
+    }]);
+    return Program;
+}();
 
 function startUp() {
-    var _this = this;
-
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
 
-    window.onload = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-        var scene, renderer, _ref3, world, boids, camera, controls, blocker, clock, render;
-
-        return _regenerator2.default.wrap(function _callee2$(_context2) {
-            while (1) {
-                switch (_context2.prev = _context2.next) {
-                    case 0:
-                        scene = new THREE.Scene();
-                        renderer = new THREE.WebGLRenderer();
-
-                        renderer.setSize(window.innerWidth, window.innerHeight);
-
-                        document.body.appendChild(renderer.domElement);
-
-                        _context2.next = 6;
-                        return setup(scene, assetRoot);
-
-                    case 6:
-                        _ref3 = _context2.sent;
-                        world = _ref3.world;
-                        boids = _ref3.boids;
-                        camera = _ref3.camera;
-
-
-                        console.log('setup complete');
-
-                        window.onresize = createHandleWindowResize(camera, renderer);
-
-                        if ((0, _pointerLockControls.pointerLockSupported)()) {
-                            controls = new _pointerLockControls2.default(camera);
-
-                            world.getControllerByName(cameraKey).setPointerLockControls(controls);
-                            scene.add(controls.getObject());
-                            controls.getObject().position.setX(0);
-                            controls.getObject().position.setY(1);
-                            controls.getObject().position.setZ(30);
-
-                            blocker = document.getElementById('blocker');
-
-
-                            (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
-                                if (isSourceElement) {
-                                    controls.enabled = true;
-                                    blocker.style.display = 'none';
-                                    context.simulationRunning = true;
-                                } else {
-                                    controls.enabled = false;
-                                    blocker.style.display = '';
-                                    context.simulationRunning = false;
-                                }
-                            });
-
-                            document.body.addEventListener('click', function () {
-                                controls.enabled = true;
-                                (0, _pointerLockControls.lockPointer)(document.body);
-                            }, false);
-                        } else {
-                            console.log('pointer lock not supported');
-                        }
-                        setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
-
-                        clock = new THREE.Clock();
-                        render = createRenderLoop(clock, boids, scene, camera, renderer, world);
-
-
-                        render();
-
-                    case 17:
-                    case 'end':
-                        return _context2.stop();
-                }
-            }
-        }, _callee2, _this);
-    }));
+    new Program().run(assetRoot);
 }
 
 /***/ }),
