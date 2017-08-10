@@ -44600,6 +44600,10 @@ var _resources = __webpack_require__(98);
 
 var _resources2 = _interopRequireDefault(_resources);
 
+var _page = __webpack_require__(101);
+
+var _page2 = _interopRequireDefault(_page);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -44616,83 +44620,11 @@ var KEYS = {
     KEY_Z: 90
 };
 
-var Page = function () {
-    function Page() {
-        (0, _classCallCheck3.default)(this, Page);
-    }
-
-    (0, _createClass3.default)(Page, [{
-        key: 'registerOnLoad',
-        value: function registerOnLoad(onLoad) {
-            var _this = this;
-
-            window.onload = function () {
-                return onLoad(_this);
-            };
-        }
-    }, {
-        key: 'appendToBody',
-        value: function appendToBody(element) {
-            document.body.appendChild(element);
-        }
-    }, {
-        key: 'registerOnResize',
-        value: function registerOnResize(onResize) {
-            window.onresize = onResize;
-        }
-    }, {
-        key: 'getElementById',
-        value: function getElementById(id) {
-            return document.getElementById(id);
-        }
-    }, {
-        key: 'isPointerLockSupported',
-        value: function isPointerLockSupported() {
-            return (0, _pointerLockControls.pointerLockSupported)();
-        }
-    }, {
-        key: 'registerOnPointerLockChanged',
-        value: function registerOnPointerLockChanged(whenPointerLockChanged) {
-            return (0, _pointerLockControls.onPointerLockChanged)(document, whenPointerLockChanged);
-        }
-    }, {
-        key: 'registerOnClick',
-        value: function registerOnClick(onClick) {
-            var _this2 = this;
-
-            document.body.addEventListener('click', function () {
-                return onClick(_this2);
-            }, false);
-        }
-    }, {
-        key: 'lockPointer',
-        value: function lockPointer() {
-            (0, _pointerLockControls.lockPointer)(document.body);
-        }
-    }, {
-        key: 'getInnerWidth',
-        value: function getInnerWidth() {
-            return window.innerWidth;
-        }
-    }, {
-        key: 'getInnerHeight',
-        value: function getInnerHeight() {
-            return window.innerHeight;
-        }
-    }, {
-        key: 'addKeyDownListener',
-        value: function addKeyDownListener(onKeyDown) {
-            document.addEventListener('keydown', onKeyDown, false);
-        }
-    }]);
-    return Page;
-}();
-
 var Program = function () {
     function Program() {
         (0, _classCallCheck3.default)(this, Program);
 
-        this.page = new Page();
+        this.page = new _page2.default();
         this.context = {
             config: {
                 showForceLine: false,
@@ -44844,14 +44776,14 @@ var Program = function () {
     }, {
         key: 'createRenderLoop',
         value: function createRenderLoop(clock, boids, scene, camera, renderer, world) {
-            var _this3 = this;
+            var _this = this;
 
             var internalRender = function internalRender() {
                 window.requestAnimationFrame(internalRender);
 
                 var delta = clock.getDelta();
-                if (_this3.context.simulationRunning) {
-                    _this3.update(delta, boids, world);
+                if (_this.context.simulationRunning) {
+                    _this.update(delta, boids, world);
                 }
 
                 renderer.render(scene, camera);
@@ -44885,14 +44817,14 @@ var Program = function () {
     }, {
         key: '_createResourcesStrategies',
         value: function _createResourcesStrategies(scene, world, boids) {
-            var _this4 = this;
+            var _this2 = this;
 
             return {
                 skySphere: function skySphere(_skySphere) {
                     return scene.add((0, _renderer.createSkyView)(_skySphere.geometry, _skySphere.materials));
                 },
                 bird: function bird(_bird) {
-                    return _this4.setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
+                    return _this2.setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
                 },
                 terrain: function terrain(_terrain) {
                     return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
@@ -44902,40 +44834,40 @@ var Program = function () {
     }, {
         key: 'createOnDocumentKeyDown',
         value: function createOnDocumentKeyDown(cameraController, domElement) {
-            var _this5 = this;
+            var _this3 = this;
 
             return function (event) {
                 console.log('keydown', event);
                 switch (event.keyCode) {
                     case KEYS.KEY_Y:
-                        _this5.toggleForceLine();
+                        _this3.toggleForceLine();
                         break;
                     case KEYS.KEY_U:
-                        _this5.context.config.showRepelLine = !_this5.context.config.showRepelLine;
+                        _this3.context.config.showRepelLine = !_this3.context.config.showRepelLine;
                         break;
                     case KEYS.KEY_I:
-                        _this5.toggleAttractLine();
+                        _this3.toggleAttractLine();
                         break;
                     case KEYS.KEY_O:
-                        _this5.context.config.showFollowLine = !_this5.context.config.showFollowLine;
+                        _this3.context.config.showFollowLine = !_this3.context.config.showFollowLine;
                         break;
                     case KEYS.KEY_P:
-                        _this5.context.config.showFriendLines = !_this5.context.config.showFriendLines;
+                        _this3.context.config.showFriendLines = !_this3.context.config.showFriendLines;
                         break;
                     case KEYS.KEY_B:
-                        _this5.context.config.showAxis = !_this5.context.config.showAxis;
+                        _this3.context.config.showAxis = !_this3.context.config.showAxis;
                         break;
                     case KEYS.KEY_Z:
-                        _this5.context.zoom = !_this5.context.zoom;
-                        if (_this5.context.zoom) {
+                        _this3.context.zoom = !_this3.context.zoom;
+                        if (_this3.context.zoom) {
                             cameraController.zoomIn();
                         } else {
                             cameraController.zoomOut();
                         }
                         break;
                     case KEYS.KEY_F:
-                        _this5.context.fullscreen = !_this5.context.fullscreen;
-                        if (_this5.context.fullscreen) {
+                        _this3.context.fullscreen = !_this3.context.fullscreen;
+                        if (_this3.context.fullscreen) {
                             if (domElement.webkitRequestFullscreen) {
                                 domElement.webkitRequestFullscreen();
                             }
@@ -44943,7 +44875,7 @@ var Program = function () {
                         break;
 
                 }
-                (0, _persistence.storeConfigChanges)(_this5.context.config);
+                (0, _persistence.storeConfigChanges)(_this3.context.config);
             };
         }
     }, {
@@ -44964,7 +44896,7 @@ var Program = function () {
     }, {
         key: 'run',
         value: function run(assetRoot) {
-            var _this6 = this;
+            var _this4 = this;
 
             this.page.registerOnLoad(function () {
                 var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
@@ -44982,7 +44914,7 @@ var Program = function () {
                                     page.appendToBody(renderer.domElement);
 
                                     _context2.next = 6;
-                                    return _this6.setup(scene, assetRoot);
+                                    return _this4.setup(scene, assetRoot);
 
                                 case 6:
                                     _ref3 = _context2.sent;
@@ -44993,7 +44925,7 @@ var Program = function () {
 
                                     console.log('setup complete');
 
-                                    page.registerOnResize(_this6.createHandleWindowResize(camera, renderer));
+                                    page.registerOnResize(_this4.createHandleWindowResize(camera, renderer));
 
                                     if (page.isPointerLockSupported()) {
                                         controls = new _pointerLockControls2.default(camera);
@@ -45011,11 +44943,11 @@ var Program = function () {
                                             if (isSourceElement) {
                                                 controls.enabled = true;
                                                 blocker.style.display = 'none';
-                                                _this6.context.simulationRunning = true;
+                                                _this4.context.simulationRunning = true;
                                             } else {
                                                 controls.enabled = false;
                                                 blocker.style.display = '';
-                                                _this6.context.simulationRunning = false;
+                                                _this4.context.simulationRunning = false;
                                             }
                                         });
 
@@ -45026,10 +44958,10 @@ var Program = function () {
                                     } else {
                                         console.log('pointer lock not supported');
                                     }
-                                    _this6.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+                                    _this4.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
 
                                     clock = new THREE.Clock();
-                                    render = _this6.createRenderLoop(clock, boids, scene, camera, renderer, world);
+                                    render = _this4.createRenderLoop(clock, boids, scene, camera, renderer, world);
 
 
                                     render();
@@ -45039,7 +44971,7 @@ var Program = function () {
                                     return _context2.stop();
                             }
                         }
-                    }, _callee2, _this6);
+                    }, _callee2, _this4);
                 }));
 
                 return function (_x4) {
@@ -48094,6 +48026,103 @@ var core  = __webpack_require__(0)
 module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(9);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(10);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _pointerLockControls = __webpack_require__(96);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Page = function () {
+    function Page() {
+        (0, _classCallCheck3.default)(this, Page);
+    }
+
+    (0, _createClass3.default)(Page, [{
+        key: 'registerOnLoad',
+        value: function registerOnLoad(onLoad) {
+            var _this = this;
+
+            window.onload = function () {
+                return onLoad(_this);
+            };
+        }
+    }, {
+        key: 'appendToBody',
+        value: function appendToBody(element) {
+            document.body.appendChild(element);
+        }
+    }, {
+        key: 'registerOnResize',
+        value: function registerOnResize(onResize) {
+            window.onresize = onResize;
+        }
+    }, {
+        key: 'getElementById',
+        value: function getElementById(id) {
+            return document.getElementById(id);
+        }
+    }, {
+        key: 'isPointerLockSupported',
+        value: function isPointerLockSupported() {
+            return (0, _pointerLockControls.pointerLockSupported)();
+        }
+    }, {
+        key: 'registerOnPointerLockChanged',
+        value: function registerOnPointerLockChanged(whenPointerLockChanged) {
+            return (0, _pointerLockControls.onPointerLockChanged)(document, whenPointerLockChanged);
+        }
+    }, {
+        key: 'registerOnClick',
+        value: function registerOnClick(onClick) {
+            var _this2 = this;
+
+            document.body.addEventListener('click', function () {
+                return onClick(_this2);
+            }, false);
+        }
+    }, {
+        key: 'lockPointer',
+        value: function lockPointer() {
+            (0, _pointerLockControls.lockPointer)(document.body);
+        }
+    }, {
+        key: 'getInnerWidth',
+        value: function getInnerWidth() {
+            return window.innerWidth;
+        }
+    }, {
+        key: 'getInnerHeight',
+        value: function getInnerHeight() {
+            return window.innerHeight;
+        }
+    }, {
+        key: 'addKeyDownListener',
+        value: function addKeyDownListener(onKeyDown) {
+            document.addEventListener('keydown', onKeyDown, false);
+        }
+    }]);
+    return Page;
+}();
+
+exports.default = Page;
 
 /***/ })
 /******/ ]);

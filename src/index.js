@@ -3,9 +3,10 @@ import { World } from './game/world';
 import { Boid } from './game/boid';
 import { BoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistence';
-import PointerLockControler, { pointerLockSupported, lockPointer, onPointerLockChanged } from './pointerLockControls';
+import PointerLockControler from './pointerLockControls';
 import CameraController from './CameraController';
 import loadAllResources from './resources';
+import Page from './page';
 
 const cameraKey = 'camera';
 const KEYS = {
@@ -18,52 +19,6 @@ const KEYS = {
     KEY_Y: 89,
     KEY_Z: 90
 };
-
-class Page {
-    registerOnLoad(onLoad) {
-        window.onload = () => onLoad(this);
-    }
-
-    appendToBody(element) {
-        document.body.appendChild(element);
-    }
-
-    registerOnResize(onResize) {
-        window.onresize = onResize;
-    }
-
-    getElementById(id) {
-        return document.getElementById(id);
-    }
-
-    isPointerLockSupported() {
-        return pointerLockSupported();
-    }
-
-    registerOnPointerLockChanged(whenPointerLockChanged) {
-        return onPointerLockChanged(document, whenPointerLockChanged);
-    }
-
-    registerOnClick(onClick) {
-        document.body.addEventListener('click', () => onClick(this), false);
-    }
-
-    lockPointer() {
-        lockPointer(document.body);
-    }
-
-    getInnerWidth() {
-        return window.innerWidth;
-    }
-
-    getInnerHeight() {
-        return window.innerHeight;
-    }
-
-    addKeyDownListener(onKeyDown) {
-        document.addEventListener('keydown', onKeyDown, false);
-    }
-}
 
 class Program {
     constructor() {
