@@ -19,8 +19,51 @@ const KEYS = {
     KEY_Z: 90
 };
 
+class Page {
+    registerOnLoad(onLoad) {
+        window.onload = () => onLoad(this);
+    }
+
+    appendToBody(element) {
+        document.body.appendChild(element);
+    }
+
+    registerOnResize(onResize) {
+        window.onresize = onResize;
+    }
+
+    getElementById(id) {
+        return document.getElementById(id);
+    }
+
+    isPointerLockSupported() {
+        return pointerLockSupported();
+    }
+
+    registerOnPointerLockChanged(whenPointerLockChanged) {
+        return onPointerLockChanged(document, whenPointerLockChanged);
+    }
+
+    registerOnClick(onClick) {
+        document.body.addEventListener('click', () => onClick(this), false);
+    }
+
+    lockPointer() {
+        lockPointer(document.body);
+    }
+
+    getInnerWidth() {
+        return window.innerWidth;
+    }
+
+    getInnerHeight() {
+        return window.innerHeight;
+    }
+}
+
 class Program {
     constructor() {
+        this.page = new Page();
         this.context = {
             config: {
                 showForceLine: false,
@@ -180,21 +223,21 @@ class Program {
     }
 
     run(assetRoot) {
-        window.onload = async () => {
+        this.page.registerOnLoad(async page => {
             var scene = new THREE.Scene();
 
             var renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-            document.body.appendChild(renderer.domElement);
+            page.appendToBody(renderer.domElement);
 
             var { world, boids, camera } = await this.setup(scene, assetRoot);
 
             console.log('setup complete');
 
-            window.onresize = this.createHandleWindowResize(camera, renderer);
+            page.registerOnResize(this.createHandleWindowResize(camera, renderer));
 
-            if (pointerLockSupported()) {
+            if (page.isPointerLockSupported()) {
                 const controls = new PointerLockControler(camera);
                 world.getControllerByName(cameraKey).setPointerLockControls(controls);
                 scene.add(controls.getObject());
@@ -202,9 +245,9 @@ class Program {
                 controls.getObject().position.setY(1);
                 controls.getObject().position.setZ(30);
 
-                var blocker = document.getElementById('blocker');
+                var blocker = page.getElementById('blocker');
 
-                onPointerLockChanged(document, (isSourceElement) => {
+                page.registerOnPointerLockChanged((isSourceElement) => {
                     if (isSourceElement) {
                         controls.enabled = true;
                         blocker.style.display = 'none';
@@ -216,13 +259,10 @@ class Program {
                     }
                 });
 
-                document.body.addEventListener(
-                    'click',
-                    () => {
-                        controls.enabled = true;
-                        lockPointer(document.body);
-                    },
-                    false);
+                page.registerOnClick((p) => {
+                    controls.enabled = true;
+                    p.lockPointer();
+                });
             } else {
                 console.log('pointer lock not supported');
             }
@@ -233,7 +273,7 @@ class Program {
             var render = this.createRenderLoop(clock, boids, scene, camera, renderer, world);
 
             render();
-        };
+        });
     }
 }
 

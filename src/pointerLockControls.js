@@ -82,10 +82,10 @@ const lockPointer = (element) => {
     element.requestPointerLock();
 };
 
-const onPointerLockChanged = (document, pointerlockchange) => {
+const onPointerLockChanged = (document, pointerLockChange) => {
     const element = document.body;
     const changed = () => {
-        pointerlockchange(document.pointerLockElement === element ||
+        pointerLockChange(document.pointerLockElement === element ||
             document.mozPointerLockElement === element ||
             document.webkitPointerLockElement === element);
         };
