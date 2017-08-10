@@ -59,6 +59,10 @@ class Page {
     getInnerHeight() {
         return window.innerHeight;
     }
+
+    addKeyDownListener(onKeyDown) {
+        document.addEventListener('keydown', onKeyDown, false);
+    }
 }
 
 class Program {
@@ -210,7 +214,7 @@ class Program {
     }
 
     setupKeyboardListeners(cameraController, domElement) {
-        document.addEventListener('keydown', this.createOnDocumentKeyDown(cameraController, domElement), false);
+        this.page.addKeyDownListener(this.createOnDocumentKeyDown(cameraController, domElement));
     }
 
     createHandleWindowResize(camera, renderer) {

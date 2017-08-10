@@ -44679,6 +44679,11 @@ var Page = function () {
         value: function getInnerHeight() {
             return window.innerHeight;
         }
+    }, {
+        key: 'addKeyDownListener',
+        value: function addKeyDownListener(onKeyDown) {
+            document.addEventListener('keydown', onKeyDown, false);
+        }
     }]);
     return Page;
 }();
@@ -44944,7 +44949,7 @@ var Program = function () {
     }, {
         key: 'setupKeyboardListeners',
         value: function setupKeyboardListeners(cameraController, domElement) {
-            document.addEventListener('keydown', this.createOnDocumentKeyDown(cameraController, domElement), false);
+            this.page.addKeyDownListener(this.createOnDocumentKeyDown(cameraController, domElement));
         }
     }, {
         key: 'createHandleWindowResize',
