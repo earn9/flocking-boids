@@ -44,4 +44,8 @@ export default class Page {
     addKeyDownListener(onKeyDown) {
         document.addEventListener('keydown', onKeyDown, false);
     }
+
+    getAspectRatio()  {
+        return window.innerWidth / window.innerHeight;
+    }
 }

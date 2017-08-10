@@ -174,10 +174,10 @@ class Program {
 
     createHandleWindowResize(camera, renderer) {
         return () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect = this.page.getAspectRatio();
             camera.updateProjectionMatrix();
 
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(this.page.getInnerWidth(), this.page.getInnerHeight());
         };
     }
 
@@ -237,6 +237,5 @@ class Program {
 }
 
 export function startUp(assetRoot = '') {
-
     new Program().run(assetRoot);
 }

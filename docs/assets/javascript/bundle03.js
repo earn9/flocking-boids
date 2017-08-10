@@ -44886,17 +44886,19 @@ var Program = function () {
     }, {
         key: 'createHandleWindowResize',
         value: function createHandleWindowResize(camera, renderer) {
+            var _this4 = this;
+
             return function () {
-                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.aspect = _this4.page.getAspectRatio();
                 camera.updateProjectionMatrix();
 
-                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setSize(_this4.page.getInnerWidth(), _this4.page.getInnerHeight());
             };
         }
     }, {
         key: 'run',
         value: function run(assetRoot) {
-            var _this4 = this;
+            var _this5 = this;
 
             this.page.registerOnLoad(function () {
                 var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
@@ -44914,7 +44916,7 @@ var Program = function () {
                                     page.appendToBody(renderer.domElement);
 
                                     _context2.next = 6;
-                                    return _this4.setup(scene, assetRoot);
+                                    return _this5.setup(scene, assetRoot);
 
                                 case 6:
                                     _ref3 = _context2.sent;
@@ -44925,7 +44927,7 @@ var Program = function () {
 
                                     console.log('setup complete');
 
-                                    page.registerOnResize(_this4.createHandleWindowResize(camera, renderer));
+                                    page.registerOnResize(_this5.createHandleWindowResize(camera, renderer));
 
                                     if (page.isPointerLockSupported()) {
                                         controls = new _pointerLockControls2.default(camera);
@@ -44943,11 +44945,11 @@ var Program = function () {
                                             if (isSourceElement) {
                                                 controls.enabled = true;
                                                 blocker.style.display = 'none';
-                                                _this4.context.simulationRunning = true;
+                                                _this5.context.simulationRunning = true;
                                             } else {
                                                 controls.enabled = false;
                                                 blocker.style.display = '';
-                                                _this4.context.simulationRunning = false;
+                                                _this5.context.simulationRunning = false;
                                             }
                                         });
 
@@ -44958,10 +44960,10 @@ var Program = function () {
                                     } else {
                                         console.log('pointer lock not supported');
                                     }
-                                    _this4.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+                                    _this5.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
 
                                     clock = new THREE.Clock();
-                                    render = _this4.createRenderLoop(clock, boids, scene, camera, renderer, world);
+                                    render = _this5.createRenderLoop(clock, boids, scene, camera, renderer, world);
 
 
                                     render();
@@ -44971,7 +44973,7 @@ var Program = function () {
                                     return _context2.stop();
                             }
                         }
-                    }, _callee2, _this4);
+                    }, _callee2, _this5);
                 }));
 
                 return function (_x4) {
@@ -44985,7 +44987,6 @@ var Program = function () {
 
 function startUp() {
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
 
     new Program().run(assetRoot);
 }
@@ -48117,6 +48118,11 @@ var Page = function () {
         key: 'addKeyDownListener',
         value: function addKeyDownListener(onKeyDown) {
             document.addEventListener('keydown', onKeyDown, false);
+        }
+    }, {
+        key: 'getAspectRatio',
+        value: function getAspectRatio() {
+            return window.innerWidth / window.innerHeight;
         }
     }]);
     return Page;
