@@ -21,12 +21,12 @@ const KEYS = {
 };
 
 const createKeyHandlingStrategies = (cameraController, domElement) => ({
-    [KEYS.KEY_Y]: program => program.toggleForceLine(),
-    [KEYS.KEY_U]: program => program.context.config.showRepelLine = !program.context.config.showRepelLine,
-    [KEYS.KEY_I]: program => program.toggleAttractLine(),
-    [KEYS.KEY_O]: program => program.context.config.showFollowLine = !program.context.config.showFollowLine,
-    [KEYS.KEY_P]: program => program.context.config.showFriendLines = !program.context.config.showFriendLines,
-    [KEYS.KEY_B]: program => program.context.config.showAxis = !program.context.config.showAxis,
+    [KEYS.KEY_Y]: program => program.context.config.toggleForceLine(),
+    [KEYS.KEY_U]: program => program.context.config.toggleRepelLines(),
+    [KEYS.KEY_I]: program => program.context.config.toggleAttractLine(),
+    [KEYS.KEY_O]: program => program.context.config.toggleFollowLine(),
+    [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
+    [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
     [KEYS.KEY_Z]: program => {
         program.context.zoom = !program.context.zoom;
         if (program.context.zoom) {
@@ -45,18 +45,54 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     }
 });
 
+class Config {
+    constructor() {
+        this.showForceLine = false;
+        this.showRepelLine = false;
+        this.showAttractLine = false;
+        this.showFollowLine = false;
+        this.showFriendLines = false;
+        this.showAxis = false;
+    }
+
+    toggleForceLine() { 
+        this.showForceLine = !this.showForceLine;
+    }
+
+    toggleAttractLine() {
+        this.showAttractLine = !this.showAttractLine;
+    }
+
+    toggleRepelLines() {
+        this.showRepelLine = !this.showRepelLine;
+    }
+
+    toggleFollowLine() {
+        this.showFollowLine = !this.showFollowLine;
+    }
+
+    toggleFriendLines() {
+        this.showFriendLines = !this.showFriendLines;
+    }
+
+    toggleAxis() {
+        this.showAxis = !this.showAxis;
+    }
+
+    toggleZoom() {
+        this.zoom = !this.zoom;
+    }
+
+    toggleFullscreen() {
+        this.fullscreen = !this.fullscreen;
+    }
+}
+
 class Program {
     constructor() {
         this.page = new Page();
-        this.context = {
-            config: {
-                showForceLine: false,
-                showRepelLine: false,
-                showAttractLine: false,
-                showFollowLine: false,
-                showFriendLines: false,
-                showAxis: false
-            },
+        this.context = { 
+            config: new Config(),
             simulationRunning: false,
             zoom: false
         };
@@ -114,15 +150,6 @@ class Program {
         };
         return internalRender;
     }
-
-    toggleForceLine() {
-        this.context.config.showForceLine = !this.context.config.showForceLine;
-    }
-
-    toggleAttractLine() {
-        this.context.config.showAttractLine = !this.context.config.showAttractLine;
-    }
-
 
     _createResourcesDescription(assetRoot) {
         return [

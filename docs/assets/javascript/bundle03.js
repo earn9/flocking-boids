@@ -44628,17 +44628,17 @@ var createKeyHandlingStrategies = function createKeyHandlingStrategies(cameraCon
     var _ref;
 
     return _ref = {}, (0, _defineProperty3.default)(_ref, KEYS.KEY_Y, function (program) {
-        return program.toggleForceLine();
+        return program.context.config.toggleForceLine();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_U, function (program) {
-        return program.context.config.showRepelLine = !program.context.config.showRepelLine;
+        return program.context.config.toggleRepelLines();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_I, function (program) {
-        return program.toggleAttractLine();
+        return program.context.config.toggleAttractLine();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_O, function (program) {
-        return program.context.config.showFollowLine = !program.context.config.showFollowLine;
+        return program.context.config.toggleFollowLine();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_P, function (program) {
-        return program.context.config.showFriendLines = !program.context.config.showFriendLines;
+        return program.context.config.toggleFriendLines();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_B, function (program) {
-        return program.context.config.showAxis = !program.context.config.showAxis;
+        return program.context.config.toggleAxis();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_Z, function (program) {
         program.context.zoom = !program.context.zoom;
         if (program.context.zoom) {
@@ -44656,20 +44656,69 @@ var createKeyHandlingStrategies = function createKeyHandlingStrategies(cameraCon
     }), _ref;
 };
 
+var Config = function () {
+    function Config() {
+        (0, _classCallCheck3.default)(this, Config);
+
+        this.showForceLine = false;
+        this.showRepelLine = false;
+        this.showAttractLine = false;
+        this.showFollowLine = false;
+        this.showFriendLines = false;
+        this.showAxis = false;
+    }
+
+    (0, _createClass3.default)(Config, [{
+        key: 'toggleForceLine',
+        value: function toggleForceLine() {
+            this.showForceLine = !this.showForceLine;
+        }
+    }, {
+        key: 'toggleAttractLine',
+        value: function toggleAttractLine() {
+            this.showAttractLine = !this.showAttractLine;
+        }
+    }, {
+        key: 'toggleRepelLines',
+        value: function toggleRepelLines() {
+            this.showRepelLine = !this.showRepelLine;
+        }
+    }, {
+        key: 'toggleFollowLine',
+        value: function toggleFollowLine() {
+            this.showFollowLine = !this.showFollowLine;
+        }
+    }, {
+        key: 'toggleFriendLines',
+        value: function toggleFriendLines() {
+            this.showFriendLines = !this.showFriendLines;
+        }
+    }, {
+        key: 'toggleAxis',
+        value: function toggleAxis() {
+            this.showAxis = !this.showAxis;
+        }
+    }, {
+        key: 'toggleZoom',
+        value: function toggleZoom() {
+            this.zoom = !this.zoom;
+        }
+    }, {
+        key: 'toggleFullscreen',
+        value: function toggleFullscreen() {
+            this.fullscreen = !this.fullscreen;
+        }
+    }]);
+    return Config;
+}();
+
 var Program = function () {
     function Program() {
         (0, _classCallCheck3.default)(this, Program);
 
         this.page = new _page2.default();
         this.context = {
-            config: {
-                showForceLine: false,
-                showRepelLine: false,
-                showAttractLine: false,
-                showFollowLine: false,
-                showFriendLines: false,
-                showAxis: false
-            },
+            config: new Config(),
             simulationRunning: false,
             zoom: false
         };
@@ -44825,16 +44874,6 @@ var Program = function () {
                 renderer.render(scene, camera);
             };
             return internalRender;
-        }
-    }, {
-        key: 'toggleForceLine',
-        value: function toggleForceLine() {
-            this.context.config.showForceLine = !this.context.config.showForceLine;
-        }
-    }, {
-        key: 'toggleAttractLine',
-        value: function toggleAttractLine() {
-            this.context.config.showAttractLine = !this.context.config.showAttractLine;
         }
     }, {
         key: '_createResourcesDescription',
