@@ -44574,6 +44574,10 @@ var _createClass2 = __webpack_require__(10);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+var _defineProperty2 = __webpack_require__(89);
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
 exports.startUp = startUp;
 
 var _three = __webpack_require__(11);
@@ -44618,6 +44622,38 @@ var KEYS = {
     KEY_P: 80,
     KEY_Y: 89,
     KEY_Z: 90
+};
+
+var createKeyHandlingStrategies = function createKeyHandlingStrategies(cameraController, domElement) {
+    var _ref;
+
+    return _ref = {}, (0, _defineProperty3.default)(_ref, KEYS.KEY_Y, function (program) {
+        return program.toggleForceLine();
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_U, function (program) {
+        return program.context.config.showRepelLine = !program.context.config.showRepelLine;
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_I, function (program) {
+        return program.toggleAttractLine();
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_O, function (program) {
+        return program.context.config.showFollowLine = !program.context.config.showFollowLine;
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_P, function (program) {
+        return program.context.config.showFriendLines = !program.context.config.showFriendLines;
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_B, function (program) {
+        return program.context.config.showAxis = !program.context.config.showAxis;
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_Z, function (program) {
+        program.context.zoom = !program.context.zoom;
+        if (program.context.zoom) {
+            cameraController.zoomIn();
+        } else {
+            cameraController.zoomOut();
+        }
+    }), (0, _defineProperty3.default)(_ref, KEYS.KEY_F, function (program) {
+        program.context.fullscreen = !program.context.fullscreen;
+        if (program.context.fullscreen) {
+            if (domElement.webkitRequestFullscreen) {
+                domElement.webkitRequestFullscreen();
+            }
+        }
+    }), _ref;
 };
 
 var Program = function () {
@@ -44685,7 +44721,7 @@ var Program = function () {
     }, {
         key: 'setup',
         value: function () {
-            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
+            var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
                 var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
                 var world, boids, resources, resourceStratergies, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light, camera;
@@ -44768,7 +44804,7 @@ var Program = function () {
             }));
 
             function setup(_x3) {
-                return _ref.apply(this, arguments);
+                return _ref2.apply(this, arguments);
             }
 
             return setup;
@@ -44833,55 +44869,21 @@ var Program = function () {
         }
     }, {
         key: 'createOnDocumentKeyDown',
-        value: function createOnDocumentKeyDown(cameraController, domElement) {
+        value: function createOnDocumentKeyDown(keyHandlingStrategies) {
             var _this3 = this;
 
             return function (event) {
                 console.log('keydown', event);
-                switch (event.keyCode) {
-                    case KEYS.KEY_Y:
-                        _this3.toggleForceLine();
-                        break;
-                    case KEYS.KEY_U:
-                        _this3.context.config.showRepelLine = !_this3.context.config.showRepelLine;
-                        break;
-                    case KEYS.KEY_I:
-                        _this3.toggleAttractLine();
-                        break;
-                    case KEYS.KEY_O:
-                        _this3.context.config.showFollowLine = !_this3.context.config.showFollowLine;
-                        break;
-                    case KEYS.KEY_P:
-                        _this3.context.config.showFriendLines = !_this3.context.config.showFriendLines;
-                        break;
-                    case KEYS.KEY_B:
-                        _this3.context.config.showAxis = !_this3.context.config.showAxis;
-                        break;
-                    case KEYS.KEY_Z:
-                        _this3.context.zoom = !_this3.context.zoom;
-                        if (_this3.context.zoom) {
-                            cameraController.zoomIn();
-                        } else {
-                            cameraController.zoomOut();
-                        }
-                        break;
-                    case KEYS.KEY_F:
-                        _this3.context.fullscreen = !_this3.context.fullscreen;
-                        if (_this3.context.fullscreen) {
-                            if (domElement.webkitRequestFullscreen) {
-                                domElement.webkitRequestFullscreen();
-                            }
-                        }
-                        break;
-
+                var handler = keyHandlingStrategies[event.keyCode];
+                if (handler) {
+                    handler(_this3);
+                    (0, _persistence.storeConfigChanges)(_this3.context.config);
+                    return;
+                } else {
+                    console.log('no handler found for key ' + event.keyCode);
                 }
                 (0, _persistence.storeConfigChanges)(_this3.context.config);
             };
-        }
-    }, {
-        key: 'setupKeyboardListeners',
-        value: function setupKeyboardListeners(cameraController, domElement) {
-            this.page.addKeyDownListener(this.createOnDocumentKeyDown(cameraController, domElement));
         }
     }, {
         key: 'createHandleWindowResize',
@@ -44901,8 +44903,8 @@ var Program = function () {
             var _this5 = this;
 
             this.page.registerOnLoad(function () {
-                var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
-                    var scene, renderer, _ref3, world, boids, camera, controls, blocker, clock, render;
+                var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
+                    var scene, renderer, _ref4, world, boids, camera, controls, blocker, clock, render;
 
                     return _regenerator2.default.wrap(function _callee2$(_context2) {
                         while (1) {
@@ -44919,10 +44921,10 @@ var Program = function () {
                                     return _this5.setup(scene, assetRoot);
 
                                 case 6:
-                                    _ref3 = _context2.sent;
-                                    world = _ref3.world;
-                                    boids = _ref3.boids;
-                                    camera = _ref3.camera;
+                                    _ref4 = _context2.sent;
+                                    world = _ref4.world;
+                                    boids = _ref4.boids;
+                                    camera = _ref4.camera;
 
 
                                     console.log('setup complete');
@@ -44960,7 +44962,8 @@ var Program = function () {
                                     } else {
                                         console.log('pointer lock not supported');
                                     }
-                                    _this5.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+
+                                    _this5.page.addKeyDownListener(_this5.createOnDocumentKeyDown(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
 
                                     clock = new THREE.Clock();
                                     render = _this5.createRenderLoop(clock, boids, scene, camera, renderer, world);
@@ -44977,7 +44980,7 @@ var Program = function () {
                 }));
 
                 return function (_x4) {
-                    return _ref2.apply(this, arguments);
+                    return _ref3.apply(this, arguments);
                 };
             }());
         }

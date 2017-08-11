@@ -20,6 +20,31 @@ const KEYS = {
     KEY_Z: 90
 };
 
+const createKeyHandlingStrategies = (cameraController, domElement) => ({
+    [KEYS.KEY_Y]: program => program.toggleForceLine(),
+    [KEYS.KEY_U]: program => program.context.config.showRepelLine = !program.context.config.showRepelLine,
+    [KEYS.KEY_I]: program => program.toggleAttractLine(),
+    [KEYS.KEY_O]: program => program.context.config.showFollowLine = !program.context.config.showFollowLine,
+    [KEYS.KEY_P]: program => program.context.config.showFriendLines = !program.context.config.showFriendLines,
+    [KEYS.KEY_B]: program => program.context.config.showAxis = !program.context.config.showAxis,
+    [KEYS.KEY_Z]: program => {
+        program.context.zoom = !program.context.zoom;
+        if (program.context.zoom) {
+            cameraController.zoomIn();
+        } else {
+            cameraController.zoomOut();
+        }
+    },
+    [KEYS.KEY_F]: program => {
+        program.context.fullscreen = !program.context.fullscreen;
+        if (program.context.fullscreen) {
+            if (domElement.webkitRequestFullscreen) {
+                domElement.webkitRequestFullscreen();
+            }
+        }
+    }
+});
+
 class Program {
     constructor() {
         this.page = new Page();
@@ -124,52 +149,19 @@ class Program {
         };
     }
 
-    createOnDocumentKeyDown(cameraController, domElement) {
+    createOnDocumentKeyDown(keyHandlingStrategies) {
         return (event) => {
             console.log('keydown', event);
-            switch (event.keyCode) {
-                case KEYS.KEY_Y:
-                    this.toggleForceLine();
-                    break;
-                case KEYS.KEY_U:
-                    this.context.config.showRepelLine = !this.context.config.showRepelLine;
-                    break;
-                case KEYS.KEY_I:
-                    this.toggleAttractLine();
-                    break;
-                case KEYS.KEY_O:
-                    this.context.config.showFollowLine = !this.context.config.showFollowLine;
-                    break;
-                case KEYS.KEY_P:
-                    this.context.config.showFriendLines = !this.context.config.showFriendLines;
-                    break;
-                case KEYS.KEY_B:
-                    this.context.config.showAxis = !this.context.config.showAxis;
-                    break;
-                case KEYS.KEY_Z:
-                    this.context.zoom = !this.context.zoom;
-                    if (this.context.zoom) {
-                        cameraController.zoomIn();
-                    } else {
-                        cameraController.zoomOut();
-                    }
-                    break;
-                case KEYS.KEY_F:
-                    this.context.fullscreen = !this.context.fullscreen;
-                    if (this.context.fullscreen) {
-                        if (domElement.webkitRequestFullscreen) {
-                            domElement.webkitRequestFullscreen();
-                        }
-                    }
-                    break;
-
+            const handler = keyHandlingStrategies[event.keyCode];
+            if (handler) {
+                handler(this);
+                storeConfigChanges(this.context.config);
+                return;
+            } else {
+                console.log(`no handler found for key ${event.keyCode}`);
             }
             storeConfigChanges(this.context.config);
         };
-    }
-
-    setupKeyboardListeners(cameraController, domElement) {
-        this.page.addKeyDownListener(this.createOnDocumentKeyDown(cameraController, domElement));
     }
 
     createHandleWindowResize(camera, renderer) {
@@ -225,7 +217,12 @@ class Program {
             } else {
                 console.log('pointer lock not supported');
             }
-            this.setupKeyboardListeners(world.getControllerByName(cameraKey), renderer.domElement);
+
+            this.page.addKeyDownListener(
+                this.createOnDocumentKeyDown(
+                    createKeyHandlingStrategies(
+                        world.getControllerByName(cameraKey), 
+                        renderer.domElement)));
 
             var clock = new THREE.Clock();
 
