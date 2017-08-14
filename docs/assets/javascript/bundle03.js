@@ -44640,14 +44640,14 @@ var createKeyHandlingStrategies = function createKeyHandlingStrategies(cameraCon
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_B, function (program) {
         return program.context.config.toggleAxis();
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_Z, function (program) {
-        program.context.zoom = !program.context.zoom;
+        program.context.toggleZoom();
         if (program.context.zoom) {
             cameraController.zoomIn();
         } else {
             cameraController.zoomOut();
         }
     }), (0, _defineProperty3.default)(_ref, KEYS.KEY_F, function (program) {
-        program.context.fullscreen = !program.context.fullscreen;
+        program.context.toggleFullscreen();
         if (program.context.fullscreen) {
             if (domElement.webkitRequestFullscreen) {
                 domElement.webkitRequestFullscreen();
@@ -44712,16 +44712,36 @@ var Config = function () {
     return Config;
 }();
 
+var Context = function () {
+    function Context() {
+        var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Config();
+        (0, _classCallCheck3.default)(this, Context);
+
+        this.config = config;
+        this.simulationRunning = false;
+        this.zoom = false;
+    }
+
+    (0, _createClass3.default)(Context, [{
+        key: 'toggleZoom',
+        value: function toggleZoom() {
+            this.zoom = !this.zoom;
+        }
+    }, {
+        key: 'toggleFullscreen',
+        value: function toggleFullscreen() {
+            this.fullscreen = !this.fullscreen;
+        }
+    }]);
+    return Context;
+}();
+
 var Program = function () {
     function Program() {
         (0, _classCallCheck3.default)(this, Program);
 
         this.page = new _page2.default();
-        this.context = {
-            config: new Config(),
-            simulationRunning: false,
-            zoom: false
-        };
+        this.context = new Context();
     }
 
     (0, _createClass3.default)(Program, [{
@@ -44852,7 +44872,7 @@ var Program = function () {
                 }, _callee, this, [[11, 15, 19, 27], [20,, 22, 26]]);
             }));
 
-            function setup(_x3) {
+            function setup(_x4) {
                 return _ref2.apply(this, arguments);
             }
 
@@ -45018,7 +45038,7 @@ var Program = function () {
                     }, _callee2, _this5);
                 }));
 
-                return function (_x4) {
+                return function (_x5) {
                     return _ref3.apply(this, arguments);
                 };
             }());

@@ -28,7 +28,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
     [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
     [KEYS.KEY_Z]: program => {
-        program.context.zoom = !program.context.zoom;
+        program.context.toggleZoom();
         if (program.context.zoom) {
             cameraController.zoomIn();
         } else {
@@ -36,7 +36,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
         }
     },
     [KEYS.KEY_F]: program => {
-        program.context.fullscreen = !program.context.fullscreen;
+        program.context.toggleFullscreen();
         if (program.context.fullscreen) {
             if (domElement.webkitRequestFullscreen) {
                 domElement.webkitRequestFullscreen();
@@ -88,14 +88,26 @@ class Config {
     }
 }
 
+class Context {
+    constructor(config = new Config()) {
+        this.config = config;
+        this.simulationRunning = false;
+        this.zoom = false;
+    }
+
+    toggleZoom() {
+        this.zoom = !this.zoom;
+    }
+
+    toggleFullscreen() {
+        this.fullscreen = !this.fullscreen;
+    }
+}
+
 class Program {
     constructor() {
         this.page = new Page();
-        this.context = { 
-            config: new Config(),
-            simulationRunning: false,
-            zoom: false
-        };
+        this.context = new Context();
     }
 
     update(delta, boidsViews, world) {
