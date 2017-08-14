@@ -5,6 +5,10 @@ export default class Page {
         window.onload = () => onLoad(this);
     }
 
+    setRenderer(renderer) {
+        this.appendToBody(renderer.domElement);
+    }
+
     appendToBody(element) {
         document.body.appendChild(element);
     }

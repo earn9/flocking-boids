@@ -44974,7 +44974,7 @@ var Program = function () {
 
                                     renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-                                    page.appendToBody(renderer.domElement);
+                                    page.setRenderer(renderer);
 
                                     _context2.next = 6;
                                     return _this5._setup(scene, assetRoot);
@@ -48125,6 +48125,11 @@ var Page = function () {
             window.onload = function () {
                 return onLoad(_this);
             };
+        }
+    }, {
+        key: 'setRenderer',
+        value: function setRenderer(renderer) {
+            this.appendToBody(renderer.domElement);
         }
     }, {
         key: 'appendToBody',

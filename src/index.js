@@ -219,7 +219,7 @@ class Program {
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-            page.appendToBody(renderer.domElement);
+            page.setRenderer(renderer);
 
             var { world, boids, camera } = await this._setup(scene, assetRoot);
 
