@@ -110,14 +110,14 @@ class Program {
         this.context = new Context();
     }
 
-    update(delta, boidsViews, world) {
+    _update(delta, boidsViews, world) {
         world.update(delta);
         for (const boidView of boidsViews) {
             boidView.update(this.context, delta);
         }
     }
 
-    setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
+    _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
         const numBoids = 500;
 
         for (let i = 0; i < numBoids; i++) {
@@ -128,7 +128,7 @@ class Program {
         }
     }
 
-    async setup(scene, assetRoot = '') {
+    async _setup(scene, assetRoot = '') {
         initializeConfig(this.context.config);
         const world = new World();
 
@@ -149,13 +149,13 @@ class Program {
         return { world, boids, camera };
     }
 
-    createRenderLoop(clock, boids, scene, camera, renderer, world) {
+    _createRenderLoop(clock, boids, scene, camera, renderer, world) {
         const internalRender = () => {
             window.requestAnimationFrame(internalRender);
 
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
-                this.update(delta, boids, world);
+                this._update(delta, boids, world);
             }
 
             renderer.render(scene, camera);
@@ -183,12 +183,12 @@ class Program {
     _createResourcesStrategies(scene, world, boids) {
         return {
             skySphere: skySphere => scene.add(createSkyView(skySphere.geometry, skySphere.materials)),
-            bird: bird => this.setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
+            bird: bird => this._setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
             terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
         };
     }
 
-    createOnDocumentKeyDown(keyHandlingStrategies) {
+    _createDocumentKeyDownHandler(keyHandlingStrategies) {
         return (event) => {
             console.log('keydown', event);
             const handler = keyHandlingStrategies[event.keyCode];
@@ -203,7 +203,7 @@ class Program {
         };
     }
 
-    createHandleWindowResize(camera, renderer) {
+    _createWindowResizeHandler(camera, renderer) {
         return () => {
             camera.aspect = this.page.getAspectRatio();
             camera.updateProjectionMatrix();
@@ -221,11 +221,11 @@ class Program {
 
             page.appendToBody(renderer.domElement);
 
-            var { world, boids, camera } = await this.setup(scene, assetRoot);
+            var { world, boids, camera } = await this._setup(scene, assetRoot);
 
             console.log('setup complete');
 
-            page.registerOnResize(this.createHandleWindowResize(camera, renderer));
+            page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
 
             if (page.isPointerLockSupported()) {
                 const controls = new PointerLockControler(camera);
@@ -258,14 +258,14 @@ class Program {
             }
 
             this.page.addKeyDownListener(
-                this.createOnDocumentKeyDown(
+                this._createDocumentKeyDownHandler(
                     createKeyHandlingStrategies(
                         world.getControllerByName(cameraKey), 
                         renderer.domElement)));
 
             var clock = new THREE.Clock();
 
-            var render = this.createRenderLoop(clock, boids, scene, camera, renderer, world);
+            var render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
 
             render();
         });

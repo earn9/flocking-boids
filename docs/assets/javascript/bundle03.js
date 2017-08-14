@@ -44745,8 +44745,8 @@ var Program = function () {
     }
 
     (0, _createClass3.default)(Program, [{
-        key: 'update',
-        value: function update(delta, boidsViews, world) {
+        key: '_update',
+        value: function _update(delta, boidsViews, world) {
             world.update(delta);
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
@@ -44774,8 +44774,8 @@ var Program = function () {
             }
         }
     }, {
-        key: 'setupBoids',
-        value: function setupBoids(scene, world, boidGeometry, boidMaterial) {
+        key: '_setupBoids',
+        value: function _setupBoids(scene, world, boidGeometry, boidMaterial) {
             var boids = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
 
             var numBoids = 500;
@@ -44788,7 +44788,7 @@ var Program = function () {
             }
         }
     }, {
-        key: 'setup',
+        key: '_setup',
         value: function () {
             var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(scene) {
                 var assetRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
@@ -44872,15 +44872,15 @@ var Program = function () {
                 }, _callee, this, [[11, 15, 19, 27], [20,, 22, 26]]);
             }));
 
-            function setup(_x4) {
+            function _setup(_x4) {
                 return _ref2.apply(this, arguments);
             }
 
-            return setup;
+            return _setup;
         }()
     }, {
-        key: 'createRenderLoop',
-        value: function createRenderLoop(clock, boids, scene, camera, renderer, world) {
+        key: '_createRenderLoop',
+        value: function _createRenderLoop(clock, boids, scene, camera, renderer, world) {
             var _this = this;
 
             var internalRender = function internalRender() {
@@ -44888,7 +44888,7 @@ var Program = function () {
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
-                    _this.update(delta, boids, world);
+                    _this._update(delta, boids, world);
                 }
 
                 renderer.render(scene, camera);
@@ -44919,7 +44919,7 @@ var Program = function () {
                     return scene.add((0, _renderer.createSkyView)(_skySphere.geometry, _skySphere.materials));
                 },
                 bird: function bird(_bird) {
-                    return _this2.setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
+                    return _this2._setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
                 },
                 terrain: function terrain(_terrain) {
                     return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
@@ -44927,8 +44927,8 @@ var Program = function () {
             };
         }
     }, {
-        key: 'createOnDocumentKeyDown',
-        value: function createOnDocumentKeyDown(keyHandlingStrategies) {
+        key: '_createDocumentKeyDownHandler',
+        value: function _createDocumentKeyDownHandler(keyHandlingStrategies) {
             var _this3 = this;
 
             return function (event) {
@@ -44945,8 +44945,8 @@ var Program = function () {
             };
         }
     }, {
-        key: 'createHandleWindowResize',
-        value: function createHandleWindowResize(camera, renderer) {
+        key: '_createWindowResizeHandler',
+        value: function _createWindowResizeHandler(camera, renderer) {
             var _this4 = this;
 
             return function () {
@@ -44977,7 +44977,7 @@ var Program = function () {
                                     page.appendToBody(renderer.domElement);
 
                                     _context2.next = 6;
-                                    return _this5.setup(scene, assetRoot);
+                                    return _this5._setup(scene, assetRoot);
 
                                 case 6:
                                     _ref4 = _context2.sent;
@@ -44988,7 +44988,7 @@ var Program = function () {
 
                                     console.log('setup complete');
 
-                                    page.registerOnResize(_this5.createHandleWindowResize(camera, renderer));
+                                    page.registerOnResize(_this5._createWindowResizeHandler(camera, renderer));
 
                                     if (page.isPointerLockSupported()) {
                                         controls = new _pointerLockControls2.default(camera);
@@ -45022,10 +45022,10 @@ var Program = function () {
                                         console.log('pointer lock not supported');
                                     }
 
-                                    _this5.page.addKeyDownListener(_this5.createOnDocumentKeyDown(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
+                                    _this5.page.addKeyDownListener(_this5._createDocumentKeyDownHandler(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
 
                                     clock = new THREE.Clock();
-                                    render = _this5.createRenderLoop(clock, boids, scene, camera, renderer, world);
+                                    render = _this5._createRenderLoop(clock, boids, scene, camera, renderer, world);
 
 
                                     render();
