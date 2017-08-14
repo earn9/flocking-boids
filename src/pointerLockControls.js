@@ -90,7 +90,8 @@ const lockPointer = (element) => {
 const onPointerLockChanged = (document, pointerLockChange) => {
     const element = document.body;
     const changed = () => {
-        pointerLockChange(document.pointerLockElement === element ||
+        pointerLockChange(
+            document.pointerLockElement === element ||
             document.mozPointerLockElement === element ||
             document.webkitPointerLockElement === element);
         };

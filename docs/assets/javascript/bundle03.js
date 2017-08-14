@@ -44963,7 +44963,7 @@ var Program = function () {
 
             this.page.registerOnLoad(function () {
                 var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
-                    var scene, renderer, _ref4, world, boids, camera, controls, blocker, clock, render;
+                    var scene, renderer, _ref4, world, boids, camera, controls, clock, render;
 
                     return _regenerator2.default.wrap(function _callee2$(_context2) {
                         while (1) {
@@ -44997,17 +44997,12 @@ var Program = function () {
                                         scene.add(controls.getObject());
                                         controls.setPosition(0, 1, 30);
 
-                                        blocker = page.getElementById('blocker');
-
-
                                         page.registerOnPointerLockChanged(function (isSourceElement) {
                                             if (isSourceElement) {
                                                 controls.enabled = true;
-                                                blocker.style.display = 'none';
                                                 _this5.context.simulationRunning = true;
                                             } else {
                                                 controls.enabled = false;
-                                                blocker.style.display = '';
                                                 _this5.context.simulationRunning = false;
                                             }
                                         });
@@ -48142,8 +48137,8 @@ var Page = function () {
             window.onresize = onResize;
         }
     }, {
-        key: 'getElementById',
-        value: function getElementById(id) {
+        key: '_getElementById',
+        value: function _getElementById(id) {
             return document.getElementById(id);
         }
     }, {
@@ -48154,15 +48149,25 @@ var Page = function () {
     }, {
         key: 'registerOnPointerLockChanged',
         value: function registerOnPointerLockChanged(whenPointerLockChanged) {
-            return (0, _pointerLockControls.onPointerLockChanged)(document, whenPointerLockChanged);
+            var _this2 = this;
+
+            (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
+                var blocker = _this2._getElementById('blocker');
+                if (isSourceElement) {
+                    blocker.style.display = 'none';
+                } else {
+                    blocker.style.display = '';
+                }
+                whenPointerLockChanged(isSourceElement);
+            });
         }
     }, {
         key: 'registerOnClick',
         value: function registerOnClick(onClick) {
-            var _this2 = this;
+            var _this3 = this;
 
             document.body.addEventListener('click', function () {
-                return onClick(_this2);
+                return onClick(_this3);
             }, false);
         }
     }, {

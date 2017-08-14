@@ -233,16 +233,12 @@ class Program {
                 scene.add(controls.getObject());
                 controls.setPosition(0, 1, 30);
 
-                var blocker = page.getElementById('blocker');
-
                 page.registerOnPointerLockChanged((isSourceElement) => {
                     if (isSourceElement) {
                         controls.enabled = true;
-                        blocker.style.display = 'none';
                         this.context.simulationRunning = true;
                     } else {
                         controls.enabled = false;
-                        blocker.style.display = '';
                         this.context.simulationRunning = false;
                     }
                 });

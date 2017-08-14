@@ -13,7 +13,7 @@ export default class Page {
         window.onresize = onResize;
     }
 
-    getElementById(id) {
+    _getElementById(id) {
         return document.getElementById(id);
     }
 
@@ -22,7 +22,17 @@ export default class Page {
     }
 
     registerOnPointerLockChanged(whenPointerLockChanged) {
-        return onPointerLockChanged(document, whenPointerLockChanged);
+        onPointerLockChanged(
+            document, 
+            (isSourceElement) => {
+                var blocker = this._getElementById('blocker');
+                if (isSourceElement) {
+                    blocker.style.display = 'none';
+                } else {
+                    blocker.style.display = '';
+                }
+                whenPointerLockChanged(isSourceElement);
+            });
     }
 
     registerOnClick(onClick) {
