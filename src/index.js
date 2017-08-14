@@ -231,9 +231,7 @@ class Program {
                 const controls = new PointerLockControler(camera);
                 world.getControllerByName(cameraKey).setPointerLockControls(controls);
                 scene.add(controls.getObject());
-                controls.getObject().position.setX(0);
-                controls.getObject().position.setY(1);
-                controls.getObject().position.setZ(30);
+                controls.setPosition(0, 1, 30);
 
                 var blocker = page.getElementById('blocker');
 

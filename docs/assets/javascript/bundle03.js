@@ -44995,9 +44995,7 @@ var Program = function () {
 
                                         world.getControllerByName(cameraKey).setPointerLockControls(controls);
                                         scene.add(controls.getObject());
-                                        controls.getObject().position.setX(0);
-                                        controls.getObject().position.setY(1);
-                                        controls.getObject().position.setZ(30);
+                                        controls.setPosition(0, 1, 30);
 
                                         blocker = page.getElementById('blocker');
 
@@ -47873,6 +47871,12 @@ var PointerLockControls = function PointerLockControls(camera) {
             return v;
         };
     }();
+
+    this.setPosition = function (x, y, z) {
+        yawObject.position.setX(x);
+        yawObject.position.setY(y);
+        yawObject.position.setZ(z);
+    };
 };
 
 var pointerLockSupported = function pointerLockSupported() {

@@ -69,6 +69,11 @@ const PointerLockControls = function (camera) {
 
     }();
 
+    this.setPosition = function(x, y, z) {
+        yawObject.position.setX(x);
+        yawObject.position.setY(y);
+        yawObject.position.setZ(z);
+    };
 };
 
 
