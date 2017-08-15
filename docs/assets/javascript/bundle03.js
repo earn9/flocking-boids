@@ -44737,9 +44737,10 @@ var Context = function () {
 }();
 
 var Program = function () {
-    function Program() {
+    function Program(assetRoot) {
         (0, _classCallCheck3.default)(this, Program);
 
+        this.assetRoot = assetRoot;
         this.page = new _page2.default();
         this.context = new Context();
     }
@@ -44957,82 +44958,112 @@ var Program = function () {
             };
         }
     }, {
+        key: '_startApp',
+        value: function () {
+            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
+                var _this5 = this;
+
+                var scene, renderer, _ref4, world, boids, camera, controls, clock, render;
+
+                return _regenerator2.default.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                scene = new THREE.Scene();
+                                renderer = new THREE.WebGLRenderer();
+
+                                renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+
+                                page.setRenderer(renderer);
+
+                                _context2.next = 6;
+                                return this._setup(scene, this.assetRoot);
+
+                            case 6:
+                                _ref4 = _context2.sent;
+                                world = _ref4.world;
+                                boids = _ref4.boids;
+                                camera = _ref4.camera;
+
+
+                                console.log('setup complete');
+
+                                page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
+
+                                if (page.isPointerLockSupported()) {
+                                    controls = new _pointerLockControls2.default(camera);
+
+                                    world.getControllerByName(cameraKey).setPointerLockControls(controls);
+                                    scene.add(controls.getObject());
+                                    controls.setPosition(0, 1, 30);
+
+                                    page.registerOnPointerLockChanged(function (isSourceElement) {
+                                        if (isSourceElement) {
+                                            controls.enabled = true;
+                                            _this5.context.simulationRunning = true;
+                                        } else {
+                                            controls.enabled = false;
+                                            _this5.context.simulationRunning = false;
+                                        }
+                                    });
+
+                                    page.registerOnClick(function (p) {
+                                        controls.enabled = true;
+                                        p.lockPointer();
+                                    });
+                                } else {
+                                    console.log('pointer lock not supported');
+                                }
+
+                                this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
+
+                                clock = new THREE.Clock();
+                                render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
+
+
+                                render();
+
+                            case 17:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function _startApp(_x5) {
+                return _ref3.apply(this, arguments);
+            }
+
+            return _startApp;
+        }()
+    }, {
         key: 'run',
-        value: function run(assetRoot) {
-            var _this5 = this;
+        value: function run() {
+            var _this6 = this;
 
             this.page.registerOnLoad(function () {
-                var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
-                    var scene, renderer, _ref4, world, boids, camera, controls, clock, render;
-
-                    return _regenerator2.default.wrap(function _callee2$(_context2) {
+                var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
+                    return _regenerator2.default.wrap(function _callee3$(_context3) {
                         while (1) {
-                            switch (_context2.prev = _context2.next) {
+                            switch (_context3.prev = _context3.next) {
                                 case 0:
-                                    scene = new THREE.Scene();
-                                    renderer = new THREE.WebGLRenderer();
+                                    _context3.next = 2;
+                                    return _this6._startApp(page);
 
-                                    renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+                                case 2:
+                                    return _context3.abrupt('return', _context3.sent);
 
-                                    page.setRenderer(renderer);
-
-                                    _context2.next = 6;
-                                    return _this5._setup(scene, assetRoot);
-
-                                case 6:
-                                    _ref4 = _context2.sent;
-                                    world = _ref4.world;
-                                    boids = _ref4.boids;
-                                    camera = _ref4.camera;
-
-
-                                    console.log('setup complete');
-
-                                    page.registerOnResize(_this5._createWindowResizeHandler(camera, renderer));
-
-                                    if (page.isPointerLockSupported()) {
-                                        controls = new _pointerLockControls2.default(camera);
-
-                                        world.getControllerByName(cameraKey).setPointerLockControls(controls);
-                                        scene.add(controls.getObject());
-                                        controls.setPosition(0, 1, 30);
-
-                                        page.registerOnPointerLockChanged(function (isSourceElement) {
-                                            if (isSourceElement) {
-                                                controls.enabled = true;
-                                                _this5.context.simulationRunning = true;
-                                            } else {
-                                                controls.enabled = false;
-                                                _this5.context.simulationRunning = false;
-                                            }
-                                        });
-
-                                        page.registerOnClick(function (p) {
-                                            controls.enabled = true;
-                                            p.lockPointer();
-                                        });
-                                    } else {
-                                        console.log('pointer lock not supported');
-                                    }
-
-                                    _this5.page.addKeyDownListener(_this5._createDocumentKeyDownHandler(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
-
-                                    clock = new THREE.Clock();
-                                    render = _this5._createRenderLoop(clock, boids, scene, camera, renderer, world);
-
-
-                                    render();
-
-                                case 17:
+                                case 3:
                                 case 'end':
-                                    return _context2.stop();
+                                    return _context3.stop();
                             }
                         }
-                    }, _callee2, _this5);
+                    }, _callee3, _this6);
                 }));
 
-                return function (_x5) {
-                    return _ref3.apply(this, arguments);
+                return function (_x6) {
+                    return _ref5.apply(this, arguments);
                 };
             }());
         }
@@ -45043,7 +45074,7 @@ var Program = function () {
 function startUp() {
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-    new Program().run(assetRoot);
+    new Program(assetRoot).run();
 }
 
 /***/ }),

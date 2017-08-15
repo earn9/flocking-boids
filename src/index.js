@@ -55,7 +55,7 @@ class Config {
         this.showAxis = false;
     }
 
-    toggleForceLine() { 
+    toggleForceLine() {
         this.showForceLine = !this.showForceLine;
     }
 
@@ -105,7 +105,8 @@ class Context {
 }
 
 class Program {
-    constructor() {
+    constructor(assetRoot) {
+        this.assetRoot = assetRoot;
         this.page = new Page();
         this.context = new Context();
     }
@@ -212,60 +213,62 @@ class Program {
         };
     }
 
-    run(assetRoot) {
-        this.page.registerOnLoad(async page => {
-            var scene = new THREE.Scene();
+    async _startApp(page) {
+        var scene = new THREE.Scene();
 
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-            page.setRenderer(renderer);
+        page.setRenderer(renderer);
 
-            var { world, boids, camera } = await this._setup(scene, assetRoot);
+        var { world, boids, camera } = await this._setup(scene, this.assetRoot);
 
-            console.log('setup complete');
+        console.log('setup complete');
 
-            page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
+        page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
 
-            if (page.isPointerLockSupported()) {
-                const controls = new PointerLockControler(camera);
-                world.getControllerByName(cameraKey).setPointerLockControls(controls);
-                scene.add(controls.getObject());
-                controls.setPosition(0, 1, 30);
+        if (page.isPointerLockSupported()) {
+            const controls = new PointerLockControler(camera);
+            world.getControllerByName(cameraKey).setPointerLockControls(controls);
+            scene.add(controls.getObject());
+            controls.setPosition(0, 1, 30);
 
-                page.registerOnPointerLockChanged((isSourceElement) => {
-                    if (isSourceElement) {
-                        controls.enabled = true;
-                        this.context.simulationRunning = true;
-                    } else {
-                        controls.enabled = false;
-                        this.context.simulationRunning = false;
-                    }
-                });
-
-                page.registerOnClick((p) => {
+            page.registerOnPointerLockChanged((isSourceElement) => {
+                if (isSourceElement) {
                     controls.enabled = true;
-                    p.lockPointer();
-                });
-            } else {
-                console.log('pointer lock not supported');
-            }
+                    this.context.simulationRunning = true;
+                } else {
+                    controls.enabled = false;
+                    this.context.simulationRunning = false;
+                }
+            });
 
-            this.page.addKeyDownListener(
-                this._createDocumentKeyDownHandler(
-                    createKeyHandlingStrategies(
-                        world.getControllerByName(cameraKey), 
-                        renderer.domElement)));
+            page.registerOnClick((p) => {
+                controls.enabled = true;
+                p.lockPointer();
+            });
+        } else {
+            console.log('pointer lock not supported');
+        }
 
-            var clock = new THREE.Clock();
+        this.page.addKeyDownListener(
+            this._createDocumentKeyDownHandler(
+                createKeyHandlingStrategies(
+                    world.getControllerByName(cameraKey),
+                    renderer.domElement)));
 
-            var render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
+        var clock = new THREE.Clock();
 
-            render();
-        });
+        var render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
+
+        render();
+    }
+
+    run() {
+        this.page.registerOnLoad(async page => await this._startApp(page));
     }
 }
 
 export function startUp(assetRoot = '') {
-    new Program().run(assetRoot);
+    new Program(assetRoot).run();
 }
