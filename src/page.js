@@ -62,4 +62,8 @@ export default class Page {
     getAspectRatio()  {
         return window.innerWidth / window.innerHeight;
     }
+
+    requestAnimationFrame(internalRender) {
+        window.requestAnimationFrame(internalRender);
+    }
 }

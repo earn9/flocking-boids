@@ -44881,11 +44881,13 @@ var Program = function () {
         }()
     }, {
         key: '_createRenderLoop',
-        value: function _createRenderLoop(clock, boids, scene, camera, renderer, world) {
+        value: function _createRenderLoop(boids, scene, camera, renderer, world) {
             var _this = this;
 
+            var clock = new THREE.Clock();
+
             var internalRender = function internalRender() {
-                window.requestAnimationFrame(internalRender);
+                _this.page.requestAnimationFrame(internalRender);
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
@@ -44963,7 +44965,7 @@ var Program = function () {
             var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
                 var _this5 = this;
 
-                var scene, renderer, _ref4, world, boids, camera, controls, clock, render;
+                var scene, renderer, _ref4, world, boids, camera, controls, render;
 
                 return _regenerator2.default.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -45017,13 +45019,12 @@ var Program = function () {
 
                                 this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(world.getControllerByName(cameraKey), renderer.domElement)));
 
-                                clock = new THREE.Clock();
-                                render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
+                                render = this._createRenderLoop(boids, scene, camera, renderer, world);
 
 
                                 render();
 
-                            case 17:
+                            case 16:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -48230,6 +48231,11 @@ var Page = function () {
         key: 'getAspectRatio',
         value: function getAspectRatio() {
             return window.innerWidth / window.innerHeight;
+        }
+    }, {
+        key: 'requestAnimationFrame',
+        value: function requestAnimationFrame(internalRender) {
+            window.requestAnimationFrame(internalRender);
         }
     }]);
     return Page;

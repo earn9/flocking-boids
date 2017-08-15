@@ -150,10 +150,12 @@ class Program {
         return { world, boids, camera };
     }
 
-    _createRenderLoop(clock, boids, scene, camera, renderer, world) {
+    _createRenderLoop(boids, scene, camera, renderer, world) {
+        const clock = new THREE.Clock();
+        
         const internalRender = () => {
-            window.requestAnimationFrame(internalRender);
-
+            this.page.requestAnimationFrame(internalRender);
+            
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
                 this._update(delta, boids, world);
@@ -257,9 +259,7 @@ class Program {
                     world.getControllerByName(cameraKey),
                     renderer.domElement)));
 
-        var clock = new THREE.Clock();
-
-        var render = this._createRenderLoop(clock, boids, scene, camera, renderer, world);
+        var render = this._createRenderLoop(boids, scene, camera, renderer, world);
 
         render();
     }
