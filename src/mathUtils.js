@@ -5,7 +5,8 @@ export const randomBetween = (min, max) => {
 export const randomVec2 = (min, max) => {
     return {
         x: randomBetween(min, max),
-        y: randomBetween(min, max)
+        y: randomBetween(min, max),
+        z: randomBetween(0, 15)
     };
 };
 

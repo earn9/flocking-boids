@@ -13,7 +13,7 @@ const BoidStates = {
     returning: 'returning'
 };
 
-const maxDistance = 50;
+const maxDistance = 30;
 const startFlockingAgainDistance = 45;
 
 
@@ -163,8 +163,8 @@ class Boid {
     } 
 
     static createWithRandomPositionAndDirection(min, max, speed) {
-        const { x: xPos, y: yPos } = randomVec2(min, max);
-        const position = new Vector3(xPos, yOffset, yPos);
+        const { x: xPos, y: yPos, z: zPos } = randomVec2(min, max);
+        const position = new Vector3(xPos, zPos, yPos);
 
         const { x: xDir, y: yDir } = randomDirection();
         const direction = new Vector3(xDir, 0, yDir);
