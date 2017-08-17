@@ -253,7 +253,7 @@ class DebugLine {
     }
 
     setLineEnd(end) {
-        this.mesh.visible = true;
+        this.show();
         this.geometry.vertices[1].copy(end);
         this.geometry.verticesNeedUpdate = true;        
     }
