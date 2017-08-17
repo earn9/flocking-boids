@@ -44525,11 +44525,11 @@ const glidingActionName = 'Gliding';
 class BoidView {
 
     constructor(
-            scene,
-            boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["d" /* BoxGeometry */](1, 1, 1),
-            boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["n" /* MeshPhongMaterial */]({ color: 0xff6464 }),
-            gameBoid
-        ) {
+        scene,
+        boidGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["d" /* BoxGeometry */](1, 1, 1),
+        boidMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["n" /* MeshPhongMaterial */]({ color: 0xff6464 }),
+        gameBoid
+    ) {
 
         this.gameBoid = gameBoid;
         if (!boidGeometry.animations) {
@@ -44537,8 +44537,8 @@ class BoidView {
         }
 
         boidMaterial.skinning = true;
-        this.boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["t" /* SkinnedMesh */](boidGeometry, boidMaterial);
-        this.mixer = new __WEBPACK_IMPORTED_MODULE_0_three__["c" /* AnimationMixer */](this.boidMesh);
+        const boidMesh = new __WEBPACK_IMPORTED_MODULE_0_three__["t" /* SkinnedMesh */](boidGeometry, boidMaterial);
+        this.mixer = new __WEBPACK_IMPORTED_MODULE_0_three__["c" /* AnimationMixer */](boidMesh);
         this.animationClips = boidGeometry.animations;
         this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
         this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
@@ -44546,24 +44546,24 @@ class BoidView {
             .startAt(this.mixer.time + Object(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomBetween */])(0, 1))
             .play();
 
-        this.scaleModel = Object(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomBetween */])(0.2, 0.3);
-        this.boidMesh.scale.set(this.scaleModel, this.scaleModel, this.scaleModel);
+        this.modelScale = Object(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomBetween */])(0.2, 0.3);
+        boidMesh.scale.set(this.modelScale, this.modelScale, this.modelScale);
         this.debugAxis = createAxisGroup();
-        this.boidMesh.add(this.debugAxis);
-        this.forceLine = createDebugLine(this.boidMesh, 0xffffff);
-        this.repelForceLine = createDebugLine(this.boidMesh, 0xff0000);
-        this.attractForceLine = createDebugLine(this.boidMesh, 0x00ff00);
-        this.followForceLine = createDebugLine(this.boidMesh, 0x0000ff);
-        this.friendLines = createFriendLines(this.boidMesh);
+        boidMesh.add(this.debugAxis);
+        this.forceLine = createDebugLine(boidMesh, 0xffffff);
+        this.repelForceLine = createDebugLine(boidMesh, 0xff0000);
+        this.attractForceLine = createDebugLine(boidMesh, 0x00ff00);
+        this.followForceLine = createDebugLine(boidMesh, 0x0000ff);
+        this.friendLines = createFriendLines(boidMesh);
 
         this._timeTillThink = Object(__WEBPACK_IMPORTED_MODULE_1__mathUtils__["a" /* randomBetween */])(5, 10);
         this._timeSinceThink = 0;
 
         this._currentActionName = 'Flapping';
 
-        scene.add(this.boidMesh);
+        scene.add(boidMesh);
 
-        this.mesh = this.boidMesh;
+        this.mesh = boidMesh;
     }
 
     update(context, delta) {
@@ -44623,7 +44623,7 @@ class BoidView {
     _updateForceLine(gameBoid) {
         const forceVector = gameBoid.getVelocity().clone();
         forceVector.add(this.mesh.position);
-        this.boidMesh.worldToLocal(forceVector);
+        this.mesh.worldToLocal(forceVector);
         this.forceLine.setLine(center, forceVector);
     }
 
@@ -44631,7 +44631,7 @@ class BoidView {
         const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceAway, 100);
         forceVector.add(this.mesh.position);
-        this.boidMesh.worldToLocal(forceVector);
+        this.mesh.worldToLocal(forceVector);
         this.repelForceLine.setLine(center, forceVector);
     }
 
@@ -44639,15 +44639,15 @@ class BoidView {
         const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
         forceVector.add(this.mesh.position);
-        this.boidMesh.worldToLocal(forceVector);
+        this.mesh.worldToLocal(forceVector);
         this.followForceLine.setLine(center, forceVector);
     }
-    
+
     _updateAttractLine(gameBoid) {
         const forceVector = center.clone();
         forceVector.addScaledVector(gameBoid.forceToCenter, 100);
         forceVector.add(this.mesh.position);
-        this.boidMesh.worldToLocal(forceVector);
+        this.mesh.worldToLocal(forceVector);
         this.attractForceLine.setLine(center, forceVector);
     }
 
