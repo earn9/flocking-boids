@@ -13,10 +13,6 @@ class World {
         this.controllers[name] = controller;
     }
 
-    getControllerByName (name) {
-        return this.controllers[name];
-    }
-
     addBoid(boid) {
         this.boids.push(boid);
     }

@@ -221,7 +221,8 @@ class Program {
 
         var camera = createCamera();
         
-        world.addController(new CameraController(camera), cameraKey);
+        const cameraController = new CameraController(camera);
+        world.addController(cameraController, cameraKey);
         
         console.log('setup complete');
 
@@ -229,7 +230,7 @@ class Program {
 
         if (page.isPointerLockSupported()) {
             const controls = new PointerLockControler(camera);
-            world.getControllerByName(cameraKey).setPointerLockControls(controls);
+            cameraController.setPointerLockControls(controls);
             scene.add(controls.getObject());
             controls.setPosition(0, 1, 30);
 
@@ -254,7 +255,7 @@ class Program {
         this.page.addKeyDownListener(
             this._createDocumentKeyDownHandler(
                 createKeyHandlingStrategies(
-                    world.getControllerByName(cameraKey),
+                    cameraController,
                     renderer.domElement)));
 
         var render = this._createRenderLoop(boids, scene, camera, renderer, world);

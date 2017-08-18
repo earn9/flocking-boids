@@ -44131,7 +44131,8 @@ class Program {
 
         var camera = Object(__WEBPACK_IMPORTED_MODULE_3__renderer__["b" /* createCamera */])();
         
-        world.addController(new __WEBPACK_IMPORTED_MODULE_6__CameraController__["a" /* default */](camera), cameraKey);
+        const cameraController = new __WEBPACK_IMPORTED_MODULE_6__CameraController__["a" /* default */](camera);
+        world.addController(cameraController, cameraKey);
         
         console.log('setup complete');
 
@@ -44139,7 +44140,7 @@ class Program {
 
         if (page.isPointerLockSupported()) {
             const controls = new __WEBPACK_IMPORTED_MODULE_5__pointerLockControls__["a" /* default */](camera);
-            world.getControllerByName(cameraKey).setPointerLockControls(controls);
+            cameraController.setPointerLockControls(controls);
             scene.add(controls.getObject());
             controls.setPosition(0, 1, 30);
 
@@ -44164,7 +44165,7 @@ class Program {
         this.page.addKeyDownListener(
             this._createDocumentKeyDownHandler(
                 createKeyHandlingStrategies(
-                    world.getControllerByName(cameraKey),
+                    cameraController,
                     renderer.domElement)));
 
         var render = this._createRenderLoop(boids, scene, camera, renderer, world);
@@ -44200,10 +44201,6 @@ class World {
             name = this.nextControllerName;
         }
         this.controllers[name] = controller;
-    }
-
-    getControllerByName (name) {
-        return this.controllers[name];
     }
 
     addBoid(boid) {
