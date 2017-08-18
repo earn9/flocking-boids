@@ -23,11 +23,11 @@ const loadResourceAsync = (loader, name, url) => {
         .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
 };
 
-const loadAllResources = async (resources) => {
+const loadAllResources = async (resources, assetRoot) => {
     const loader = new JSONLoader();
     
     const allResources = await Promise.all(
-        resources.map(x => loadResourceAsync(loader, x.name, x.url)));
+        resources.map(x => loadResourceAsync(loader, x.name, assetRoot + x.url)));
     console.log('loading done!');
     return allResources;
 };

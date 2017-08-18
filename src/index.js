@@ -45,6 +45,21 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     }
 });
 
+const mainSceneResources = [
+        {
+            name: 'skySphere',
+            url: '/assets/models/skySphere.json'
+        },
+        {
+            name: 'bird',
+            url: '/assets/models/birdSimple02.json'
+        },
+        {
+            name: 'terrain',
+            url: '/assets/models/terain01.json'
+        }
+    ];
+
 class Config {
     constructor() {
         this.showForceLine = false;
@@ -134,7 +149,7 @@ class Program {
         const world = new World();
 
         const boids = [];
-        const resources = await loadAllResources(this._getMainSceneResourcesDescription(assetRoot));
+        const resources = await loadAllResources(mainSceneResources, assetRoot);
 
         const scene = new THREE.Scene();
         const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
@@ -161,23 +176,6 @@ class Program {
             renderer.render(scene, camera);
         };
         return internalRender;
-    }
-
-    _getMainSceneResourcesDescription(assetRoot) {
-        return [
-            {
-                name: 'skySphere',
-                url: `${assetRoot}/assets/models/skySphere.json`
-            },
-            {
-                name: 'bird',
-                url: `${assetRoot}/assets/models/birdSimple02.json`
-            },
-            {
-                name: 'terrain',
-                url: `${assetRoot}/assets/models/terain01.json`
-            }
-        ];
     }
 
     _createResourcesStrategies(scene, world, boids) {

@@ -43955,6 +43955,21 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     }
 });
 
+const mainSceneResources = [
+        {
+            name: 'skySphere',
+            url: '/assets/models/skySphere.json'
+        },
+        {
+            name: 'bird',
+            url: '/assets/models/birdSimple02.json'
+        },
+        {
+            name: 'terrain',
+            url: '/assets/models/terain01.json'
+        }
+    ];
+
 class Config {
     constructor() {
         this.showForceLine = false;
@@ -44044,7 +44059,7 @@ class Program {
         const world = new __WEBPACK_IMPORTED_MODULE_1__game_world__["a" /* World */]();
 
         const boids = [];
-        const resources = await Object(__WEBPACK_IMPORTED_MODULE_7__resources__["a" /* default */])(this._getMainSceneResourcesDescription(assetRoot));
+        const resources = await Object(__WEBPACK_IMPORTED_MODULE_7__resources__["a" /* default */])(mainSceneResources, assetRoot);
 
         const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["s" /* Scene */]();
         const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
@@ -44071,23 +44086,6 @@ class Program {
             renderer.render(scene, camera);
         };
         return internalRender;
-    }
-
-    _getMainSceneResourcesDescription(assetRoot) {
-        return [
-            {
-                name: 'skySphere',
-                url: `${assetRoot}/assets/models/skySphere.json`
-            },
-            {
-                name: 'bird',
-                url: `${assetRoot}/assets/models/birdSimple02.json`
-            },
-            {
-                name: 'terrain',
-                url: `${assetRoot}/assets/models/terain01.json`
-            }
-        ];
     }
 
     _createResourcesStrategies(scene, world, boids) {
@@ -44905,11 +44903,11 @@ const loadResourceAsync = (loader, name, url) => {
         .catch(err => console.log(`error loading "${url}"`, JSON.stringify(err)));    
 };
 
-const loadAllResources = async (resources) => {
+const loadAllResources = async (resources, assetRoot) => {
     const loader = new __WEBPACK_IMPORTED_MODULE_0_three__["i" /* JSONLoader */]();
     
     const allResources = await Promise.all(
-        resources.map(x => loadResourceAsync(loader, x.name, x.url)));
+        resources.map(x => loadResourceAsync(loader, x.name, assetRoot + x.url)));
     console.log('loading done!');
     return allResources;
 };
