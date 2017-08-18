@@ -129,13 +129,14 @@ class Program {
         }
     }
 
-    async _setup(scene, assetRoot = '') {
+    async _setupMainScene(assetRoot = '') {
         initializeConfig(this.context.config);
         const world = new World();
 
         const boids = [];
-        const resources = await loadAllResources(this._createResourcesDescription(assetRoot));
+        const resources = await loadAllResources(this._getMainSceneResourcesDescription(assetRoot));
 
+        const scene = new THREE.Scene();
         const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
         resources.forEach(x => resourceStratergies[x.name](x));
 
@@ -143,11 +144,7 @@ class Program {
             scene.add(light);
         }
 
-        var camera = createCamera();
-
-        world.addController(new CameraController(camera), cameraKey);
-
-        return { world, boids, camera };
+        return { world, boids, scene };
     }
 
     _createRenderLoop(boids, scene, camera, renderer, world) {
@@ -166,7 +163,7 @@ class Program {
         return internalRender;
     }
 
-    _createResourcesDescription(assetRoot) {
+    _getMainSceneResourcesDescription(assetRoot) {
         return [
             {
                 name: 'skySphere',
@@ -216,15 +213,18 @@ class Program {
     }
 
     async _startApp(page) {
-        var scene = new THREE.Scene();
 
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
         page.setRenderer(renderer);
 
-        var { world, boids, camera } = await this._setup(scene, this.assetRoot);
+        var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
 
+        var camera = createCamera();
+        
+        world.addController(new CameraController(camera), cameraKey);
+        
         console.log('setup complete');
 
         page.registerOnResize(this._createWindowResizeHandler(camera, renderer));

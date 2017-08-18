@@ -44039,13 +44039,14 @@ class Program {
         }
     }
 
-    async _setup(scene, assetRoot = '') {
+    async _setupMainScene(assetRoot = '') {
         Object(__WEBPACK_IMPORTED_MODULE_4__persistence__["a" /* initializeConfig */])(this.context.config);
         const world = new __WEBPACK_IMPORTED_MODULE_1__game_world__["a" /* World */]();
 
         const boids = [];
-        const resources = await Object(__WEBPACK_IMPORTED_MODULE_7__resources__["a" /* default */])(this._createResourcesDescription(assetRoot));
+        const resources = await Object(__WEBPACK_IMPORTED_MODULE_7__resources__["a" /* default */])(this._getMainSceneResourcesDescription(assetRoot));
 
+        const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["s" /* Scene */]();
         const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
         resources.forEach(x => resourceStratergies[x.name](x));
 
@@ -44053,11 +44054,7 @@ class Program {
             scene.add(light);
         }
 
-        var camera = Object(__WEBPACK_IMPORTED_MODULE_3__renderer__["b" /* createCamera */])();
-
-        world.addController(new __WEBPACK_IMPORTED_MODULE_6__CameraController__["a" /* default */](camera), cameraKey);
-
-        return { world, boids, camera };
+        return { world, boids, scene };
     }
 
     _createRenderLoop(boids, scene, camera, renderer, world) {
@@ -44076,7 +44073,7 @@ class Program {
         return internalRender;
     }
 
-    _createResourcesDescription(assetRoot) {
+    _getMainSceneResourcesDescription(assetRoot) {
         return [
             {
                 name: 'skySphere',
@@ -44126,15 +44123,18 @@ class Program {
     }
 
     async _startApp(page) {
-        var scene = new __WEBPACK_IMPORTED_MODULE_0_three__["s" /* Scene */]();
 
         var renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["v" /* WebGLRenderer */]();
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
         page.setRenderer(renderer);
 
-        var { world, boids, camera } = await this._setup(scene, this.assetRoot);
+        var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
 
+        var camera = Object(__WEBPACK_IMPORTED_MODULE_3__renderer__["b" /* createCamera */])();
+        
+        world.addController(new __WEBPACK_IMPORTED_MODULE_6__CameraController__["a" /* default */](camera), cameraKey);
+        
         console.log('setup complete');
 
         page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
