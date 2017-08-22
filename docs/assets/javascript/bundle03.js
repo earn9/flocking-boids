@@ -43938,12 +43938,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
     [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
     [KEYS.KEY_Z]: program => {
-        program.context.toggleZoom();
-        if (program.context.zoom) {
-            cameraController.zoomIn();
-        } else {
-            cameraController.zoomOut();
-        }
+        cameraController.zoom();
     },
     [KEYS.KEY_F]: program => {
         program.context.toggleFullscreen();
@@ -44813,19 +44808,67 @@ const storeConfigChanges = (config) => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const ZoomState = {
-    None: 'none',
-    In: 'in',
-    Out: 'out'
-};
+const OutFov = 75;
+const InFov = 15;
+
+class StateBase {
+    constructor(cameraController) {
+        this.cameraController = cameraController;
+    }
+
+    update() { }
+    zoom() { }
+}
+
+class ZoomedInState extends StateBase {
+    constructor(cameraController) {
+        super(cameraController);
+    }
+
+    zoom() {
+        this.cameraController.setState(new OutState(this.cameraController));        
+    }
+}
+
+class ZoomedOutState extends StateBase {
+    constructor(cameraController) {
+        super(cameraController);
+    }
+
+    zoom() {
+        this.cameraController.setState(new InState(this.cameraController));        
+    }
+}
+
+class InState extends StateBase {
+    constructor(cameraController) {
+        super(cameraController);
+    }
+
+    update() {
+        this.cameraController.setFov(InFov);
+        this.cameraController.setMovementFactor(this.cameraController.InMovement);
+        this.cameraController.setState(new ZoomedInState(this.cameraController));
+    }
+}
+
+class OutState extends StateBase {
+    constructor(cameraController) {
+        super(cameraController);
+    }
+
+    update() {
+        console.log('zooming out');
+        this.cameraController.setFov(OutFov);
+        this.cameraController.setMovementFactor(this.cameraController.OutMovement);
+        this.cameraController.setState(new ZoomedOutState(this.cameraController));
+    }    
+}
 
 class CameraController  {
     constructor(camera) {
         this.camera = camera;
-        this.currentState = ZoomState.None;
-
-        this.OutFov = 75;
-        this.InFov = 15;
+        this.currentState = new ZoomedOutState(this);
     }
 
     setPointerLockControls(pointerLockControls) {
@@ -44834,37 +44877,26 @@ class CameraController  {
         this.InMovement = pointerLockControls.movementFactor / 8;
     }
 
-    update(delta) {
-        switch (this.currentState) {
-            case ZoomState.None:
-                return;
-            case ZoomState.In:
-                if (this.camera.fov === this.InFov) return;
-                console.log('zooming in');
-                this.camera.fov = this.InFov;
-                this.pointerLockControls.movementFactor = this.InMovement;
-                this.camera.updateProjectionMatrix();
-                return;
-            case ZoomState.Out:
-                if (this.camera.fov === this.OutFov) return;
-                console.log('zooming out');
-                this.camera.fov = this.OutFov;
-                this.pointerLockControls.movementFactor = this.OutMovement;
-                this.camera.updateProjectionMatrix();
-                return;
-        }
-
+    setFov(fov) {
+        this.camera.fov = fov;
+        this.camera.updateProjectionMatrix();
     }
 
-    zoomIn() {
-        this.currentState = ZoomState.In;
+    setMovementFactor(factor) {
+        this.pointerLockControls.movementFactor = factor;
     }
 
-    zoomOut() {
-        this.currentState = ZoomState.Out;
+    setState(state) {
+        this.currentState = state;
     }
 
+    update() {
+        this.currentState.update();
+    }
 
+    zoom() {
+        this.currentState.zoom();
+    }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CameraController;
 

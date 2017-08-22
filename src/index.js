@@ -28,12 +28,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
     [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
     [KEYS.KEY_Z]: program => {
-        program.context.toggleZoom();
-        if (program.context.zoom) {
-            cameraController.zoomIn();
-        } else {
-            cameraController.zoomOut();
-        }
+        cameraController.zoom();
     },
     [KEYS.KEY_F]: program => {
         program.context.toggleFullscreen();
