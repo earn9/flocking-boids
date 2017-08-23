@@ -48,7 +48,6 @@ class OutState extends StateBase {
     }
 
     update() {
-        console.log('zooming out');
         this.cameraController.setFov(OutFov);
         this.cameraController.setMovementFactor(this.cameraController.OutMovement);
         this.cameraController.setState(new ZoomedOutState(this.cameraController));
