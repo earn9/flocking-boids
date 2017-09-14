@@ -45136,12 +45136,6 @@ var Program = function () {
     }
 
     (0, _createClass3.default)(Program, [{
-        key: '_update',
-        value: function _update(delta, rootView, world) {
-            world.update(delta);
-            rootView.update(this.context, delta);
-        }
-    }, {
         key: '_setupBoids',
         value: function _setupBoids(scene, world, boidGeometry, boidMaterial) {
             var boids = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
@@ -45254,7 +45248,7 @@ var Program = function () {
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
-                    _this._update(delta, _this.rootView, _this.world);
+                    Program._update(delta, _this.rootView, _this.world, _this.context);
                 }
 
                 renderer.render(_this.scene, camera);
@@ -45465,6 +45459,12 @@ var Program = function () {
                     return _ref7.apply(this, arguments);
                 };
             }());
+        }
+    }], [{
+        key: '_update',
+        value: function _update(delta, rootView, world, context) {
+            world.update(delta);
+            rootView.update(context, delta);
         }
     }]);
     return Program;

@@ -132,9 +132,9 @@ class Program {
         this.context = new Context();
     }
 
-    _update(delta, rootView, world) {
+    static _update(delta, rootView, world, context) {
         world.update(delta);
-        rootView.update(this.context, delta);
+        rootView.update(context, delta);
     }
 
     _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
@@ -174,7 +174,7 @@ class Program {
 
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
-                this._update(delta, this.rootView, this.world);
+                Program._update(delta, this.rootView, this.world, this.context);
             }
 
             renderer.render(this.scene, camera);
