@@ -45244,7 +45244,7 @@ var Program = function () {
         }()
     }, {
         key: '_createRenderLoop',
-        value: function _createRenderLoop(rootView, scene, camera, renderer, world) {
+        value: function _createRenderLoop(camera, renderer) {
             var _this = this;
 
             var clock = new THREE.Clock();
@@ -45254,10 +45254,10 @@ var Program = function () {
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
-                    _this._update(delta, rootView, world);
+                    _this._update(delta, _this.rootView, _this.world);
                 }
 
-                renderer.render(scene, camera);
+                renderer.render(_this.scene, camera);
             };
             return internalRender;
         }
@@ -45309,32 +45309,25 @@ var Program = function () {
             };
         }
     }, {
-        key: '_startApp',
+        key: '_setupFlockingExperience',
         value: function () {
-            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page) {
+            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page, renderer, camera) {
                 var _this5 = this;
 
-                var renderer, _ref4, world, boids, scene, camera, cameraController, controls, render;
+                var _ref4, world, boids, scene, cameraController, controls;
 
                 return _regenerator2.default.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
-                                renderer = new THREE.WebGLRenderer();
-
-                                renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
-
-                                page.addViewPort(renderer);
-
-                                _context2.next = 5;
+                                _context2.next = 2;
                                 return this._setupMainScene(this.assetRoot);
 
-                            case 5:
+                            case 2:
                                 _ref4 = _context2.sent;
                                 world = _ref4.world;
                                 boids = _ref4.boids;
                                 scene = _ref4.scene;
-                                camera = (0, _renderer.createCamera)();
                                 cameraController = new _CameraController2.default(camera);
 
                                 world.addController(cameraController, cameraKey);
@@ -45369,13 +45362,13 @@ var Program = function () {
                                 }
 
                                 this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
+                                return _context2.abrupt('return', {
+                                    flockingRootView: new CompositeView(boids),
+                                    flockingScene: scene,
+                                    flockingWorld: world
+                                });
 
-                                render = this._createRenderLoop(new CompositeView(boids), scene, camera, renderer, world);
-
-
-                                render();
-
-                            case 18:
+                            case 13:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -45383,8 +45376,56 @@ var Program = function () {
                 }, _callee2, this);
             }));
 
-            function _startApp(_x4) {
+            function _setupFlockingExperience(_x4, _x5, _x6) {
                 return _ref3.apply(this, arguments);
+            }
+
+            return _setupFlockingExperience;
+        }()
+    }, {
+        key: '_startApp',
+        value: function () {
+            var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
+                var renderer, camera, _ref6, flockingRootView, flockingScene, flockingWorld, render;
+
+                return _regenerator2.default.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                renderer = new THREE.WebGLRenderer();
+
+                                renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+
+                                page.addViewPort(renderer);
+                                camera = (0, _renderer.createCamera)();
+                                _context3.next = 6;
+                                return this._setupFlockingExperience(page, renderer, camera);
+
+                            case 6:
+                                _ref6 = _context3.sent;
+                                flockingRootView = _ref6.flockingRootView;
+                                flockingScene = _ref6.flockingScene;
+                                flockingWorld = _ref6.flockingWorld;
+
+
+                                this.rootView = flockingRootView;
+                                this.scene = flockingScene;
+                                this.world = flockingWorld;
+                                render = this._createRenderLoop(camera, renderer);
+
+
+                                render();
+
+                            case 15:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function _startApp(_x7) {
+                return _ref5.apply(this, arguments);
             }
 
             return _startApp;
@@ -45395,27 +45436,27 @@ var Program = function () {
             var _this6 = this;
 
             this.page.registerOnLoad(function () {
-                var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                    return _regenerator2.default.wrap(function _callee3$(_context3) {
+                var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4(page) {
+                    return _regenerator2.default.wrap(function _callee4$(_context4) {
                         while (1) {
-                            switch (_context3.prev = _context3.next) {
+                            switch (_context4.prev = _context4.next) {
                                 case 0:
-                                    _context3.next = 2;
+                                    _context4.next = 2;
                                     return _this6._startApp(page);
 
                                 case 2:
-                                    return _context3.abrupt('return', _context3.sent);
+                                    return _context4.abrupt('return', _context4.sent);
 
                                 case 3:
                                 case 'end':
-                                    return _context3.stop();
+                                    return _context4.stop();
                             }
                         }
-                    }, _callee3, _this6);
+                    }, _callee4, _this6);
                 }));
 
-                return function (_x5) {
-                    return _ref5.apply(this, arguments);
+                return function (_x8) {
+                    return _ref7.apply(this, arguments);
                 };
             }());
         }

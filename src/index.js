@@ -41,19 +41,19 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
 });
 
 const mainSceneResources = [
-        {
-            name: 'skySphere',
-            url: '/assets/models/skySphere.json'
-        },
-        {
-            name: 'bird',
-            url: '/assets/models/birdSimple02.json'
-        },
-        {
-            name: 'terrain',
-            url: '/assets/models/terain01.json'
-        }
-    ];
+    {
+        name: 'skySphere',
+        url: '/assets/models/skySphere.json'
+    },
+    {
+        name: 'bird',
+        url: '/assets/models/birdSimple02.json'
+    },
+    {
+        name: 'terrain',
+        url: '/assets/models/terain01.json'
+    }
+];
 
 class Config {
     constructor() {
@@ -121,7 +121,7 @@ class CompositeView {
     update(context, delta) {
         for (const child of this.children) {
             child.update(context, delta);
-        }        
+        }
     }
 }
 
@@ -166,18 +166,18 @@ class Program {
         return { world, boids, scene };
     }
 
-    _createRenderLoop(rootView, scene, camera, renderer, world) {
+    _createRenderLoop(camera, renderer) {
         const clock = new THREE.Clock();
-        
+
         const internalRender = () => {
             this.page.requestAnimationFrame(internalRender);
-            
+
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
-                this._update(delta, rootView, world);
+                this._update(delta, this.rootView, this.world);
             }
 
-            renderer.render(scene, camera);
+            renderer.render(this.scene, camera);
         };
         return internalRender;
     }
@@ -214,20 +214,13 @@ class Program {
         };
     }
 
-    async _startApp(page) {
-
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
-
-        page.addViewPort(renderer);
-
+    async _setupFlockingExperience(page, renderer, camera) {
         var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
 
-        var camera = createCamera();
-        
+
         const cameraController = new CameraController(camera);
         world.addController(cameraController, cameraKey);
-        
+
         console.log('setup complete');
 
         page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
@@ -261,8 +254,27 @@ class Program {
                 createKeyHandlingStrategies(
                     cameraController,
                     renderer.domElement)));
+        return {
+            flockingRootView: new CompositeView(boids),
+            flockingScene: scene,
+            flockingWorld: world
+        };
+    }
 
-        var render = this._createRenderLoop(new CompositeView(boids), scene, camera, renderer, world);
+    async _startApp(page) {
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+
+        page.addViewPort(renderer);
+        var camera = createCamera();        
+
+        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera); 
+
+        this.rootView = flockingRootView;
+        this.scene = flockingScene;
+        this.world = flockingWorld;
+        var render = this._createRenderLoop(camera, renderer);
 
         render();
     }
