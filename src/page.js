@@ -5,7 +5,7 @@ export default class Page {
         window.onload = () => onLoad(this);
     }
 
-    setRenderer(renderer) {
+    addViewPort(renderer) {
         this.appendToBody(renderer.domElement);
     }
 

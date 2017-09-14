@@ -114,6 +114,17 @@ class Context {
     }
 }
 
+class CompositeView {
+    constructor(children) {
+        this.children = children;
+    }
+    update(context, delta) {
+        for (const child of this.children) {
+            child.update(context, delta);
+        }        
+    }
+}
+
 class Program {
     constructor(assetRoot) {
         this.assetRoot = assetRoot;
@@ -121,11 +132,9 @@ class Program {
         this.context = new Context();
     }
 
-    _update(delta, boidsViews, world) {
+    _update(delta, rootView, world) {
         world.update(delta);
-        for (const boidView of boidsViews) {
-            boidView.update(this.context, delta);
-        }
+        rootView.update(this.context, delta);
     }
 
     _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
@@ -157,7 +166,7 @@ class Program {
         return { world, boids, scene };
     }
 
-    _createRenderLoop(boids, scene, camera, renderer, world) {
+    _createRenderLoop(rootView, scene, camera, renderer, world) {
         const clock = new THREE.Clock();
         
         const internalRender = () => {
@@ -165,7 +174,7 @@ class Program {
             
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
-                this._update(delta, boids, world);
+                this._update(delta, rootView, world);
             }
 
             renderer.render(scene, camera);
@@ -210,7 +219,7 @@ class Program {
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-        page.setRenderer(renderer);
+        page.addViewPort(renderer);
 
         var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
 
@@ -253,7 +262,7 @@ class Program {
                     cameraController,
                     renderer.domElement)));
 
-        var render = this._createRenderLoop(boids, scene, camera, renderer, world);
+        var render = this._createRenderLoop(new CompositeView(boids), scene, camera, renderer, world);
 
         render();
     }
