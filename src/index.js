@@ -267,16 +267,21 @@ class Program {
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
         page.addViewPort(renderer);
-        var camera = createCamera();        
+        var camera = createCamera();
 
-        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera); 
+        this.rootView = new CompositeView([]);
+        this.scene = new THREE.Scene();
+        this.world = {
+            update() {}
+        };
 
+        this._createRenderLoop(camera, renderer)();
+
+        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera);
+        
         this.rootView = flockingRootView;
         this.scene = flockingScene;
         this.world = flockingWorld;
-        var render = this._createRenderLoop(camera, renderer);
-
-        render();
     }
 
     run() {

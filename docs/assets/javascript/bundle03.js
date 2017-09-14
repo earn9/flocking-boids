@@ -45386,7 +45386,7 @@ var Program = function () {
         key: '_startApp',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                var renderer, camera, _ref6, flockingRootView, flockingScene, flockingWorld, render;
+                var renderer, camera, _ref6, flockingRootView, flockingScene, flockingWorld;
 
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
@@ -45398,10 +45398,20 @@ var Program = function () {
 
                                 page.addViewPort(renderer);
                                 camera = (0, _renderer.createCamera)();
-                                _context3.next = 6;
+
+
+                                this.rootView = new CompositeView([]);
+                                this.scene = new THREE.Scene();
+                                this.world = {
+                                    update: function update() {}
+                                };
+
+                                this._createRenderLoop(camera, renderer)();
+
+                                _context3.next = 10;
                                 return this._setupFlockingExperience(page, renderer, camera);
 
-                            case 6:
+                            case 10:
                                 _ref6 = _context3.sent;
                                 flockingRootView = _ref6.flockingRootView;
                                 flockingScene = _ref6.flockingScene;
@@ -45411,12 +45421,8 @@ var Program = function () {
                                 this.rootView = flockingRootView;
                                 this.scene = flockingScene;
                                 this.world = flockingWorld;
-                                render = this._createRenderLoop(camera, renderer);
 
-
-                                render();
-
-                            case 15:
+                            case 17:
                             case 'end':
                                 return _context3.stop();
                         }
