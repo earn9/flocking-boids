@@ -273,7 +273,7 @@ class Program {
 
         const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera);
         this.context.simulationRunning = false;
-        
+        resetCamera(camera);
         this.rootView = flockingRootView;
         this.scene = flockingScene;
         this.world = flockingWorld;
@@ -282,6 +282,10 @@ class Program {
     run() {
         this.page.registerOnLoad(async page => await this._startApp(page));
     }
+}
+
+function resetCamera(camera) {
+    camera.position.z = 0;
 }
 
 export function startUp(assetRoot = '') {

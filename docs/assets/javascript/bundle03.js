@@ -45383,12 +45383,12 @@ var Program = function () {
                                 flockingWorld = _ref6.flockingWorld;
 
                                 this.context.simulationRunning = false;
-
+                                resetCamera(camera);
                                 this.rootView = flockingRootView;
                                 this.scene = flockingScene;
                                 this.world = flockingWorld;
 
-                            case 21:
+                            case 22:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -45441,6 +45441,10 @@ var Program = function () {
     }]);
     return Program;
 }();
+
+function resetCamera(camera) {
+    camera.position.z = 0;
+}
 
 function startUp() {
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -47623,7 +47627,7 @@ var BoidView = function () {
         this.repelForceLine = new DebugLine(boidMesh, 0xff0000);
         this.attractForceLine = new DebugLine(boidMesh, 0x00ff00);
         this.followForceLine = new DebugLine(boidMesh, 0x0000ff);
-        this.friendLines = createFriendLines(boidMesh);
+        //this.friendLines = createFriendLines(boidMesh);
 
         this._timeTillThink = (0, _mathUtils.randomBetween)(5, 10);
         this._timeSinceThink = 0;
@@ -47731,9 +47735,18 @@ var BoidView = function () {
             this.attractForceLine.setLineEnd(forceVector);
         }
     }, {
+        key: '_getFriendLines',
+        value: function _getFriendLines() {
+            if (!this.friendLines) {
+                this.friendLines = createFriendLines(this.mesh);
+            }
+            return this.friendLines;
+        }
+    }, {
         key: '_updateFriendLines',
         value: function _updateFriendLines(gameBoid, context) {
             var friendLineIndex = 0;
+            var friendLines = this._getFriendLines();
             if (context.config.showFriendLines) {
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;
@@ -47743,10 +47756,10 @@ var BoidView = function () {
                     for (var _iterator = (0, _getIterator3.default)(gameBoid.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                         var friend = _step.value;
 
-                        if (friendLineIndex < this.friendLines.length) {
+                        if (friendLineIndex < friendLines.length) {
                             var localFriendPosition = friend.position.clone();
                             this.mesh.worldToLocal(localFriendPosition);
-                            this.friendLines[friendLineIndex].setLineEnd(localFriendPosition);
+                            friendLines[friendLineIndex].setLineEnd(localFriendPosition);
                         }
                         friendLineIndex++;
                     }
@@ -47766,7 +47779,7 @@ var BoidView = function () {
                 }
             }
             for (var i = friendLineIndex; i < 10; i++) {
-                this.friendLines[i].hide();
+                friendLines[i].hide();
             }
         }
     }, {
@@ -49013,7 +49026,7 @@ function createLoadingScene() {
 }
 
 function setupLoadingCamera(camera) {
-    camera.position.z = 10;
+    camera.position.z = 5;
     camera.lookAt(new THREE.Vector3());
     camera.updateProjectionMatrix();
 }

@@ -84,7 +84,7 @@ class BoidView {
         this.repelForceLine = new DebugLine(boidMesh, 0xff0000);
         this.attractForceLine = new DebugLine(boidMesh, 0x00ff00);
         this.followForceLine = new DebugLine(boidMesh, 0x0000ff);
-        this.friendLines = createFriendLines(boidMesh);
+        //this.friendLines = createFriendLines(boidMesh);
 
         this._timeTillThink = randomBetween(5, 10);
         this._timeSinceThink = 0;
@@ -181,20 +181,27 @@ class BoidView {
         this.attractForceLine.setLineEnd(forceVector);
     }
 
+    _getFriendLines() {
+        if (!this.friendLines) {
+            this.friendLines = createFriendLines(this.mesh);
+        }
+        return this.friendLines;
+    }
     _updateFriendLines(gameBoid, context) {
         let friendLineIndex = 0;
+        const friendLines = this._getFriendLines();
         if (context.config.showFriendLines) {
             for (const friend of gameBoid.friends) {
-                if (friendLineIndex < this.friendLines.length) {
+                if (friendLineIndex < friendLines.length) {
                     const localFriendPosition = friend.position.clone();
                     this.mesh.worldToLocal(localFriendPosition);
-                    this.friendLines[friendLineIndex].setLineEnd(localFriendPosition);
+                    friendLines[friendLineIndex].setLineEnd(localFriendPosition);
                 }
                 friendLineIndex++;
             }
         }
         for (let i = friendLineIndex; i < 10; i++) {
-            this.friendLines[i].hide();
+            friendLines[i].hide();
         }
     }
 

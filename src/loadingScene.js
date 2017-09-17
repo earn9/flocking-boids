@@ -26,7 +26,7 @@ export default function createLoadingScene() {
 }
 
 export function setupLoadingCamera(camera) {
-    camera.position.z = 10;
+    camera.position.z = 5;
     camera.lookAt( new THREE.Vector3() );
     camera.updateProjectionMatrix();
 }
