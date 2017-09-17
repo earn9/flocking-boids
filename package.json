@@ -6,24 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "node ./node_modules/eslint/bin/eslint.js src/** || true",
-    "start-pack": "./node_modules/.bin/webpack --watch",
-    "pack": "./node_modules/.bin/webpack",
+    "start-pack": "webpack --watch",
+    "pack": "webpack",
     "start-server": "python -m SimpleHTTPServer",
     "start-jekyll": "cd docs && bundle exec jekyll serve"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "6.25.0",
-    "babel-loader": "7.1.1",
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.2",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "1.6.0",
     "babel-preset-es2017": "6.24.1",
-    "eslint": "4.3.0",
-    "webpack": "3.4.1"
+    "eslint": "4.7.0",
+    "webpack": "3.6.0"
   },
   "dependencies": {
-    "three": "0.85.2",
+    "three": "0.87.1",
     "three-orbit-controls": "82.1.0"
   }
 }

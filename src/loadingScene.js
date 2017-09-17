@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 
-import CompositeView from './CompositeView';
-
 class RotatingView {
     constructor(mesh) {
         this.mesh = mesh;

@@ -29,7 +29,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     [KEYS.KEY_O]: program => program.context.config.toggleFollowLine(),
     [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
     [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
-    [KEYS.KEY_Z]: program => {
+    [KEYS.KEY_Z]: () => {
         cameraController.zoom();
     },
     [KEYS.KEY_F]: program => {
