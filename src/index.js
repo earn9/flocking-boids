@@ -7,6 +7,8 @@ import PointerLockControler from './pointerLockControls';
 import CameraController from './CameraController';
 import loadAllResources from './resources';
 import Page from './page';
+import createLoadingScene, { setupLoadingCamera } from './loadingScene';
+import CompositeView from './CompositeView';
 
 const cameraKey = 'camera';
 const KEYS = {
@@ -111,17 +113,6 @@ class Context {
 
     toggleFullscreen() {
         this.fullscreen = !this.fullscreen;
-    }
-}
-
-class CompositeView {
-    constructor(children) {
-        this.children = children;
-    }
-    update(context, delta) {
-        for (const child of this.children) {
-            child.update(context, delta);
-        }
     }
 }
 
@@ -269,15 +260,19 @@ class Program {
         page.addViewPort(renderer);
         var camera = createCamera();
 
-        this.rootView = new CompositeView([]);
-        this.scene = new THREE.Scene();
+        const { loadingScene, loadingView } = createLoadingScene();
+        this.scene = loadingScene;
+        this.rootView = loadingView;
         this.world = {
             update() {}
         };
 
+        setupLoadingCamera(camera);
+        this.context.simulationRunning = true;
         this._createRenderLoop(camera, renderer)();
 
         const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera);
+        this.context.simulationRunning = false;
         
         this.rootView = flockingRootView;
         this.scene = flockingScene;

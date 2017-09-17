@@ -44903,13 +44903,13 @@ var _regenerator = __webpack_require__(39);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(41);
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
 var _getIterator2 = __webpack_require__(23);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _asyncToGenerator2 = __webpack_require__(41);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 var _classCallCheck2 = __webpack_require__(12);
 
@@ -44952,6 +44952,14 @@ var _resources2 = _interopRequireDefault(_resources);
 var _page = __webpack_require__(131);
 
 var _page2 = _interopRequireDefault(_page);
+
+var _loadingScene = __webpack_require__(132);
+
+var _loadingScene2 = _interopRequireDefault(_loadingScene);
+
+var _CompositeView = __webpack_require__(133);
+
+var _CompositeView2 = _interopRequireDefault(_CompositeView);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -45087,45 +45095,6 @@ var Context = function () {
     return Context;
 }();
 
-var CompositeView = function () {
-    function CompositeView(children) {
-        (0, _classCallCheck3.default)(this, CompositeView);
-
-        this.children = children;
-    }
-
-    (0, _createClass3.default)(CompositeView, [{
-        key: 'update',
-        value: function update(context, delta) {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var child = _step.value;
-
-                    child.update(context, delta);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-        }
-    }]);
-    return CompositeView;
-}();
-
 var Program = function () {
     function Program(assetRoot) {
         (0, _classCallCheck3.default)(this, Program);
@@ -45155,7 +45124,7 @@ var Program = function () {
             var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
                 var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-                var world, boids, resources, scene, resourceStratergies, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, light;
+                var world, boids, resources, scene, resourceStratergies, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, light;
 
                 return _regenerator2.default.wrap(function _callee$(_context) {
                     while (1) {
@@ -45176,12 +45145,12 @@ var Program = function () {
                                     return resourceStratergies[x.name](x);
                                 });
 
-                                _iteratorNormalCompletion2 = true;
-                                _didIteratorError2 = false;
-                                _iteratorError2 = undefined;
+                                _iteratorNormalCompletion = true;
+                                _didIteratorError = false;
+                                _iteratorError = undefined;
                                 _context.prev = 12;
-                                for (_iterator2 = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                    light = _step2.value;
+                                for (_iterator = (0, _getIterator3.default)((0, _renderer.createLights)()); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                    light = _step.value;
 
                                     scene.add(light);
                                 }
@@ -45192,26 +45161,26 @@ var Program = function () {
                             case 16:
                                 _context.prev = 16;
                                 _context.t0 = _context['catch'](12);
-                                _didIteratorError2 = true;
-                                _iteratorError2 = _context.t0;
+                                _didIteratorError = true;
+                                _iteratorError = _context.t0;
 
                             case 20:
                                 _context.prev = 20;
                                 _context.prev = 21;
 
-                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                    _iterator2.return();
+                                if (!_iteratorNormalCompletion && _iterator.return) {
+                                    _iterator.return();
                                 }
 
                             case 23:
                                 _context.prev = 23;
 
-                                if (!_didIteratorError2) {
+                                if (!_didIteratorError) {
                                     _context.next = 26;
                                     break;
                                 }
 
-                                throw _iteratorError2;
+                                throw _iteratorError;
 
                             case 26:
                                 return _context.finish(23);
@@ -45357,7 +45326,7 @@ var Program = function () {
 
                                 this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
                                 return _context2.abrupt('return', {
-                                    flockingRootView: new CompositeView(boids),
+                                    flockingRootView: new _CompositeView2.default(boids),
                                     flockingScene: scene,
                                     flockingWorld: world
                                 });
@@ -45380,7 +45349,7 @@ var Program = function () {
         key: '_startApp',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                var renderer, camera, _ref6, flockingRootView, flockingScene, flockingWorld;
+                var renderer, camera, _createLoadingScene, loadingScene, loadingView, _ref6, flockingRootView, flockingScene, flockingWorld;
 
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
@@ -45392,31 +45361,34 @@ var Program = function () {
 
                                 page.addViewPort(renderer);
                                 camera = (0, _renderer.createCamera)();
+                                _createLoadingScene = (0, _loadingScene2.default)(), loadingScene = _createLoadingScene.loadingScene, loadingView = _createLoadingScene.loadingView;
 
-
-                                this.rootView = new CompositeView([]);
-                                this.scene = new THREE.Scene();
+                                this.scene = loadingScene;
+                                this.rootView = loadingView;
                                 this.world = {
                                     update: function update() {}
                                 };
 
+                                (0, _loadingScene.setupLoadingCamera)(camera);
+                                this.context.simulationRunning = true;
                                 this._createRenderLoop(camera, renderer)();
 
-                                _context3.next = 10;
+                                _context3.next = 13;
                                 return this._setupFlockingExperience(page, renderer, camera);
 
-                            case 10:
+                            case 13:
                                 _ref6 = _context3.sent;
                                 flockingRootView = _ref6.flockingRootView;
                                 flockingScene = _ref6.flockingScene;
                                 flockingWorld = _ref6.flockingWorld;
 
+                                this.context.simulationRunning = false;
 
                                 this.rootView = flockingRootView;
                                 this.scene = flockingScene;
                                 this.world = flockingWorld;
 
-                            case 17:
+                            case 21:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -48975,6 +48947,142 @@ var Page = function () {
 }();
 
 exports.default = Page;
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(12);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(13);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+exports.default = createLoadingScene;
+exports.setupLoadingCamera = setupLoadingCamera;
+
+var _three = __webpack_require__(18);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _CompositeView = __webpack_require__(133);
+
+var _CompositeView2 = _interopRequireDefault(_CompositeView);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var RotatingView = function () {
+    function RotatingView(mesh) {
+        (0, _classCallCheck3.default)(this, RotatingView);
+
+        this.mesh = mesh;
+    }
+
+    (0, _createClass3.default)(RotatingView, [{
+        key: 'update',
+        value: function update(context, delta) {
+            console.log('rotating view, delta: ' + delta);
+            this.mesh.rotation.x += 1 * delta;
+            this.mesh.rotation.y += 1 * delta;
+        }
+    }]);
+    return RotatingView;
+}();
+
+function createLoadingScene() {
+    var scene = new THREE.Scene();
+    var loadingIconGeometry = new THREE.BoxGeometry(1, 1, 1);
+    var loadingIconMaterial = new THREE.MeshBasicMaterial({ color: 0xff6464 });
+    var loadingIconMesh = new THREE.Mesh(loadingIconGeometry, loadingIconMaterial);
+    scene.add(loadingIconMesh);
+
+    var loadingView = new RotatingView(loadingIconMesh);
+
+    return { loadingScene: scene, loadingView: loadingView };
+}
+
+function setupLoadingCamera(camera) {
+    camera.position.z = 10;
+    camera.lookAt(new THREE.Vector3());
+    camera.updateProjectionMatrix();
+}
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getIterator2 = __webpack_require__(23);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(12);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(13);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CompositeView = function () {
+    function CompositeView(children) {
+        (0, _classCallCheck3.default)(this, CompositeView);
+
+        this.children = children;
+    }
+
+    (0, _createClass3.default)(CompositeView, [{
+        key: "update",
+        value: function update(context, delta) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var child = _step.value;
+
+                    child.update(context, delta);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+    }]);
+    return CompositeView;
+}();
+
+exports.default = CompositeView;
 
 /***/ })
 /******/ ]);
