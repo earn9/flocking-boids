@@ -45826,12 +45826,12 @@ var Program = function () {
             };
         }
     }, {
-        key: '_setupFlockingExperience',
+        key: '_createFlockingExperience',
         value: function () {
-            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page, renderer, camera) {
+            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page, renderer) {
                 var _this5 = this;
 
-                var _ref4, world, boids, scene, cameraController, controls;
+                var _ref4, world, boids, scene, camera, cameraController, controls;
 
                 return _regenerator2.default.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -45845,6 +45845,7 @@ var Program = function () {
                                 world = _ref4.world;
                                 boids = _ref4.boids;
                                 scene = _ref4.scene;
+                                camera = (0, _renderer.createCamera)();
                                 cameraController = new _CameraController2.default(camera);
 
                                 world.addController(cameraController, cameraKey);
@@ -45877,13 +45878,10 @@ var Program = function () {
                                 }
 
                                 this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
-                                return _context2.abrupt('return', {
-                                    flockingRootView: new _CompositeView2.default(boids),
-                                    flockingScene: scene,
-                                    flockingWorld: world
-                                });
 
-                            case 12:
+                                return _context2.abrupt('return', new Experience(scene, camera, new _CompositeView2.default(boids), world));
+
+                            case 13:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -45891,18 +45889,28 @@ var Program = function () {
                 }, _callee2, this);
             }));
 
-            function _setupFlockingExperience(_x4, _x5, _x6) {
+            function _createFlockingExperience(_x4, _x5) {
                 return _ref3.apply(this, arguments);
             }
 
-            return _setupFlockingExperience;
+            return _createFlockingExperience;
         }()
+    }, {
+        key: '_createLoadingExperience',
+        value: function _createLoadingExperience() {
+            var loadingCamera = (0, _loadingScene.setupLoadingCamera)();
+
+            var _createLoadingScene = (0, _loadingScene2.default)(),
+                loadingScene = _createLoadingScene.loadingScene,
+                loadingView = _createLoadingScene.loadingView;
+
+            return new Experience(loadingScene, loadingCamera, loadingView);
+        }
     }, {
         key: '_startApp',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                var renderer, loadingCamera, _createLoadingScene, loadingScene, loadingView, mainCamera, _ref6, flockingRootView, flockingScene, flockingWorld;
-
+                var renderer;
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
@@ -45914,30 +45922,21 @@ var Program = function () {
                                 page.addViewPort(renderer);
                                 page.registerOnResize(this._createWindowResizeHandler(renderer));
 
-                                loadingCamera = (0, _loadingScene.setupLoadingCamera)();
-                                _createLoadingScene = (0, _loadingScene2.default)(), loadingScene = _createLoadingScene.loadingScene, loadingView = _createLoadingScene.loadingView;
-
-                                this.experience = new Experience(loadingScene, loadingCamera, loadingView);
+                                this.experience = this._createLoadingExperience();
 
                                 this.context.simulationRunning = true;
 
                                 this._createRenderLoop(renderer)();
 
-                                mainCamera = (0, _renderer.createCamera)();
-                                _context3.next = 12;
-                                return this._setupFlockingExperience(page, renderer, mainCamera);
+                                _context3.next = 9;
+                                return this._createFlockingExperience(page, renderer);
 
-                            case 12:
-                                _ref6 = _context3.sent;
-                                flockingRootView = _ref6.flockingRootView;
-                                flockingScene = _ref6.flockingScene;
-                                flockingWorld = _ref6.flockingWorld;
+                            case 9:
+                                this.experience = _context3.sent;
 
                                 this.context.simulationRunning = false;
 
-                                this.experience = new Experience(flockingScene, mainCamera, flockingRootView, flockingWorld);
-
-                            case 18:
+                            case 11:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -45945,7 +45944,7 @@ var Program = function () {
                 }, _callee3, this);
             }));
 
-            function _startApp(_x7) {
+            function _startApp(_x6) {
                 return _ref5.apply(this, arguments);
             }
 
@@ -45957,7 +45956,7 @@ var Program = function () {
             var _this6 = this;
 
             this.page.registerOnLoad(function () {
-                var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4(page) {
+                var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4(page) {
                     return _regenerator2.default.wrap(function _callee4$(_context4) {
                         while (1) {
                             switch (_context4.prev = _context4.next) {
@@ -45976,8 +45975,8 @@ var Program = function () {
                     }, _callee4, _this6);
                 }));
 
-                return function (_x8) {
-                    return _ref7.apply(this, arguments);
+                return function (_x7) {
+                    return _ref6.apply(this, arguments);
                 };
             }());
         }

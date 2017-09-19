@@ -199,10 +199,10 @@ class Program {
         };
     }
 
-    async _setupFlockingExperience(page, renderer, camera) {
+    async _createFlockingExperience(page, renderer) {
         var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
 
-
+        var camera = createCamera();        
         const cameraController = new CameraController(camera);
         world.addController(cameraController, cameraKey);
 
@@ -238,13 +238,15 @@ class Program {
                 createKeyHandlingStrategies(
                     cameraController,
                     renderer.domElement)));
-        return {
-            flockingRootView: new CompositeView(boids),
-            flockingScene: scene,
-            flockingWorld: world
-        };
+
+        return new Experience(scene, camera, new CompositeView(boids), world);
     }
 
+    _createLoadingExperience() {
+        var loadingCamera = setupLoadingCamera();
+        const { loadingScene, loadingView } = createLoadingScene();
+        return new Experience(loadingScene, loadingCamera, loadingView);        
+    }
     async _startApp(page) {
 
         var renderer = new THREE.WebGLRenderer();
@@ -253,19 +255,14 @@ class Program {
         page.addViewPort(renderer);        
         page.registerOnResize(this._createWindowResizeHandler(renderer));
         
-        var loadingCamera = setupLoadingCamera();
-        const { loadingScene, loadingView } = createLoadingScene();
-        this.experience = new Experience(loadingScene, loadingCamera, loadingView);
+        this.experience = this._createLoadingExperience();
 
         this.context.simulationRunning = true;
 
         this._createRenderLoop(renderer)();
 
-        var mainCamera = createCamera();        
-        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, mainCamera);
+        this.experience = await this._createFlockingExperience(page, renderer);
         this.context.simulationRunning = false;
-        
-        this.experience = new Experience(flockingScene, mainCamera, flockingRootView, flockingWorld);
     }
 
     run() {
