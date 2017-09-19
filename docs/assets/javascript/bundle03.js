@@ -45516,6 +45516,10 @@ var _CompositeView = __webpack_require__(133);
 
 var _CompositeView2 = _interopRequireDefault(_CompositeView);
 
+var _Experience = __webpack_require__(134);
+
+var _Experience2 = _interopRequireDefault(_Experience);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -45879,7 +45883,7 @@ var Program = function () {
 
                                 this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
 
-                                return _context2.abrupt('return', new Experience(scene, camera, new _CompositeView2.default(boids), world));
+                                return _context2.abrupt('return', new _Experience2.default(scene, camera, new _CompositeView2.default(boids), world));
 
                             case 13:
                             case 'end':
@@ -45896,17 +45900,6 @@ var Program = function () {
             return _createFlockingExperience;
         }()
     }, {
-        key: '_createLoadingExperience',
-        value: function _createLoadingExperience() {
-            var loadingCamera = (0, _loadingScene.setupLoadingCamera)();
-
-            var _createLoadingScene = (0, _loadingScene2.default)(),
-                loadingScene = _createLoadingScene.loadingScene,
-                loadingView = _createLoadingScene.loadingView;
-
-            return new Experience(loadingScene, loadingCamera, loadingView);
-        }
-    }, {
         key: '_startApp',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
@@ -45922,7 +45915,7 @@ var Program = function () {
                                 page.addViewPort(renderer);
                                 page.registerOnResize(this._createWindowResizeHandler(renderer));
 
-                                this.experience = this._createLoadingExperience();
+                                this.experience = (0, _loadingScene2.default)();
 
                                 this.context.simulationRunning = true;
 
@@ -45982,42 +45975,6 @@ var Program = function () {
         }
     }]);
     return Program;
-}();
-
-var Experience = function () {
-    function Experience(scene, camera, view) {
-        var world = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-        (0, _classCallCheck3.default)(this, Experience);
-
-        this.scene = scene;
-        this.camera = camera;
-        this.view = view;
-        this.world = world;
-    }
-
-    (0, _createClass3.default)(Experience, [{
-        key: 'update',
-        value: function update(delta, context) {
-            if (this.world) {
-                this.world.update(delta);
-            }
-            if (this.view) {
-                this.view.update(context, delta);
-            }
-        }
-    }, {
-        key: 'pageResized',
-        value: function pageResized(page) {
-            this.camera.aspect = page.getAspectRatio();
-            this.camera.updateProjectionMatrix();
-        }
-    }, {
-        key: 'renderUsing',
-        value: function renderUsing(renderer) {
-            renderer.render(this.scene, this.camera);
-        }
-    }]);
-    return Experience;
 }();
 
 function startUp() {
@@ -49554,12 +49511,15 @@ var _createClass2 = __webpack_require__(9);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-exports.default = createLoadingScene;
-exports.setupLoadingCamera = setupLoadingCamera;
+exports.default = createLoadingExperience;
 
 var _three = __webpack_require__(14);
 
 var THREE = _interopRequireWildcard(_three);
+
+var _Experience = __webpack_require__(134);
+
+var _Experience2 = _interopRequireDefault(_Experience);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -49602,6 +49562,16 @@ function setupLoadingCamera() {
     camera.updateProjectionMatrix();
 
     return camera;
+}
+
+function createLoadingExperience() {
+    var loadingCamera = setupLoadingCamera();
+
+    var _createLoadingScene = createLoadingScene(),
+        loadingScene = _createLoadingScene.loadingScene,
+        loadingView = _createLoadingScene.loadingView;
+
+    return new _Experience2.default(loadingScene, loadingCamera, loadingView);
 }
 
 /***/ }),
@@ -49669,6 +49639,65 @@ var CompositeView = function () {
 }();
 
 exports.default = CompositeView;
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(8);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(9);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Experience = function () {
+    function Experience(scene, camera, view) {
+        var world = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+        (0, _classCallCheck3.default)(this, Experience);
+
+        this.scene = scene;
+        this.camera = camera;
+        this.view = view;
+        this.world = world;
+    }
+
+    (0, _createClass3.default)(Experience, [{
+        key: "update",
+        value: function update(delta, context) {
+            if (this.world) {
+                this.world.update(delta);
+            }
+            if (this.view) {
+                this.view.update(context, delta);
+            }
+        }
+    }, {
+        key: "pageResized",
+        value: function pageResized(page) {
+            this.camera.aspect = page.getAspectRatio();
+            this.camera.updateProjectionMatrix();
+        }
+    }, {
+        key: "renderUsing",
+        value: function renderUsing(renderer) {
+            renderer.render(this.scene, this.camera);
+        }
+    }]);
+    return Experience;
+}();
+
+exports.default = Experience;
 
 /***/ })
 /******/ ]);

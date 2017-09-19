@@ -7,8 +7,9 @@ import PointerLockControler from './pointerLockControls';
 import CameraController from './CameraController';
 import loadAllResources from './resources';
 import Page from './page';
-import createLoadingScene, { setupLoadingCamera } from './loadingScene';
+import createLoadingExperience from './loadingScene';
 import CompositeView from './CompositeView';
+import Experience from './Experience';
 
 const cameraKey = 'camera';
 const KEYS = {
@@ -242,11 +243,6 @@ class Program {
         return new Experience(scene, camera, new CompositeView(boids), world);
     }
 
-    _createLoadingExperience() {
-        var loadingCamera = setupLoadingCamera();
-        const { loadingScene, loadingView } = createLoadingScene();
-        return new Experience(loadingScene, loadingCamera, loadingView);        
-    }
     async _startApp(page) {
 
         var renderer = new THREE.WebGLRenderer();
@@ -255,7 +251,7 @@ class Program {
         page.addViewPort(renderer);        
         page.registerOnResize(this._createWindowResizeHandler(renderer));
         
-        this.experience = this._createLoadingExperience();
+        this.experience = createLoadingExperience();
 
         this.context.simulationRunning = true;
 
@@ -270,32 +266,6 @@ class Program {
     }
 }
 
-class Experience {
-    constructor(scene, camera, view, world = null) {
-        this.scene = scene;
-        this.camera = camera;
-        this.view = view;
-        this.world = world;
-    }
-
-    update(delta, context) {
-        if (this.world) {
-            this.world.update(delta);
-        }
-        if (this.view) {
-            this.view.update(context, delta);
-        }
-    }
-
-    pageResized(page) {
-        this.camera.aspect = page.getAspectRatio();
-        this.camera.updateProjectionMatrix();
-    }
-
-    renderUsing(renderer) {
-        renderer.render(this.scene, this.camera);
-    }
-}
 
 export function startUp(assetRoot = '') {
     new Program(assetRoot).run();

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import Experience from './Experience';
+
 class RotatingView {
     constructor(mesh) {
         this.mesh = mesh;
@@ -11,7 +13,7 @@ class RotatingView {
      }
 }
 
-export default function createLoadingScene() {
+function createLoadingScene() {
     const scene = new THREE.Scene();
     const loadingIconGeometry = new THREE.BoxGeometry(1, 1, 1);
     const loadingIconMaterial = new THREE.MeshBasicMaterial({ color: 0xff6464 });
@@ -23,7 +25,7 @@ export default function createLoadingScene() {
     return { loadingScene: scene, loadingView };
 }
 
-export function setupLoadingCamera() {
+function setupLoadingCamera() {
     var camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -34,4 +36,10 @@ export function setupLoadingCamera() {
     camera.updateProjectionMatrix();
 
     return camera;
+}
+
+export default function createLoadingExperience() {
+    var loadingCamera = setupLoadingCamera();
+    const { loadingScene, loadingView } = createLoadingScene();
+    return new Experience(loadingScene, loadingCamera, loadingView);        
 }
