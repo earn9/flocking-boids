@@ -45772,7 +45772,7 @@ var Program = function () {
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
-                    Program._update(delta, _this.rootView, _this.world, _this.context);
+                    _this.experience.update(delta, _this.context);
                 }
 
                 _this.experience.renderUsing(renderer);
@@ -45917,21 +45917,17 @@ var Program = function () {
                                 loadingCamera = (0, _loadingScene.setupLoadingCamera)();
                                 _createLoadingScene = (0, _loadingScene2.default)(), loadingScene = _createLoadingScene.loadingScene, loadingView = _createLoadingScene.loadingView;
 
-                                this.experience = new Experience(loadingScene, loadingCamera);
-                                this.rootView = loadingView;
-                                this.world = {
-                                    update: function update() {}
-                                };
+                                this.experience = new Experience(loadingScene, loadingCamera, loadingView);
 
                                 this.context.simulationRunning = true;
 
                                 this._createRenderLoop(renderer)();
 
                                 mainCamera = (0, _renderer.createCamera)();
-                                _context3.next = 14;
+                                _context3.next = 12;
                                 return this._setupFlockingExperience(page, renderer, mainCamera);
 
-                            case 14:
+                            case 12:
                                 _ref6 = _context3.sent;
                                 flockingRootView = _ref6.flockingRootView;
                                 flockingScene = _ref6.flockingScene;
@@ -45939,11 +45935,9 @@ var Program = function () {
 
                                 this.context.simulationRunning = false;
 
-                                this.experience = new Experience(flockingScene, mainCamera);
-                                this.rootView = flockingRootView;
-                                this.world = flockingWorld;
+                                this.experience = new Experience(flockingScene, mainCamera, flockingRootView, flockingWorld);
 
-                            case 22:
+                            case 18:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -45987,25 +45981,32 @@ var Program = function () {
                 };
             }());
         }
-    }], [{
-        key: '_update',
-        value: function _update(delta, rootView, world, context) {
-            world.update(delta);
-            rootView.update(context, delta);
-        }
     }]);
     return Program;
 }();
 
 var Experience = function () {
-    function Experience(scene, camera) {
+    function Experience(scene, camera, view) {
+        var world = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
         (0, _classCallCheck3.default)(this, Experience);
 
         this.scene = scene;
         this.camera = camera;
+        this.view = view;
+        this.world = world;
     }
 
     (0, _createClass3.default)(Experience, [{
+        key: 'update',
+        value: function update(delta, context) {
+            if (this.world) {
+                this.world.update(delta);
+            }
+            if (this.view) {
+                this.view.update(context, delta);
+            }
+        }
+    }, {
         key: 'pageResized',
         value: function pageResized(page) {
             this.camera.aspect = page.getAspectRatio();

@@ -123,11 +123,6 @@ class Program {
         this.context = new Context();
     }
 
-    static _update(delta, rootView, world, context) {
-        world.update(delta);
-        rootView.update(context, delta);
-    }
-
     _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
         const numBoids = 500;
 
@@ -165,7 +160,7 @@ class Program {
 
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
-                Program._update(delta, this.rootView, this.world, this.context);
+                this.experience.update(delta, this.context);
             }
 
             this.experience.renderUsing(renderer);
@@ -260,11 +255,7 @@ class Program {
         
         var loadingCamera = setupLoadingCamera();
         const { loadingScene, loadingView } = createLoadingScene();
-        this.experience = new Experience(loadingScene, loadingCamera);
-        this.rootView = loadingView;
-        this.world = {
-            update() {}
-        };
+        this.experience = new Experience(loadingScene, loadingCamera, loadingView);
 
         this.context.simulationRunning = true;
 
@@ -274,9 +265,7 @@ class Program {
         const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, mainCamera);
         this.context.simulationRunning = false;
         
-        this.experience = new Experience(flockingScene, mainCamera);
-        this.rootView = flockingRootView;
-        this.world = flockingWorld;
+        this.experience = new Experience(flockingScene, mainCamera, flockingRootView, flockingWorld);
     }
 
     run() {
@@ -285,9 +274,20 @@ class Program {
 }
 
 class Experience {
-    constructor(scene, camera) {
+    constructor(scene, camera, view, world = null) {
         this.scene = scene;
         this.camera = camera;
+        this.view = view;
+        this.world = world;
+    }
+
+    update(delta, context) {
+        if (this.world) {
+            this.world.update(delta);
+        }
+        if (this.view) {
+            this.view.update(context, delta);
+        }
     }
 
     pageResized(page) {
