@@ -45762,7 +45762,7 @@ var Program = function () {
         }()
     }, {
         key: '_createRenderLoop',
-        value: function _createRenderLoop(camera, renderer) {
+        value: function _createRenderLoop(renderer) {
             var _this = this;
 
             var clock = new THREE.Clock();
@@ -45775,7 +45775,7 @@ var Program = function () {
                     Program._update(delta, _this.rootView, _this.world, _this.context);
                 }
 
-                renderer.render(_this.scene, camera);
+                _this.experience.renderUsing(renderer);
             };
             return internalRender;
         }
@@ -45816,12 +45816,11 @@ var Program = function () {
         }
     }, {
         key: '_createWindowResizeHandler',
-        value: function _createWindowResizeHandler(camera, renderer) {
+        value: function _createWindowResizeHandler(renderer) {
             var _this4 = this;
 
             return function () {
-                camera.aspect = _this4.page.getAspectRatio();
-                camera.updateProjectionMatrix();
+                _this4.experience.pageResized(_this4.page);
 
                 renderer.setSize(_this4.page.getInnerWidth(), _this4.page.getInnerHeight());
             };
@@ -45851,8 +45850,6 @@ var Program = function () {
                                 world.addController(cameraController, cameraKey);
 
                                 console.log('setup complete');
-
-                                page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
 
                                 if (page.isPointerLockSupported()) {
                                     controls = new _pointerLockControls2.default(camera);
@@ -45886,7 +45883,7 @@ var Program = function () {
                                     flockingWorld: world
                                 });
 
-                            case 13:
+                            case 12:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -45904,7 +45901,7 @@ var Program = function () {
         key: '_startApp',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                var renderer, camera, _createLoadingScene, loadingScene, loadingView, _ref6, flockingRootView, flockingScene, flockingWorld;
+                var renderer, loadingCamera, _createLoadingScene, loadingScene, loadingView, mainCamera, _ref6, flockingRootView, flockingScene, flockingWorld;
 
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
@@ -45915,32 +45912,35 @@ var Program = function () {
                                 renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
                                 page.addViewPort(renderer);
-                                camera = (0, _renderer.createCamera)();
+                                page.registerOnResize(this._createWindowResizeHandler(renderer));
+
+                                loadingCamera = (0, _loadingScene.setupLoadingCamera)();
                                 _createLoadingScene = (0, _loadingScene2.default)(), loadingScene = _createLoadingScene.loadingScene, loadingView = _createLoadingScene.loadingView;
 
-                                this.scene = loadingScene;
+                                this.experience = new Experience(loadingScene, loadingCamera);
                                 this.rootView = loadingView;
                                 this.world = {
                                     update: function update() {}
                                 };
 
-                                (0, _loadingScene.setupLoadingCamera)(camera);
                                 this.context.simulationRunning = true;
-                                this._createRenderLoop(camera, renderer)();
 
-                                _context3.next = 13;
-                                return this._setupFlockingExperience(page, renderer, camera);
+                                this._createRenderLoop(renderer)();
 
-                            case 13:
+                                mainCamera = (0, _renderer.createCamera)();
+                                _context3.next = 14;
+                                return this._setupFlockingExperience(page, renderer, mainCamera);
+
+                            case 14:
                                 _ref6 = _context3.sent;
                                 flockingRootView = _ref6.flockingRootView;
                                 flockingScene = _ref6.flockingScene;
                                 flockingWorld = _ref6.flockingWorld;
 
                                 this.context.simulationRunning = false;
-                                resetCamera(camera);
+
+                                this.experience = new Experience(flockingScene, mainCamera);
                                 this.rootView = flockingRootView;
-                                this.scene = flockingScene;
                                 this.world = flockingWorld;
 
                             case 22:
@@ -45997,9 +45997,28 @@ var Program = function () {
     return Program;
 }();
 
-function resetCamera(camera) {
-    camera.position.z = 0;
-}
+var Experience = function () {
+    function Experience(scene, camera) {
+        (0, _classCallCheck3.default)(this, Experience);
+
+        this.scene = scene;
+        this.camera = camera;
+    }
+
+    (0, _createClass3.default)(Experience, [{
+        key: 'pageResized',
+        value: function pageResized(page) {
+            this.camera.aspect = page.getAspectRatio();
+            this.camera.updateProjectionMatrix();
+        }
+    }, {
+        key: 'renderUsing',
+        value: function renderUsing(renderer) {
+            renderer.render(this.scene, this.camera);
+        }
+    }]);
+    return Experience;
+}();
 
 function startUp() {
     var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -49576,10 +49595,13 @@ function createLoadingScene() {
     return { loadingScene: scene, loadingView: loadingView };
 }
 
-function setupLoadingCamera(camera) {
+function setupLoadingCamera() {
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 150);
     camera.position.z = 5;
     camera.lookAt(new THREE.Vector3());
     camera.updateProjectionMatrix();
+
+    return camera;
 }
 
 /***/ }),

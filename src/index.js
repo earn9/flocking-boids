@@ -157,7 +157,7 @@ class Program {
         return { world, boids, scene };
     }
 
-    _createRenderLoop(camera, renderer) {
+    _createRenderLoop(renderer) {
         const clock = new THREE.Clock();
 
         const internalRender = () => {
@@ -168,7 +168,7 @@ class Program {
                 Program._update(delta, this.rootView, this.world, this.context);
             }
 
-            renderer.render(this.scene, camera);
+            this.experience.renderUsing(renderer);
         };
         return internalRender;
     }
@@ -196,10 +196,9 @@ class Program {
         };
     }
 
-    _createWindowResizeHandler(camera, renderer) {
+    _createWindowResizeHandler(renderer) {
         return () => {
-            camera.aspect = this.page.getAspectRatio();
-            camera.updateProjectionMatrix();
+            this.experience.pageResized(this.page);
 
             renderer.setSize(this.page.getInnerWidth(), this.page.getInnerHeight());
         };
@@ -214,7 +213,6 @@ class Program {
 
         console.log('setup complete');
 
-        page.registerOnResize(this._createWindowResizeHandler(camera, renderer));
 
         if (page.isPointerLockSupported()) {
             const controls = new PointerLockControler(camera);
@@ -257,25 +255,27 @@ class Program {
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-        page.addViewPort(renderer);
-        var camera = createCamera();
-
+        page.addViewPort(renderer);        
+        page.registerOnResize(this._createWindowResizeHandler(renderer));
+        
+        var loadingCamera = setupLoadingCamera();
         const { loadingScene, loadingView } = createLoadingScene();
-        this.scene = loadingScene;
+        this.experience = new Experience(loadingScene, loadingCamera);
         this.rootView = loadingView;
         this.world = {
             update() {}
         };
 
-        setupLoadingCamera(camera);
         this.context.simulationRunning = true;
-        this._createRenderLoop(camera, renderer)();
 
-        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, camera);
+        this._createRenderLoop(renderer)();
+
+        var mainCamera = createCamera();        
+        const { flockingRootView, flockingScene, flockingWorld } = await this._setupFlockingExperience(page, renderer, mainCamera);
         this.context.simulationRunning = false;
-        resetCamera(camera);
+        
+        this.experience = new Experience(flockingScene, mainCamera);
         this.rootView = flockingRootView;
-        this.scene = flockingScene;
         this.world = flockingWorld;
     }
 
@@ -284,8 +284,20 @@ class Program {
     }
 }
 
-function resetCamera(camera) {
-    camera.position.z = 0;
+class Experience {
+    constructor(scene, camera) {
+        this.scene = scene;
+        this.camera = camera;
+    }
+
+    pageResized(page) {
+        this.camera.aspect = page.getAspectRatio();
+        this.camera.updateProjectionMatrix();
+    }
+
+    renderUsing(renderer) {
+        renderer.render(this.scene, this.camera);
+    }
 }
 
 export function startUp(assetRoot = '') {

@@ -23,8 +23,15 @@ export default function createLoadingScene() {
     return { loadingScene: scene, loadingView };
 }
 
-export function setupLoadingCamera(camera) {
+export function setupLoadingCamera() {
+    var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        150);
     camera.position.z = 5;
     camera.lookAt( new THREE.Vector3() );
     camera.updateProjectionMatrix();
+
+    return camera;
 }
