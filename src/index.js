@@ -5,7 +5,7 @@ import { BoidView, createFloor, createLights, createCamera, createSkyView } from
 import { initializeConfig, storeConfigChanges } from './persistence';
 import PointerLockControler from './pointerLockControls';
 import CameraController from './CameraController';
-import loadAllResources from './resources';
+import loadAllResourcesAsync from './resources';
 import Page from './page';
 import createLoadingExperience from './loadingScene';
 import CompositeView from './CompositeView';
@@ -118,7 +118,7 @@ class Context {
 }
 
 class Program {
-    constructor(assetRoot) {
+    constructor(assetRoot = '') {
         this.assetRoot = assetRoot;
         this.page = new Page();
         this.context = new Context();
@@ -135,12 +135,12 @@ class Program {
         }
     }
 
-    async _setupMainScene(assetRoot = '') {
+    async _setupMainSceneAync() {
         initializeConfig(this.context.config);
         const world = new World();
 
         const boids = [];
-        const resources = await loadAllResources(mainSceneResources, assetRoot);
+        const resources = await loadAllResourcesAsync(mainSceneResources, this.assetRoot);
 
         const scene = new THREE.Scene();
         const resourceStratergies = this._createResourcesStrategies(scene, world, boids);
@@ -200,8 +200,8 @@ class Program {
         };
     }
 
-    async _createFlockingExperience(page, renderer) {
-        var { world, boids, scene } = await this._setupMainScene(this.assetRoot);
+    async _createFlockingExperienceAsync(localPage, renderer) {
+        var { world, boids, scene } = await this._setupMainSceneAync(this.assetRoot);
 
         var camera = createCamera();        
         const cameraController = new CameraController(camera);
@@ -210,13 +210,13 @@ class Program {
         console.log('setup complete');
 
 
-        if (page.isPointerLockSupported()) {
+        if (localPage.isPointerLockSupported()) {
             const controls = new PointerLockControler(camera);
             cameraController.setPointerLockControls(controls);
             scene.add(controls.getObject());
             controls.setPosition(0, 1, 30);
 
-            page.registerOnPointerLockChanged((isSourceElement) => {
+            localPage.registerOnPointerLockChanged((isSourceElement) => {
                 if (isSourceElement) {
                     controls.enabled = true;
                     this.context.simulationRunning = true;
@@ -226,7 +226,7 @@ class Program {
                 }
             });
 
-            page.registerOnClick((p) => {
+            localPage.registerOnClick((p) => {
                 controls.enabled = true;
                 p.lockPointer();
             });
@@ -234,7 +234,7 @@ class Program {
             console.log('pointer lock not supported');
         }
 
-        this.page.addKeyDownListener(
+        localPage.addKeyDownListener(
             this._createDocumentKeyDownHandler(
                 createKeyHandlingStrategies(
                     cameraController,
@@ -243,7 +243,7 @@ class Program {
         return new Experience(scene, camera, new CompositeView(boids), world);
     }
 
-    async _startApp(page) {
+    async _startAppAsync(page) {
 
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
@@ -257,12 +257,12 @@ class Program {
 
         this._createRenderLoop(renderer)();
 
-        this.experience = await this._createFlockingExperience(page, renderer);
+        this.experience = await this._createFlockingExperienceAsync(page, renderer);
         this.context.simulationRunning = false;
     }
 
     run() {
-        this.page.registerOnLoad(async page => await this._startApp(page));
+        this.page.registerOnLoad(async page => await this._startAppAsync(page));
     }
 }
 

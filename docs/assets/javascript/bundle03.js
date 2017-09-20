@@ -45655,7 +45655,8 @@ var Context = function () {
 }();
 
 var Program = function () {
-    function Program(assetRoot) {
+    function Program() {
+        var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
         (0, _classCallCheck3.default)(this, Program);
 
         this.assetRoot = assetRoot;
@@ -45678,11 +45679,9 @@ var Program = function () {
             }
         }
     }, {
-        key: '_setupMainScene',
+        key: '_setupMainSceneAync',
         value: function () {
             var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-                var assetRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
                 var world, boids, resources, scene, resourceStratergies, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, light;
 
                 return _regenerator2.default.wrap(function _callee$(_context) {
@@ -45693,7 +45692,7 @@ var Program = function () {
                                 world = new _world.World();
                                 boids = [];
                                 _context.next = 5;
-                                return (0, _resources2.default)(mainSceneResources, assetRoot);
+                                return (0, _resources2.default)(mainSceneResources, this.assetRoot);
 
                             case 5:
                                 resources = _context.sent;
@@ -45758,11 +45757,11 @@ var Program = function () {
                 }, _callee, this, [[12, 16, 20, 28], [21,, 23, 27]]);
             }));
 
-            function _setupMainScene() {
+            function _setupMainSceneAync() {
                 return _ref2.apply(this, arguments);
             }
 
-            return _setupMainScene;
+            return _setupMainSceneAync;
         }()
     }, {
         key: '_createRenderLoop',
@@ -45830,9 +45829,9 @@ var Program = function () {
             };
         }
     }, {
-        key: '_createFlockingExperience',
+        key: '_createFlockingExperienceAsync',
         value: function () {
-            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(page, renderer) {
+            var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(localPage, renderer) {
                 var _this5 = this;
 
                 var _ref4, world, boids, scene, camera, cameraController, controls;
@@ -45842,7 +45841,7 @@ var Program = function () {
                         switch (_context2.prev = _context2.next) {
                             case 0:
                                 _context2.next = 2;
-                                return this._setupMainScene(this.assetRoot);
+                                return this._setupMainSceneAync(this.assetRoot);
 
                             case 2:
                                 _ref4 = _context2.sent;
@@ -45856,14 +45855,14 @@ var Program = function () {
 
                                 console.log('setup complete');
 
-                                if (page.isPointerLockSupported()) {
+                                if (localPage.isPointerLockSupported()) {
                                     controls = new _pointerLockControls2.default(camera);
 
                                     cameraController.setPointerLockControls(controls);
                                     scene.add(controls.getObject());
                                     controls.setPosition(0, 1, 30);
 
-                                    page.registerOnPointerLockChanged(function (isSourceElement) {
+                                    localPage.registerOnPointerLockChanged(function (isSourceElement) {
                                         if (isSourceElement) {
                                             controls.enabled = true;
                                             _this5.context.simulationRunning = true;
@@ -45873,7 +45872,7 @@ var Program = function () {
                                         }
                                     });
 
-                                    page.registerOnClick(function (p) {
+                                    localPage.registerOnClick(function (p) {
                                         controls.enabled = true;
                                         p.lockPointer();
                                     });
@@ -45881,7 +45880,7 @@ var Program = function () {
                                     console.log('pointer lock not supported');
                                 }
 
-                                this.page.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
+                                localPage.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(cameraController, renderer.domElement)));
 
                                 return _context2.abrupt('return', new _Experience2.default(scene, camera, new _CompositeView2.default(boids), world));
 
@@ -45893,14 +45892,14 @@ var Program = function () {
                 }, _callee2, this);
             }));
 
-            function _createFlockingExperience(_x4, _x5) {
+            function _createFlockingExperienceAsync(_x4, _x5) {
                 return _ref3.apply(this, arguments);
             }
 
-            return _createFlockingExperience;
+            return _createFlockingExperienceAsync;
         }()
     }, {
-        key: '_startApp',
+        key: '_startAppAsync',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
                 var renderer;
@@ -45922,7 +45921,7 @@ var Program = function () {
                                 this._createRenderLoop(renderer)();
 
                                 _context3.next = 9;
-                                return this._createFlockingExperience(page, renderer);
+                                return this._createFlockingExperienceAsync(page, renderer);
 
                             case 9:
                                 this.experience = _context3.sent;
@@ -45937,11 +45936,11 @@ var Program = function () {
                 }, _callee3, this);
             }));
 
-            function _startApp(_x6) {
+            function _startAppAsync(_x6) {
                 return _ref5.apply(this, arguments);
             }
 
-            return _startApp;
+            return _startAppAsync;
         }()
     }, {
         key: 'run',
@@ -45955,7 +45954,7 @@ var Program = function () {
                             switch (_context4.prev = _context4.next) {
                                 case 0:
                                     _context4.next = 2;
-                                    return _this6._startApp(page);
+                                    return _this6._startAppAsync(page);
 
                                 case 2:
                                     return _context4.abrupt('return', _context4.sent);
@@ -49320,7 +49319,7 @@ var loadResourceAsync = function loadResourceAsync(loader, name, url) {
     });
 };
 
-var loadAllResources = function () {
+var loadAllResourcesAsync = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(resources, assetRoot) {
         var loader, allResources;
         return _regenerator2.default.wrap(function _callee$(_context) {
@@ -49347,12 +49346,12 @@ var loadAllResources = function () {
         }, _callee, undefined);
     }));
 
-    return function loadAllResources(_x2, _x3) {
+    return function loadAllResourcesAsync(_x2, _x3) {
         return _ref.apply(this, arguments);
     };
 }();
 
-exports.default = loadAllResources;
+exports.default = loadAllResourcesAsync;
 
 /***/ }),
 /* 129 */
