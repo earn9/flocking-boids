@@ -1,19 +1,15 @@
 ---
 layout: post
-title:  "CI FTW!"
+title:  "Flocking Boids v4"
 date:   2017-06-23 13:15:00 +0100
 categories: update
 ---
-> TL;DR: [checkout boids flocking v4 wip]({{ "/game03/" | relative_url }})
+> TL;DR: [checkout boids flocking v4]({{ "/game03/" | relative_url }})
 
-I decided to practice what I preach and always be shipable.
+Done in this version
+---
 
-This post will host the work in progress for v4.
-
-Done so far
------------
-
+* Loading has been reworked to take advantage of async / await instead of callbacks
+* There is now a loading screen that animates while the resources for the main scene are downloading and being setup. 
 * Fixed debug lines.
-* There are two animations:
-    * Flapping and 
-    * Gliding
+* Animation has been removed for now as it was slowing things down and not adding much value.
