@@ -49564,13 +49564,11 @@ function setupLoadingCamera() {
 }
 
 function createLoadingExperience() {
-    var loadingCamera = setupLoadingCamera();
-
     var _createLoadingScene = createLoadingScene(),
         loadingScene = _createLoadingScene.loadingScene,
         loadingView = _createLoadingScene.loadingView;
 
-    return new _Experience2.default(loadingScene, loadingCamera, loadingView);
+    return new _Experience2.default(loadingScene, setupLoadingCamera(), loadingView);
 }
 
 /***/ }),

@@ -39,7 +39,6 @@ function setupLoadingCamera() {
 }
 
 export default function createLoadingExperience() {
-    var loadingCamera = setupLoadingCamera();
     const { loadingScene, loadingView } = createLoadingScene();
-    return new Experience(loadingScene, loadingCamera, loadingView);        
+    return new Experience(loadingScene, setupLoadingCamera(), loadingView);        
 }
