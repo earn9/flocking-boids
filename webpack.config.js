@@ -6,7 +6,7 @@ module.exports = {
         library: 'Boids',
         path: path.resolve(__dirname, 'docs/assets/javascript'),
         libraryTarget: 'var',
-        filename: 'bundle03.js'
+        filename: 'bundle04.js'
     },
     devtool: 'source-map',
     module: {
