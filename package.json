@@ -9,6 +9,7 @@
     "start-pack": "webpack --watch",
     "pack": "webpack",
     "start-server": "python -m SimpleHTTPServer",
+    "start-jekyll-open": "cd docs && bundle exec jekyll serve --host 0.0.0.0",
     "start-jekyll": "cd docs && bundle exec jekyll serve"
   },
   "author": "",
