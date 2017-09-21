@@ -4,78 +4,65 @@ import * as THREE from 'three';
  * @author mrdoob / http://mrdoob.com/
  */
 
-const PointerLockControls = function (camera) {
+const PI_2 = Math.PI / 2;
 
-    var scope = this;
 
-    camera.rotation.set(0, 0, 0);
+class PointerLockControls {
+    constructor(camera) {
+        camera.rotation.set(0, 0, 0);
 
-    var pitchObject = new THREE.Object3D();
-    pitchObject.add(camera);
+        this.pitchObject = new THREE.Object3D();
+        this.pitchObject.add(camera);
 
-    var yawObject = new THREE.Object3D();
-    yawObject.position.y = 10;
-    yawObject.add(pitchObject);
+        this.yawObject = new THREE.Object3D();
+        this.yawObject.position.y = 10;
+        this.yawObject.add(this.pitchObject);
 
-    var PI_2 = Math.PI / 2;
+        this.mouseMoveHander = (event) => this.onMouseMove(event);
+        document.addEventListener('mousemove', (event) => this.onMouseMove(event), false);
 
-    var onMouseMove = function (event) {
+        this.enabled = false;
+        this.movementFactor = 0.002;
 
-        if (scope.enabled === false) return;
+        this.direction = new THREE.Vector3(0, 0, - 1);
+        this.rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+
+    }
+
+    onMouseMove(event) {
+
+        if (this.enabled === false) return;
 
         var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-        yawObject.rotation.y -= movementX * scope.movementFactor;
-        pitchObject.rotation.x -= movementY * scope.movementFactor;
+        this.yawObject.rotation.y -= movementX * this.movementFactor;
+        this.pitchObject.rotation.x -= movementY * this.movementFactor;
 
-        pitchObject.rotation.x = Math.max(- PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        this.pitchObject.rotation.x = Math.max(- PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
 
-    };
+    }
 
-    this.dispose = function () {
+    dispose() {
+        document.removeEventListener('mousemove', this.mouseMoveHander, false);
+    }
 
-        document.removeEventListener('mousemove', onMouseMove, false);
+    getDirection(v) {
+        this.rotation.set(this.pitchObject.rotation.x, this.yawObject.rotation.y, 0);
+        v.copy(this.direction).applyEuler(this.rotation);
+        return v;
+    }
 
-    };
+    getObject() {
+        return this.yawObject;
+    }
 
-    document.addEventListener('mousemove', onMouseMove, false);
-
-    this.enabled = false;
-    this.movementFactor = 0.002;
-
-    this.getObject = function () {
-
-        return yawObject;
-
-    };
-
-    this.getDirection = function () {
-
-        // assumes the camera itself is not rotated
-
-        var direction = new THREE.Vector3(0, 0, - 1);
-        var rotation = new THREE.Euler(0, 0, 0, 'YXZ');
-
-        return function (v) {
-
-            rotation.set(pitchObject.rotation.x, yawObject.rotation.y, 0);
-
-            v.copy(direction).applyEuler(rotation);
-
-            return v;
-
-        };
-
-    }();
-
-    this.setPosition = function(x, y, z) {
-        yawObject.position.setX(x);
-        yawObject.position.setY(y);
-        yawObject.position.setZ(z);
-    };
-};
-
+    setPosition(x, y, z) {
+        this.yawObject.position.setX(x);
+        this.yawObject.position.setY(y);
+        this.yawObject.position.setZ(z);
+    }
+}
 
 const pointerLockSupported = () => {
     return 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
@@ -94,7 +81,7 @@ const onPointerLockChanged = (document, pointerLockChange) => {
             document.pointerLockElement === element ||
             document.mozPointerLockElement === element ||
             document.webkitPointerLockElement === element);
-        };
+    };
     document.addEventListener('pointerlockchange', changed, false);
     document.addEventListener('mozpointerlockchange', changed, false);
     document.addEventListener('webkitpointerlockchange', changed, false);
