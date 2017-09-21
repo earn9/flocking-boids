@@ -217,6 +217,10 @@ class Program {
                     null,
                     renderer.domElement)));
 
+        const dolly = new THREE.Group();
+        dolly.add(camera);
+        dolly.position.set(0, 1, 30);
+        scene.add(dolly);
         return new Experience(scene, camera, new CompositeView(boids), world);
     }
 

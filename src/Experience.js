@@ -1,4 +1,3 @@
-
 export default class Experience {
     constructor(scene, camera, view, world = null) {
         this.scene = scene;

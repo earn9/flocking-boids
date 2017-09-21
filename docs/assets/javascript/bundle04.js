@@ -45830,7 +45830,7 @@ var Program = function () {
         key: '_createFlockingExperienceAsync',
         value: function () {
             var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(localPage, renderer, camera) {
-                var _ref4, world, boids, scene;
+                var _ref4, world, boids, scene, dolly;
 
                 return _regenerator2.default.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -45850,9 +45850,14 @@ var Program = function () {
 
                                 localPage.addKeyDownListener(this._createDocumentKeyDownHandler(createKeyHandlingStrategies(null, renderer.domElement)));
 
+                                dolly = new THREE.Group();
+
+                                dolly.add(camera);
+                                dolly.position.set(0, 1, 30);
+                                scene.add(dolly);
                                 return _context2.abrupt('return', new _Experience2.default(scene, camera, new _CompositeView2.default(boids), world));
 
-                            case 9:
+                            case 13:
                             case 'end':
                                 return _context2.stop();
                         }
