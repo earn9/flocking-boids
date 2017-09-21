@@ -45911,7 +45911,6 @@ var Program = function () {
                                 });
 
                                 this.renderer = glRenderer;
-                                //this._createRenderLoop(glRenderer)();
 
                                 _context3.next = 16;
                                 return this._createFlockingExperienceAsync(page, glRenderer, camera);

@@ -254,7 +254,6 @@ class Program {
         });
 
         this.renderer = glRenderer;
-        //this._createRenderLoop(glRenderer)();
 
         this.experience = await this._createFlockingExperienceAsync(page, glRenderer, camera);
         this.context.simulationRunning = true;        
