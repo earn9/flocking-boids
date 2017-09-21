@@ -1,17 +1,17 @@
 import * as THREE from 'three';
+import VRControls from 'three-vrcontrols-module';
+import VREffect from 'three-vreffect-module';
+
 import { World } from './game/world';
 import { Boid } from './game/boid';
 import { BoidView, createFloor, createLights, createCamera, createSkyView } from './renderer';
 import { initializeConfig, storeConfigChanges } from './persistence';
-import PointerLockControler from './pointerLockControls';
-import CameraController from './CameraController';
 import loadAllResourcesAsync from './resources';
 import Page from './page';
 import createLoadingExperience from './loadingScene';
 import CompositeView from './CompositeView';
 import Experience from './Experience';
 
-const cameraKey = 'camera';
 const KEYS = {
     KEY_B: 66,
     KEY_F: 70,
@@ -31,7 +31,7 @@ const createKeyHandlingStrategies = (cameraController, domElement) => ({
     [KEYS.KEY_P]: program => program.context.config.toggleFriendLines(),
     [KEYS.KEY_B]: program => program.context.config.toggleAxis(),
     [KEYS.KEY_Z]: () => {
-        cameraController.zoom();
+        cameraController || cameraController.zoom();
     },
     [KEYS.KEY_F]: program => {
         program.context.toggleFullscreen();
@@ -125,7 +125,7 @@ class Program {
     }
 
     _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
-        const numBoids = 500;
+        const numBoids = 200;
 
         for (let i = 0; i < numBoids; i++) {
             const gameBoid = Boid.createWithRandomPositionAndDirection(-20, 20, 1);
@@ -164,6 +164,10 @@ class Program {
                 this.experience.update(delta, this.context);
             }
 
+            if (this.controls) {
+                this.controls.update();
+            }
+
             this.experience.renderUsing(renderer);
         };
         return internalRender;
@@ -200,44 +204,17 @@ class Program {
         };
     }
 
-    async _createFlockingExperienceAsync(localPage, renderer) {
+    async _createFlockingExperienceAsync(localPage, renderer, camera) {
         var { world, boids, scene } = await this._setupMainSceneAync(this.assetRoot);
 
-        var camera = createCamera();        
-        const cameraController = new CameraController(camera);
-        world.addController(cameraController, cameraKey);
 
         console.log('setup complete');
 
 
-        if (localPage.isPointerLockSupported()) {
-            const controls = new PointerLockControler(camera);
-            cameraController.setPointerLockControls(controls);
-            scene.add(controls.getObject());
-            controls.setPosition(0, 1, 30);
-
-            localPage.registerOnPointerLockChanged((isSourceElement) => {
-                if (isSourceElement) {
-                    controls.enabled = true;
-                    this.context.simulationRunning = true;
-                } else {
-                    controls.enabled = false;
-                    this.context.simulationRunning = false;
-                }
-            });
-
-            localPage.registerOnClick((p) => {
-                controls.enabled = true;
-                p.lockPointer();
-            });
-        } else {
-            console.log('pointer lock not supported');
-        }
-
         localPage.addKeyDownListener(
             this._createDocumentKeyDownHandler(
                 createKeyHandlingStrategies(
-                    cameraController,
+                    null,
                     renderer.domElement)));
 
         return new Experience(scene, camera, new CompositeView(boids), world);
@@ -245,20 +222,39 @@ class Program {
 
     async _startAppAsync(page) {
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(page.getInnerWidth(), page.getInnerHeight());
+        var glRenderer = new THREE.WebGLRenderer();
+        glRenderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
-        page.addViewPort(renderer);        
-        page.registerOnResize(this._createWindowResizeHandler(renderer));
+        page.addViewPort(glRenderer);        
+        page.registerOnResize(this._createWindowResizeHandler(glRenderer));
+
+        var camera = createCamera();        
         
-        this.experience = createLoadingExperience();
+        this.experience = createLoadingExperience(camera);
 
         this.context.simulationRunning = true;
 
-        this._createRenderLoop(renderer)();
+        this.controls = new VRControls(camera);
 
-        this.experience = await this._createFlockingExperienceAsync(page, renderer);
-        this.context.simulationRunning = false;
+        this.effect = new VREffect(glRenderer);
+        this.effect.setSize(window.innerWidth,  window.innerHeight);
+
+        this.vrDisplay = null;
+        const scope = this;
+        navigator.getVRDisplays().then(function(displays) {
+          if (displays.length > 0) {
+            scope.vrDisplay = displays[0];
+            // Kick off the render loop.
+            scope.vrDisplay.requestAnimationFrame(scope._createRenderLoop(scope.effect));
+          }
+        });
+
+        this.renderer = glRenderer;
+        //this._createRenderLoop(glRenderer)();
+
+        this.experience = await this._createFlockingExperienceAsync(page, glRenderer, camera);
+        this.context.simulationRunning = true;        
+        this.doneWithLoadingLoop = true;
     }
 
     run() {

@@ -29,12 +29,6 @@ export default class Page {
         onPointerLockChanged(
             document, 
             (isSourceElement) => {
-                var blocker = this._getElementById('blocker');
-                if (isSourceElement) {
-                    blocker.style.display = 'none';
-                } else {
-                    blocker.style.display = '';
-                }
                 whenPointerLockChanged(isSourceElement);
             });
     }

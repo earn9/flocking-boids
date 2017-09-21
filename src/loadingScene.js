@@ -18,6 +18,7 @@ function createLoadingScene() {
     const loadingIconGeometry = new THREE.BoxGeometry(1, 1, 1);
     const loadingIconMaterial = new THREE.MeshBasicMaterial({ color: 0xff6464 });
     const loadingIconMesh = new THREE.Mesh(loadingIconGeometry, loadingIconMaterial);
+    loadingIconMesh.position.z = -10;
     scene.add(loadingIconMesh);
 
     const loadingView = new RotatingView(loadingIconMesh);
@@ -38,7 +39,7 @@ function setupLoadingCamera() {
     return camera;
 }
 
-export default function createLoadingExperience() {
+export default function createLoadingExperience(camera = setupLoadingCamera()) {
     const { loadingScene, loadingView } = createLoadingScene();
-    return new Experience(loadingScene, setupLoadingCamera(), loadingView);        
+    return new Experience(loadingScene, camera, loadingView);        
 }
