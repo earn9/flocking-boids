@@ -32,6 +32,7 @@
     "three-orbit-controls": "82.1.0",
     "three-vrcontrols-module": "2.0.1",
     "three-vreffect-module": "2.0.0",
-    "webvr-polyfill": "0.9.38"
+    "webvr-polyfill": "0.9.38",
+    "webvr-ui": "0.10.0"
   }
 }

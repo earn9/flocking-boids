@@ -61,7 +61,7 @@ var Boids =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 63);
+/******/ 	return __webpack_require__(__webpack_require__.s = 52);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -75,8 +75,8 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var store      = __webpack_require__(33)('wks')
-  , uid        = __webpack_require__(22)
+var store      = __webpack_require__(34)('wks')
+  , uid        = __webpack_require__(35)
   , Symbol     = __webpack_require__(2).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
@@ -100,16 +100,6 @@ if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(12);
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
@@ -122,7 +112,7 @@ exports.default = function (instance, Constructor) {
 };
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -130,7 +120,7 @@ exports.default = function (instance, Constructor) {
 
 exports.__esModule = true;
 
-var _defineProperty = __webpack_require__(54);
+var _defineProperty = __webpack_require__(45);
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
@@ -155,119 +145,22 @@ exports.default = function () {
 }();
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(16);
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(70)
-  , defined = __webpack_require__(26);
-module.exports = function(it){
-  return IObject(defined(it));
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global    = __webpack_require__(2)
-  , core      = __webpack_require__(0)
-  , ctx       = __webpack_require__(18)
-  , hide      = __webpack_require__(10)
-  , PROTOTYPE = 'prototype';
-
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , IS_WRAP   = type & $export.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
-    , key, own, out;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if(own && key in exports)continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function(C){
-      var F = function(a, b, c){
-        if(this instanceof C){
-          switch(arguments.length){
-            case 0: return new C;
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if(IS_PROTO){
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
-module.exports = $export;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject       = __webpack_require__(3)
-  , IE8_DOM_DEFINE = __webpack_require__(42)
-  , toPrimitive    = __webpack_require__(29)
-  , dP             = Object.defineProperty;
-
-exports.f = __webpack_require__(9) ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(19)(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP         = __webpack_require__(8)
-  , createDesc = __webpack_require__(21);
-module.exports = __webpack_require__(9) ? function(object, key, value){
+var dP         = __webpack_require__(12)
+  , createDesc = __webpack_require__(32);
+module.exports = __webpack_require__(7) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
   object[key] = value;
@@ -275,36 +168,16 @@ module.exports = __webpack_require__(9) ? function(object, key, value){
 };
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function(it, key){
-  return hasOwnProperty.call(it, key);
-};
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-/***/ }),
-/* 13 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = __webpack_require__(44)
-  , enumBugKeys = __webpack_require__(34);
-
-module.exports = Object.keys || function keys(O){
-  return $keys(O, enumBugKeys);
-};
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(21)(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
 
 /***/ }),
-/* 14 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44542,19 +44415,117 @@ function CanvasRenderer() {
 
 
 /***/ }),
-/* 15 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(66), __esModule: true };
+module.exports = { "default": __webpack_require__(55), __esModule: true };
 
 /***/ }),
-/* 16 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = {};
 
 /***/ }),
-/* 17 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__(2)
+  , core      = __webpack_require__(0)
+  , ctx       = __webpack_require__(15)
+  , hide      = __webpack_require__(6)
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__(5)
+  , IE8_DOM_DEFINE = __webpack_require__(60)
+  , toPrimitive    = __webpack_require__(61)
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(59)
+  , defined = __webpack_require__(19);
+module.exports = function(it){
+  return IObject(defined(it));
+};
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -44564,11 +44535,11 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 18 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // optional / simple context binding
-var aFunction = __webpack_require__(27);
+var aFunction = __webpack_require__(20);
 module.exports = function(fn, that, length){
   aFunction(fn);
   if(that === undefined)return fn;
@@ -44589,7 +44560,94 @@ module.exports = function(fn, that, length){
 };
 
 /***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Not yet presenting, but ready to present
+const READY_TO_PRESENT = 'ready';
+
+// In presentation mode
+const PRESENTING = 'presenting';
+const PRESENTING_FULLSCREEN = 'presenting-fullscreen';
+
+// Checking device availability
+const PREPARING = 'preparing';
+
+// Errors
+const ERROR_NO_PRESENTABLE_DISPLAYS = 'error-no-presentable-displays';
+const ERROR_BROWSER_NOT_SUPPORTED = 'error-browser-not-supported';
+const ERROR_REQUEST_TO_PRESENT_REJECTED = 'error-request-to-present-rejected';
+const ERROR_EXIT_PRESENT_REJECTED = 'error-exit-present-rejected';
+const ERROR_REQUEST_STATE_CHANGE_REJECTED = 'error-request-state-change-rejected';
+const ERROR_UNKOWN = 'error-unkown';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  READY_TO_PRESENT,
+  PRESENTING,
+  PRESENTING_FULLSCREEN,
+  PREPARING,
+  ERROR_NO_PRESENTABLE_DISPLAYS,
+  ERROR_BROWSER_NOT_SUPPORTED,
+  ERROR_REQUEST_TO_PRESENT_REJECTED,
+  ERROR_EXIT_PRESENT_REJECTED,
+  ERROR_REQUEST_STATE_CHANGE_REJECTED,
+  ERROR_UNKOWN,
+});
+
+
+/***/ }),
 /* 19 */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = function(exec){
@@ -44601,94 +44659,10 @@ module.exports = function(exec){
 };
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = true;
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = function(bitmap, value){
-  return {
-    enumerable  : !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
-  };
-};
-
-/***/ }),
 /* 22 */
-/***/ (function(module, exports) {
-
-var id = 0
-  , px = Math.random();
-module.exports = function(key){
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-
-/***/ }),
-/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var def = __webpack_require__(8).f
-  , has = __webpack_require__(11)
-  , TAG = __webpack_require__(1)('toStringTag');
-
-module.exports = function(it, tag, stat){
-  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
-};
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-exports.f = {}.propertyIsEnumerable;
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(67);
-var global        = __webpack_require__(2)
-  , hide          = __webpack_require__(10)
-  , Iterators     = __webpack_require__(16)
-  , TO_STRING_TAG = __webpack_require__(1)('toStringTag');
-
-for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
-  var NAME       = collections[i]
-    , Collection = global[NAME]
-    , proto      = Collection && Collection.prototype;
-  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
-  Iterators[NAME] = Iterators.Array;
-}
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
-  return it;
-};
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(12)
+var isObject = __webpack_require__(16)
   , document = __webpack_require__(2).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
@@ -44697,71 +44671,19 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 29 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(12);
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function(it, S){
-  if(!isObject(it))return it;
-  var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  throw TypeError("Can't convert object to primitive value");
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys       = __webpack_require__(66)
+  , enumBugKeys = __webpack_require__(36);
+
+module.exports = Object.keys || function keys(O){
+  return $keys(O, enumBugKeys);
 };
 
 /***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject    = __webpack_require__(3)
-  , dPs         = __webpack_require__(72)
-  , enumBugKeys = __webpack_require__(34)
-  , IE_PROTO    = __webpack_require__(32)('IE_PROTO')
-  , Empty       = function(){ /* empty */ }
-  , PROTOTYPE   = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function(){
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = __webpack_require__(28)('iframe')
-    , i      = enumBugKeys.length
-    , lt     = '<'
-    , gt     = '>'
-    , iframeDocument;
-  iframe.style.display = 'none';
-  __webpack_require__(46).appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
-  return createDict();
-};
-
-module.exports = Object.create || function create(O, Properties){
-  var result;
-  if(O !== null){
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty;
-    Empty[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
-};
-
-
-/***/ }),
-/* 31 */
+/* 24 */
 /***/ (function(module, exports) {
 
 // 7.1.4 ToInteger
@@ -44772,79 +44694,36 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 32 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(33)('keys')
-  , uid    = __webpack_require__(22);
+var shared = __webpack_require__(34)('keys')
+  , uid    = __webpack_require__(35);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
 
 /***/ }),
-/* 33 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(2)
-  , SHARED = '__core-js_shared__'
-  , store  = global[SHARED] || (global[SHARED] = {});
-module.exports = function(key){
-  return store[key] || (store[key] = {});
+var def = __webpack_require__(12).f
+  , has = __webpack_require__(17)
+  , TAG = __webpack_require__(1)('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-// IE 8- don't enum bug keys
-module.exports = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-
-/***/ }),
-/* 35 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 7.1.13 ToObject(argument)
-var defined = __webpack_require__(26);
-module.exports = function(it){
-  return Object(defined(it));
-};
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $at  = __webpack_require__(75)(true);
-
-// 21.1.3.27 String.prototype[@@iterator]()
-__webpack_require__(41)(String, 'String', function(iterated){
-  this._t = String(iterated); // target
-  this._i = 0;                // next index
-// 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , index = this._i
-    , point;
-  if(index >= O.length)return {value: undefined, done: true};
-  point = $at(O, index);
-  this._i += point.length;
-  return {value: point, done: false};
-});
-
-/***/ }),
-/* 37 */,
-/* 38 */,
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(64);
+module.exports = __webpack_require__(53);
 
 
 /***/ }),
-/* 40 */
+/* 28 */
 /***/ (function(module, exports) {
 
 var g;
@@ -44871,20 +44750,38 @@ module.exports = g;
 
 
 /***/ }),
-/* 41 */
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(56);
+var global        = __webpack_require__(2)
+  , hide          = __webpack_require__(6)
+  , Iterators     = __webpack_require__(10)
+  , TO_STRING_TAG = __webpack_require__(1)('toStringTag');
+
+for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+  var NAME       = collections[i]
+    , Collection = global[NAME]
+    , proto      = Collection && Collection.prototype;
+  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+  Iterators[NAME] = Iterators.Array;
+}
+
+/***/ }),
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY        = __webpack_require__(20)
-  , $export        = __webpack_require__(7)
-  , redefine       = __webpack_require__(43)
-  , hide           = __webpack_require__(10)
-  , has            = __webpack_require__(11)
-  , Iterators      = __webpack_require__(16)
-  , $iterCreate    = __webpack_require__(71)
-  , setToStringTag = __webpack_require__(23)
-  , getPrototypeOf = __webpack_require__(47)
+var LIBRARY        = __webpack_require__(31)
+  , $export        = __webpack_require__(11)
+  , redefine       = __webpack_require__(62)
+  , hide           = __webpack_require__(6)
+  , has            = __webpack_require__(17)
+  , Iterators      = __webpack_require__(10)
+  , $iterCreate    = __webpack_require__(63)
+  , setToStringTag = __webpack_require__(26)
+  , getPrototypeOf = __webpack_require__(69)
   , ITERATOR       = __webpack_require__(1)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
   , FF_ITERATOR    = '@@iterator'
@@ -44947,83 +44844,111 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 };
 
 /***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 31 */
+/***/ (function(module, exports) {
 
-module.exports = !__webpack_require__(9) && !__webpack_require__(19)(function(){
-  return Object.defineProperty(__webpack_require__(28)('div'), 'a', {get: function(){ return 7; }}).a != 7;
-});
+module.exports = true;
 
 /***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 32 */
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(10);
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var has          = __webpack_require__(11)
-  , toIObject    = __webpack_require__(6)
-  , arrayIndexOf = __webpack_require__(73)(false)
-  , IE_PROTO     = __webpack_require__(32)('IE_PROTO');
-
-module.exports = function(object, names){
-  var O      = toIObject(object)
-    , i      = 0
-    , result = []
-    , key;
-  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while(names.length > i)if(has(O, key = names[i++])){
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
 };
 
 /***/ }),
-/* 45 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(31)
+var toInteger = __webpack_require__(24)
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
 /***/ }),
-/* 46 */
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(2)
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(2).document && document.documentElement;
 
 /***/ }),
-/* 47 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = __webpack_require__(11)
-  , toObject    = __webpack_require__(35)
-  , IE_PROTO    = __webpack_require__(32)('IE_PROTO')
-  , ObjectProto = Object.prototype;
-
-module.exports = Object.getPrototypeOf || function(O){
-  O = toObject(O);
-  if(has(O, IE_PROTO))return O[IE_PROTO];
-  if(typeof O.constructor == 'function' && O instanceof O.constructor){
-    return O.constructor.prototype;
-  } return O instanceof Object ? ObjectProto : null;
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__(19);
+module.exports = function(it){
+  return Object(defined(it));
 };
 
 /***/ }),
-/* 48 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof   = __webpack_require__(49)
+"use strict";
+
+var $at  = __webpack_require__(70)(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+__webpack_require__(30)(String, 'String', function(iterated){
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
+  point = $at(O, index);
+  this._i += point.length;
+  return {value: point, done: false};
+});
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof   = __webpack_require__(41)
   , ITERATOR  = __webpack_require__(1)('iterator')
-  , Iterators = __webpack_require__(16);
+  , Iterators = __webpack_require__(10);
 module.exports = __webpack_require__(0).getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
@@ -45031,11 +44956,11 @@ module.exports = __webpack_require__(0).getIteratorMethod = function(it){
 };
 
 /***/ }),
-/* 49 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = __webpack_require__(17)
+var cof = __webpack_require__(14)
   , TAG = __webpack_require__(1)('toStringTag')
   // ES3 wrong here
   , ARG = cof(function(){ return arguments; }()) == 'Arguments';
@@ -45059,7 +44984,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 50 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45067,7 +44992,7 @@ module.exports = function(it){
 
 exports.__esModule = true;
 
-var _promise = __webpack_require__(51);
+var _promise = __webpack_require__(43);
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -45103,25 +45028,19 @@ exports.default = function (fn) {
 };
 
 /***/ }),
-/* 51 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(77), __esModule: true };
+module.exports = { "default": __webpack_require__(72), __esModule: true };
 
 /***/ }),
-/* 52 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-/* 53 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ctx                = __webpack_require__(18)
-  , invoke             = __webpack_require__(84)
-  , html               = __webpack_require__(46)
-  , cel                = __webpack_require__(28)
+var ctx                = __webpack_require__(15)
+  , invoke             = __webpack_require__(80)
+  , html               = __webpack_require__(37)
+  , cel                = __webpack_require__(22)
   , global             = __webpack_require__(2)
   , process            = global.process
   , setTask            = global.setImmediate
@@ -45157,7 +45076,7 @@ if(!setTask || !clearTask){
     delete queue[id];
   };
   // Node.js 0.8-
-  if(__webpack_require__(17)(process) == 'process'){
+  if(__webpack_require__(14)(process) == 'process'){
     defer = function(id){
       process.nextTick(ctx(run, id, 1));
     };
@@ -45195,13 +45114,1197 @@ module.exports = {
 };
 
 /***/ }),
-/* 54 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(89), __esModule: true };
+module.exports = { "default": __webpack_require__(85), __esModule: true };
 
 /***/ }),
-/* 55 */
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__states__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_eventemitter3__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_eventemitter3___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_eventemitter3__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_screenfull__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_screenfull___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_screenfull__);
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+
+
+
+/**
+ * WebVR Manager is a utility to handle VR displays
+ */
+class WebVRManager extends __WEBPACK_IMPORTED_MODULE_1_eventemitter3___default.a {
+
+  /**
+   * Construct a new WebVRManager
+   */
+  constructor() {
+    super();
+    this.state = __WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PREPARING;
+
+    // Bind vr display present change event to __onVRDisplayPresentChange
+    this.__onVRDisplayPresentChange = this.__onVRDisplayPresentChange.bind(this);
+    window.addEventListener('vrdisplaypresentchange', this.__onVRDisplayPresentChange);
+
+    this.__onChangeFullscreen = this.__onChangeFullscreen.bind(this);
+    if (__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.enabled) {
+      document.addEventListener(__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.raw.fullscreenchange, this.__onChangeFullscreen);
+    }
+  }
+
+  /**
+   * Check if the browser is compatible with WebVR and has headsets.
+   * @return {Promise<VRDisplay>}
+   */
+  checkDisplays() {
+    return WebVRManager.getVRDisplay()
+      .then((display) => {
+        this.defaultDisplay = display;
+        this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].READY_TO_PRESENT);
+        return display;
+      })
+      .catch((e) => {
+        delete this.defaultDisplay;
+        if (e.name == 'NO_DISPLAYS') {
+          this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].ERROR_NO_PRESENTABLE_DISPLAYS);
+        } else if (e.name == 'WEBVR_UNSUPPORTED') {
+          this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].ERROR_BROWSER_NOT_SUPPORTED);
+        } else {
+          this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].ERROR_UNKOWN);
+        }
+      });
+  }
+
+  /**
+   * clean up object for garbage collection
+   */
+  remove() {
+    window.removeEventListener('vrdisplaypresentchange', this.__onVRDisplayPresentChange);
+    if (__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.enabled) {
+      document.removeEventListener(__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.raw.fullscreenchanged, this.__onChangeFullscreen);
+    }
+
+    this.removeAllListeners();
+  }
+
+  /**
+   * returns promise returning list of available VR displays.
+   * @return {Promise<VRDisplay>}
+   */
+  static getVRDisplay() {
+    return new Promise((resolve, reject) => {
+      if (!navigator || !navigator.getVRDisplays) {
+        let e = new Error('Browser not supporting WebVR');
+        e.name = 'WEBVR_UNSUPPORTED';
+        reject(e);
+        return;
+      }
+
+      const rejectNoDisplay = ()=> {
+        // No displays are found.
+        let e = new Error('No displays found');
+        e.name = 'NO_DISPLAYS';
+        reject(e);
+      };
+
+      navigator.getVRDisplays().then(
+        function(displays) {
+          // Promise succeeds, but check if there are any displays actually.
+          for (let i = 0; i < displays.length; i++) {
+            if (displays[i].capabilities.canPresent) {
+              resolve(displays[i]);
+              break;
+            }
+          }
+
+          rejectNoDisplay();
+        },
+        rejectNoDisplay);
+    });
+  }
+
+  /**
+   * Enter presentation mode with your set VR display
+   * @param {VRDisplay} display the display to request present on
+   * @param {HTMLCanvasElement} canvas
+   * @return {Promise.<TResult>}
+   */
+  enterVR(display, canvas) {
+    this.presentedSource = canvas;
+    return display.requestPresent([{
+      source: canvas,
+    }])
+      .then(
+        ()=> {},
+        // this could fail if:
+        // 1. Display `canPresent` is false
+        // 2. Canvas is invalid
+        // 3. not executed via user interaction
+        ()=> this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].ERROR_REQUEST_TO_PRESENT_REJECTED)
+      );
+  }
+
+  /**
+   * Exit presentation mode on display
+   * @param {VRDisplay} display
+   * @return {Promise.<TResult>}
+   */
+  exitVR(display) {
+    return display.exitPresent()
+      .then(
+        ()=> {
+          this.presentedSource = undefined;
+        },
+        // this could fail if:
+        // 1. exit requested while not currently presenting
+        ()=> this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].ERROR_EXIT_PRESENT_REJECTED)
+      );
+  }
+
+  /**
+   * Enter fullscreen mode
+   * @param {HTMLCanvasElement} canvas
+   * @return {boolean}
+   */
+  enterFullscreen(canvas) {
+    if (__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.enabled) {
+      __WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.request(canvas);
+    } else {
+      // iOS
+      this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PRESENTING_FULLSCREEN);
+    }
+    return true;
+  }
+
+  /**
+   * Exit fullscreen mode
+   * @return {boolean}
+   */
+  exitFullscreen() {
+    if (__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.enabled && __WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.isFullscreen) {
+      __WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.exit();
+    } else if (this.state == __WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PRESENTING_FULLSCREEN) {
+      this.checkDisplays();
+    }
+    return true;
+  }
+
+  /**
+   * Change the state of the manager
+   * @param {State} state
+   * @private
+   */
+  __setState(state) {
+    if (state != this.state) {
+      this.emit('change', state, this.state);
+      this.state = state;
+    }
+  }
+
+  /**
+   * Triggered on fullscreen change event
+   * @param {Event} e
+   * @private
+   */
+  __onChangeFullscreen(e) {
+    if (__WEBPACK_IMPORTED_MODULE_2_screenfull___default.a.isFullscreen) {
+      if(this.state != __WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PRESENTING) {
+        this.__setState(__WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PRESENTING_FULLSCREEN);
+      }
+    } else {
+      this.checkDisplays();
+    }
+  }
+
+  /**
+   * Triggered on vr present change
+   * @param {Event} event
+   * @private
+   */
+  __onVRDisplayPresentChange(event) {
+    try {
+      let display;
+      if(event.display) {
+        // In chrome its supplied on the event
+        display = event.display;
+      } else if(event.detail && event.detail.display) {
+        // Polyfill stores display under detail
+        display = event.detail.display;
+      }
+
+      if(display && display.isPresenting && display.getLayers()[0].source !== this.presentedSource) {
+        // this means a different instance of WebVRManager has requested to present
+        return;
+      }
+
+      const isPresenting = this.defaultDisplay && this.defaultDisplay.isPresenting;
+      this.__setState(isPresenting ? __WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].PRESENTING : __WEBPACK_IMPORTED_MODULE_0__states__["a" /* default */].READY_TO_PRESENT);
+    } catch(err) {
+      // continue regardless of error
+    }
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = WebVRManager;
+
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var has = Object.prototype.hasOwnProperty
+  , prefix = '~';
+
+/**
+ * Constructor to create a storage for our `EE` objects.
+ * An `Events` instance is a plain object whose properties are event names.
+ *
+ * @constructor
+ * @api private
+ */
+function Events() {}
+
+//
+// We try to not inherit from `Object.prototype`. In some engines creating an
+// instance in this way is faster than calling `Object.create(null)` directly.
+// If `Object.create(null)` is not supported we prefix the event names with a
+// character to make sure that the built-in object properties are not
+// overridden or used as an attack vector.
+//
+if (Object.create) {
+  Events.prototype = Object.create(null);
+
+  //
+  // This hack is needed because the `__proto__` property is still inherited in
+  // some old browsers like Android 4, iPhone 5.1, Opera 11 and Safari 5.
+  //
+  if (!new Events().__proto__) prefix = false;
+}
+
+/**
+ * Representation of a single event listener.
+ *
+ * @param {Function} fn The listener function.
+ * @param {Mixed} context The context to invoke the listener with.
+ * @param {Boolean} [once=false] Specify if the listener is a one-time listener.
+ * @constructor
+ * @api private
+ */
+function EE(fn, context, once) {
+  this.fn = fn;
+  this.context = context;
+  this.once = once || false;
+}
+
+/**
+ * Minimal `EventEmitter` interface that is molded against the Node.js
+ * `EventEmitter` interface.
+ *
+ * @constructor
+ * @api public
+ */
+function EventEmitter() {
+  this._events = new Events();
+  this._eventsCount = 0;
+}
+
+/**
+ * Return an array listing the events for which the emitter has registered
+ * listeners.
+ *
+ * @returns {Array}
+ * @api public
+ */
+EventEmitter.prototype.eventNames = function eventNames() {
+  var names = []
+    , events
+    , name;
+
+  if (this._eventsCount === 0) return names;
+
+  for (name in (events = this._events)) {
+    if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
+  }
+
+  if (Object.getOwnPropertySymbols) {
+    return names.concat(Object.getOwnPropertySymbols(events));
+  }
+
+  return names;
+};
+
+/**
+ * Return the listeners registered for a given event.
+ *
+ * @param {String|Symbol} event The event name.
+ * @param {Boolean} exists Only check if there are listeners.
+ * @returns {Array|Boolean}
+ * @api public
+ */
+EventEmitter.prototype.listeners = function listeners(event, exists) {
+  var evt = prefix ? prefix + event : event
+    , available = this._events[evt];
+
+  if (exists) return !!available;
+  if (!available) return [];
+  if (available.fn) return [available.fn];
+
+  for (var i = 0, l = available.length, ee = new Array(l); i < l; i++) {
+    ee[i] = available[i].fn;
+  }
+
+  return ee;
+};
+
+/**
+ * Calls each of the listeners registered for a given event.
+ *
+ * @param {String|Symbol} event The event name.
+ * @returns {Boolean} `true` if the event had listeners, else `false`.
+ * @api public
+ */
+EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return false;
+
+  var listeners = this._events[evt]
+    , len = arguments.length
+    , args
+    , i;
+
+  if (listeners.fn) {
+    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
+
+    switch (len) {
+      case 1: return listeners.fn.call(listeners.context), true;
+      case 2: return listeners.fn.call(listeners.context, a1), true;
+      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+    }
+
+    for (i = 1, args = new Array(len -1); i < len; i++) {
+      args[i - 1] = arguments[i];
+    }
+
+    listeners.fn.apply(listeners.context, args);
+  } else {
+    var length = listeners.length
+      , j;
+
+    for (i = 0; i < length; i++) {
+      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
+
+      switch (len) {
+        case 1: listeners[i].fn.call(listeners[i].context); break;
+        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
+        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
+        case 4: listeners[i].fn.call(listeners[i].context, a1, a2, a3); break;
+        default:
+          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
+            args[j - 1] = arguments[j];
+          }
+
+          listeners[i].fn.apply(listeners[i].context, args);
+      }
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Add a listener for a given event.
+ *
+ * @param {String|Symbol} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {Mixed} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @api public
+ */
+EventEmitter.prototype.on = function on(event, fn, context) {
+  var listener = new EE(fn, context || this)
+    , evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) this._events[evt] = listener, this._eventsCount++;
+  else if (!this._events[evt].fn) this._events[evt].push(listener);
+  else this._events[evt] = [this._events[evt], listener];
+
+  return this;
+};
+
+/**
+ * Add a one-time listener for a given event.
+ *
+ * @param {String|Symbol} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {Mixed} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @api public
+ */
+EventEmitter.prototype.once = function once(event, fn, context) {
+  var listener = new EE(fn, context || this, true)
+    , evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) this._events[evt] = listener, this._eventsCount++;
+  else if (!this._events[evt].fn) this._events[evt].push(listener);
+  else this._events[evt] = [this._events[evt], listener];
+
+  return this;
+};
+
+/**
+ * Remove the listeners of a given event.
+ *
+ * @param {String|Symbol} event The event name.
+ * @param {Function} fn Only remove the listeners that match this function.
+ * @param {Mixed} context Only remove the listeners that have this context.
+ * @param {Boolean} once Only remove one-time listeners.
+ * @returns {EventEmitter} `this`.
+ * @api public
+ */
+EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return this;
+  if (!fn) {
+    if (--this._eventsCount === 0) this._events = new Events();
+    else delete this._events[evt];
+    return this;
+  }
+
+  var listeners = this._events[evt];
+
+  if (listeners.fn) {
+    if (
+         listeners.fn === fn
+      && (!once || listeners.once)
+      && (!context || listeners.context === context)
+    ) {
+      if (--this._eventsCount === 0) this._events = new Events();
+      else delete this._events[evt];
+    }
+  } else {
+    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
+      if (
+           listeners[i].fn !== fn
+        || (once && !listeners[i].once)
+        || (context && listeners[i].context !== context)
+      ) {
+        events.push(listeners[i]);
+      }
+    }
+
+    //
+    // Reset the array, or remove it completely if we have no more listeners.
+    //
+    if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
+    else if (--this._eventsCount === 0) this._events = new Events();
+    else delete this._events[evt];
+  }
+
+  return this;
+};
+
+/**
+ * Remove all listeners, or those of the specified event.
+ *
+ * @param {String|Symbol} [event] The event name.
+ * @returns {EventEmitter} `this`.
+ * @api public
+ */
+EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
+  var evt;
+
+  if (event) {
+    evt = prefix ? prefix + event : event;
+    if (this._events[evt]) {
+      if (--this._eventsCount === 0) this._events = new Events();
+      else delete this._events[evt];
+    }
+  } else {
+    this._events = new Events();
+    this._eventsCount = 0;
+  }
+
+  return this;
+};
+
+//
+// Alias methods names because people roll like that.
+//
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+
+//
+// This function doesn't apply anymore.
+//
+EventEmitter.prototype.setMaxListeners = function setMaxListeners() {
+  return this;
+};
+
+//
+// Expose the prefix.
+//
+EventEmitter.prefixed = prefix;
+
+//
+// Allow `EventEmitter` to be imported as module namespace.
+//
+EventEmitter.EventEmitter = EventEmitter;
+
+//
+// Expose the module.
+//
+if (true) {
+  module.exports = EventEmitter;
+}
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+const _LOGO_SCALE = 0.8;
+let _WEBVR_UI_CSS_INJECTED = {};
+
+/**
+ * Generate the innerHTML for the button
+ *
+ * @return {string} html of the button as string
+ * @param {string} cssPrefix
+ * @param {Number} height
+ * @private
+ */
+const generateInnerHTML = (cssPrefix, height)=> {
+  const logoHeight = height*_LOGO_SCALE;
+  const svgString = generateVRIconString(cssPrefix, logoHeight) + generateNoVRIconString(cssPrefix, logoHeight);
+
+  return `<button class="${cssPrefix}-button">
+          <div class="${cssPrefix}-title"></div>
+          <div class="${cssPrefix}-logo" >${svgString}</div>
+        </button>`;
+};
+
+/**
+ * Inject the CSS string to the head of the document
+ *
+ * @param {string} cssText the css to inject
+ */
+const injectCSS = (cssText)=> {
+  // Create the css
+  const style = document.createElement('style');
+  style.innerHTML = cssText;
+
+  let head = document.getElementsByTagName('head')[0];
+  head.insertBefore(style, head.firstChild);
+};
+/* harmony export (immutable) */ __webpack_exports__["injectCSS"] = injectCSS;
+
+
+/**
+ * Generate DOM element view for button
+ *
+ * @return {HTMLElement}
+ * @param {Object} options
+ */
+const createDefaultView = (options)=> {
+  const fontSize = options.height / 3;
+  if (options.injectCSS) {
+    // Check that css isnt already injected
+    if (!_WEBVR_UI_CSS_INJECTED[options.cssprefix]) {
+      injectCSS(generateCSS(options, fontSize));
+      _WEBVR_UI_CSS_INJECTED[options.cssprefix] = true;
+    }
+  }
+
+  const el = document.createElement('div');
+  el.innerHTML = generateInnerHTML(options.cssprefix, fontSize);
+  return el.firstChild;
+};
+/* harmony export (immutable) */ __webpack_exports__["createDefaultView"] = createDefaultView;
+
+
+
+const createVRIcon = (cssPrefix, height)=>{
+  const el = document.createElement('div');
+  el.innerHTML = generateVRIconString(cssPrefix, height);
+  return el.firstChild;
+};
+/* harmony export (immutable) */ __webpack_exports__["createVRIcon"] = createVRIcon;
+
+
+const createNoVRIcon = (cssPrefix, height)=>{
+  const el = document.createElement('div');
+  el.innerHTML = generateNoVRIconString(cssPrefix, height);
+  return el.firstChild;
+};
+/* harmony export (immutable) */ __webpack_exports__["createNoVRIcon"] = createNoVRIcon;
+
+
+
+const generateVRIconString = (cssPrefix, height)=> {
+    let aspect = 28 / 18;
+    return `<svg class="${cssPrefix}-svg" version="1.1" x="0px" y="0px" 
+        width="${aspect * height}px" height="${height}px" viewBox="0 0 28 18" xml:space="preserve">
+        <path d="M26.8,1.1C26.1,0.4,25.1,0,24.2,0H3.4c-1,0-1.7,0.4-2.4,1.1C0.3,1.7,0,2.7,0,3.6v10.7
+        c0,1,0.3,1.9,0.9,2.6C1.6,17.6,2.4,18,3.4,18h5c0.7,0,1.3-0.2,1.8-0.5c0.6-0.3,1-0.8,1.3-1.4l
+        1.5-2.6C13.2,13.1,13,13,14,13v0h-0.2 h0c0.3,0,0.7,0.1,0.8,0.5l1.4,2.6c0.3,0.6,0.8,1.1,1.3,
+        1.4c0.6,0.3,1.2,0.5,1.8,0.5h5c1,0,2-0.4,2.7-1.1c0.7-0.7,1.2-1.6,1.2-2.6 V3.6C28,2.7,27.5,
+        1.7,26.8,1.1z M7.4,11.8c-1.6,0-2.8-1.3-2.8-2.8c0-1.6,1.3-2.8,2.8-2.8c1.6,0,2.8,1.3,2.8,2.8
+        C10.2,10.5,8.9,11.8,7.4,11.8z M20.1,11.8c-1.6,0-2.8-1.3-2.8-2.8c0-1.6,1.3-2.8,2.8-2.8C21.7
+        ,6.2,23,7.4,23,9 C23,10.5,21.7,11.8,20.1,11.8z"/>
+    </svg>`;
+};
+
+const generateNoVRIconString = (cssPrefix, height)=>{
+    let aspect = 28 / 18;
+    return `<svg class="${cssPrefix}-svg-error" x="0px" y="0px" 
+        width="${aspect * height}px" height="${aspect * height}px" viewBox="0 0 28 28" xml:space="preserve">
+        <path d="M17.6,13.4c0-0.2-0.1-0.4-0.1-0.6c0-1.6,1.3-2.8,2.8-2.8s2.8,1.3,2.8,2.8s-1.3,2.8-2.8,2.8
+        c-0.2,0-0.4,0-0.6-0.1l5.9,5.9c0.5-0.2,0.9-0.4,1.3-0.8
+        c0.7-0.7,1.1-1.6,1.1-2.5V7.4c0-1-0.4-1.9-1.1-2.5c-0.7-0.7-1.6-1-2.5-1
+        H8.1 L17.6,13.4z"/>
+        <path d="M10.1,14.2c-0.5,0.9-1.4,1.4-2.4,1.4c-1.6,0-2.8-1.3-2.8-2.8c0-1.1,0.6-2,1.4-2.5
+        L0.9,5.1 C0.3,5.7,0,6.6,0,7.5v10.7c0,1,0.4,1.8,1.1,2.5c0.7,0.7,1.6,1,2.5,1
+        h5c0.7,0,1.3-0.1,1.8-0.5c0.6-0.3,1-0.8,1.3-1.4l1.3-2.6 L10.1,14.2z"/>
+        <path d="M25.5,27.5l-25-25C-0.1,2-0.1,1,0.5,0.4l0,0C1-0.1,2-0.1,2.6,0.4l25,25c0.6,0.6,0.6,1.5
+        ,0,2.1l0,0 C27,28.1,26,28.1,25.5,27.5z"/>
+    </svg>`;
+};
+
+/**
+ * Generate the CSS string to inject
+ *
+ * @param {Object} options
+ * @param {Number} [fontSize=18]
+ * @return {string}
+ */
+const generateCSS = (options, fontSize=18)=> {
+  const height = options.height;
+  const borderWidth = 2;
+  const borderColor = options.background ? options.background : options.color;
+  const cssPrefix = options.cssprefix;
+
+  let borderRadius;
+  if (options.corners == 'round') {
+    borderRadius = options.height / 2;
+  } else if (options.corners == 'square') {
+    borderRadius = 2;
+  } else {
+    borderRadius = options.corners;
+  }
+
+  return (`
+    @font-face {
+        font-family: 'Karla';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Karla'), local('Karla-Regular'), 
+             url(https://fonts.gstatic.com/s/karla/v5/31P4mP32i98D9CEnGyeX9Q.woff2) format('woff2');
+        unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+        font-family: 'Karla';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Karla'), local('Karla-Regular'), 
+             url(https://fonts.gstatic.com/s/karla/v5/Zi_e6rBgGqv33BWF8WTq8g.woff2) format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, 
+                       U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+    }
+
+    button.${cssPrefix}-button {
+        font-family: 'Karla', sans-serif;
+
+        border: ${borderColor} ${borderWidth}px solid;
+        border-radius: ${borderRadius}px;
+        box-sizing: border-box;
+        background: ${options.background ? options.background : 'none'};
+
+        height: ${height}px;
+        min-width: ${fontSize * 9.6}px;
+        display: inline-block;
+        position: relative;
+
+        cursor: pointer;
+    }
+    
+    button.${cssPrefix}-button:focus {
+      outline: none;
+    }
+
+    /*
+    * Logo
+    */
+
+    .${cssPrefix}-logo {
+        width: ${height}px;
+        height: ${height}px;
+        position: absolute;
+        top:0px;
+        left:0px;
+        width: ${height - 4}px;
+        height: ${height - 4}px;
+    }
+    .${cssPrefix}-svg {
+        fill: ${options.color};
+        margin-top: ${(height - fontSize * _LOGO_SCALE) / 2 - 2}px;
+        margin-left: ${height / 3 }px;
+    }
+    .${cssPrefix}-svg-error {
+        fill: ${options.color};
+        display:none;
+        margin-top: ${(height - 28 / 18 * fontSize * _LOGO_SCALE) / 2 - 2}px;
+        margin-left: ${height / 3 }px;
+    }
+
+
+    /*
+    * Title
+    */
+
+    .${cssPrefix}-title {
+        color: ${options.color};
+        position: relative;
+        font-size: ${fontSize}px;
+        padding-left: ${height * 1.05}px;
+        padding-right: ${(borderRadius - 10 < 5) ? height / 3 : borderRadius - 10}px;
+    }
+
+    /*
+    * disabled
+    */
+
+    button.${cssPrefix}-button[disabled=true] {
+        opacity: ${options.disabledOpacity};
+        cursor: default;
+    }
+
+    button.${cssPrefix}-button[disabled=true] > .${cssPrefix}-logo > .${cssPrefix}-svg {
+        display:none;
+    }
+
+    button.${cssPrefix}-button[disabled=true] > .${cssPrefix}-logo > .${cssPrefix}-svg-error {
+        display:initial;
+    }
+  `);
+};
+/* harmony export (immutable) */ __webpack_exports__["generateCSS"] = generateCSS;
+
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__webvr_manager__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__states__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_eventemitter3__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_eventemitter3___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_eventemitter3__);
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+
+
+
+
+/**
+ * A button to allow easy-entry and messaging around a WebVR experience
+ * @class
+ */
+class EnterVRButton extends __WEBPACK_IMPORTED_MODULE_3_eventemitter3___default.a {
+  /**
+   * Construct a new Enter VR Button
+   * @constructor
+   * @param {HTMLCanvasElement} sourceCanvas the canvas that you want to present in WebVR
+   * @param {Object} [options] optional parameters
+   * @param {HTMLElement} [options.domElement] provide your own domElement to bind to
+   * @param {Boolean} [options.injectCSS=true] set to false if you want to write your own styles
+   * @param {Function} [options.beforeEnter] should return a promise, opportunity to intercept request to enter
+   * @param {Function} [options.beforeExit] should return a promise, opportunity to intercept request to exit
+   * @param {Function} [options.onRequestStateChange] set to a function returning false to prevent default state changes
+   * @param {string} [options.textEnterVRTitle] set the text for Enter VR
+   * @param {string} [options.textVRNotFoundTitle] set the text for when a VR display is not found
+   * @param {string} [options.textExitVRTitle] set the text for exiting VR
+   * @param {string} [options.color] text and icon color
+   * @param {string} [options.background] set to false for no brackground or a color
+   * @param {string} [options.corners] set to 'round', 'square' or pixel value representing the corner radius
+   * @param {string} [options.disabledOpacity] set opacity of button dom when disabled
+   * @param {string} [options.cssprefix] set to change the css prefix from default 'webvr-ui'
+   */
+  constructor(sourceCanvas, options) {
+    super();
+    options = options || {};
+
+    options.color = options.color || 'rgb(80,168,252)';
+    options.background = options.background || false;
+    options.disabledOpacity = options.disabledOpacity || 0.5;
+    options.height = options.height || 55;
+    options.corners = options.corners || 'square';
+    options.cssprefix = options.cssprefix || 'webvr-ui';
+
+    options.textEnterVRTitle = options.textEnterVRTitle || 'ENTER VR';
+    options.textVRNotFoundTitle = options.textVRNotFoundTitle || 'VR NOT FOUND';
+    options.textExitVRTitle = options.textExitVRTitle || 'EXIT VR';
+
+    options.onRequestStateChange = options.onRequestStateChange || (() => true);
+    // Currently `beforeEnter` is unsupported by Firefox
+    options.beforeEnter = options.beforeEnter || undefined;
+    options.beforeExit = options.beforeExit || (()=> new Promise((resolve)=> resolve()));
+
+    options.injectCSS = options.injectCSS !== false;
+
+    this.options = options;
+
+
+    this.sourceCanvas = sourceCanvas;
+
+    // Pass in your own domElement if you really dont want to use ours
+    this.domElement = options.domElement || Object(__WEBPACK_IMPORTED_MODULE_1__dom__["createDefaultView"])(options);
+    this.__defaultDisplayStyle = this.domElement.style.display || 'initial';
+
+    // Create WebVR Manager
+    this.manager = new __WEBPACK_IMPORTED_MODULE_0__webvr_manager__["a" /* default */]();
+    this.manager.checkDisplays();
+    this.manager.addListener('change', (state)=> this.__onStateChange(state));
+
+    // Bind button click events to __onClick
+    this.domElement.addEventListener('click', ()=> this.__onEnterVRClick());
+
+    this.__forceDisabled = false;
+    this.setTitle(this.options.textEnterVRTitle);
+  }
+
+  /**
+   * Set the title of the button
+   * @param {string} text
+   * @return {EnterVRButton}
+   */
+  setTitle(text) {
+    this.domElement.title = text;
+    ifChild(this.domElement, this.options.cssprefix, 'title', (title)=> {
+      if (!text) {
+        title.style.display = 'none';
+      } else {
+        title.innerText = text;
+        title.style.display = 'initial';
+      }
+    });
+
+    return this;
+  }
+
+  /**
+   * Set the tooltip of the button
+   * @param {string} tooltip
+   * @return {EnterVRButton}
+   */
+  setTooltip(tooltip) {
+    this.domElement.title = tooltip;
+    return this;
+  }
+
+  /**
+   * Show the button
+   * @return {EnterVRButton}
+   */
+  show() {
+    this.domElement.style.display = this.__defaultDisplayStyle;
+    this.emit('show');
+    return this;
+  }
+
+  /**
+   * Hide the button
+   * @return {EnterVRButton}
+   */
+  hide() {
+    this.domElement.style.display = 'none';
+    this.emit('hide');
+    return this;
+  }
+
+  /**
+   * Enable the button
+   * @return {EnterVRButton}
+   */
+  enable() {
+    this.__setDisabledAttribute(false);
+    this.__forceDisabled = false;
+    return this;
+  }
+
+  /**
+   * Disable the button from being clicked
+   * @return {EnterVRButton}
+   */
+  disable() {
+    this.__setDisabledAttribute(true);
+    this.__forceDisabled = true;
+    return this;
+  }
+
+  /**
+   * clean up object for garbage collection
+   */
+  remove() {
+    this.manager.remove();
+
+    if (this.domElement.parentElement) {
+      this.domElement.parentElement.removeChild(this.domElement);
+    }
+  }
+
+  /**
+   * Returns a promise getting the VRDisplay used
+   * @return {Promise.<VRDisplay>}
+   */
+  getVRDisplay() {
+    return __WEBPACK_IMPORTED_MODULE_0__webvr_manager__["a" /* default */].getVRDisplay();
+  }
+
+  /**
+   * Check if the canvas the button is connected to is currently presenting
+   * @return {boolean}
+   */
+  isPresenting() {
+    return this.state === __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING || this.state == __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING_FULLSCREEN;
+  }
+
+  /**
+   * Request entering VR
+   * @return {Promise}
+   */
+  requestEnterVR() {
+    return new Promise((resolve, reject)=> {
+      if (this.options.onRequestStateChange(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING)) {
+        if(this.options.beforeEnter) {
+          return this.options.beforeEnter()
+            .then(()=> this.manager.enterVR(this.manager.defaultDisplay, this.sourceCanvas))
+            .then(resolve);
+        } else {
+          return this.manager.enterVR(this.manager.defaultDisplay, this.sourceCanvas)
+            .then(resolve);
+        }
+      } else {
+        reject(new Error(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_REQUEST_STATE_CHANGE_REJECTED));
+      }
+    });
+  }
+
+  /**
+   * Request exiting presentation mode
+   * @return {Promise}
+   */
+  requestExit() {
+    const initialState = this.state;
+
+    return new Promise((resolve, reject)=> {
+      if (this.options.onRequestStateChange(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].READY_TO_PRESENT)) {
+        return this.options.beforeExit()
+          .then(()=>
+            // if we were presenting VR, exit VR, if we are
+            // exiting fullscreen, exit fullscreen
+            initialState === __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING ?
+              this.manager.exitVR(this.manager.defaultDisplay) :
+              this.manager.exitFullscreen())
+          .then(resolve);
+      } else {
+        reject(new Error(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_REQUEST_STATE_CHANGE_REJECTED));
+      }
+    });
+  }
+
+  /**
+   * Request entering the site in fullscreen, but not VR
+   * @return {Promise}
+   */
+  requestEnterFullscreen() {
+    return new Promise((resolve, reject)=> {
+      if (this.options.onRequestStateChange(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING_FULLSCREEN)) {
+        if(this.options.beforeEnter) {
+          return this.options.beforeEnter()
+            .then(()=>this.manager.enterFullscreen(this.sourceCanvas))
+            .then(resolve);
+        } else {
+          return this.manager.enterFullscreen(this.sourceCanvas)
+            .then(resolve);
+        }
+      } else {
+        reject(new Error(__WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_REQUEST_STATE_CHANGE_REJECTED));
+      }
+    });
+  }
+
+  /**
+   * Set the disabled attribute
+   * @param {boolean} disabled
+   * @private
+   */
+  __setDisabledAttribute(disabled) {
+    if (disabled || this.__forceDisabled) {
+      this.domElement.setAttribute('disabled', 'true');
+    } else {
+      this.domElement.removeAttribute('disabled');
+    }
+  }
+
+  /**
+   * Handling click event from button
+   * @private
+   */
+  __onEnterVRClick() {
+    if (this.state == __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].READY_TO_PRESENT) {
+      this.requestEnterVR();
+    } else if (this.isPresenting()) {
+      this.requestExit();
+    }
+  }
+
+  /**
+   * @param {State} state the state that its transitioning to
+   * @private
+   */
+  __onStateChange(state) {
+    if (state != this.state) {
+      if (this.state === __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING || this.state === __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING_FULLSCREEN) {
+        this.emit('exit', this.manager.defaultDisplay);
+      }
+      this.state = state;
+
+      switch (state) {
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].READY_TO_PRESENT:
+          this.show();
+          this.setTitle(this.options.textEnterVRTitle);
+          if (this.manager.defaultDisplay) {
+            this.setTooltip('Enter VR using ' + this.manager.defaultDisplay.displayName);
+          }
+          this.__setDisabledAttribute(false);
+          this.emit('ready', this.manager.defaultDisplay);
+          break;
+
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING:
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING_FULLSCREEN:
+          if (!this.manager.defaultDisplay ||
+            !this.manager.defaultDisplay.capabilities.hasExternalDisplay ||
+            state == __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].PRESENTING_FULLSCREEN) {
+            this.hide();
+          }
+          this.setTitle(this.options.textExitVRTitle);
+          this.__setDisabledAttribute(false);
+          this.emit('enter', this.manager.defaultDisplay);
+          break;
+
+        // Error states
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_BROWSER_NOT_SUPPORTED:
+          this.show();
+          this.setTitle(this.options.textVRNotFoundTitle);
+          this.setTooltip('Browser not supported');
+          this.__setDisabledAttribute(true);
+          this.emit('error', new Error(state));
+          break;
+
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_NO_PRESENTABLE_DISPLAYS:
+          this.show();
+          this.setTitle(this.options.textVRNotFoundTitle);
+          this.setTooltip('No VR headset found.');
+          this.__setDisabledAttribute(true);
+          this.emit('error', new Error(state));
+          break;
+
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_REQUEST_TO_PRESENT_REJECTED:
+          this.show();
+          this.setTitle(this.options.textVRNotFoundTitle);
+          this.setTooltip('Something went wrong trying to start presenting to your headset.');
+          this.__setDisabledAttribute(true);
+          this.emit('error', new Error(state));
+          break;
+
+        case __WEBPACK_IMPORTED_MODULE_2__states__["a" /* default */].ERROR_EXIT_PRESENT_REJECTED:
+        default:
+          this.show();
+          this.setTitle(this.options.textVRNotFoundTitle);
+          this.setTooltip('Unknown error.');
+          this.__setDisabledAttribute(true);
+          this.emit('error', new Error(state));
+      }
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = EnterVRButton;
+
+
+/**
+ * Function checking if a specific css class exists as child of element.
+ *
+ * @param {HTMLElement} el element to find child in
+ * @param {string} cssPrefix css prefix of button
+ * @param {string} suffix class name
+ * @param {function} fn function to call if child is found
+ * @private
+ */
+const ifChild = (el, cssPrefix, suffix, fn)=> {
+  const c = el.querySelector('.' + cssPrefix + '-' + suffix);
+  c && fn(c);
+};
+
+
+/***/ }),
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45231,156 +46334,7 @@ var randomDirection = exports.randomDirection = function randomDirection() {
 };
 
 /***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// most Object methods by ES6 should accept primitives
-var $export = __webpack_require__(7)
-  , core    = __webpack_require__(0)
-  , fails   = __webpack_require__(19);
-module.exports = function(KEY, exec){
-  var fn  = (core.Object || {})[KEY] || Object[KEY]
-    , exp = {};
-  exp[KEY] = exec(fn);
-  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
-};
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.onPointerLockChanged = exports.lockPointer = exports.pointerLockSupported = undefined;
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _three = __webpack_require__(14);
-
-var THREE = _interopRequireWildcard(_three);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @author mrdoob / http://mrdoob.com/
- */
-
-var PI_2 = Math.PI / 2;
-
-var PointerLockControls = function () {
-    function PointerLockControls(camera) {
-        var _this = this;
-
-        (0, _classCallCheck3.default)(this, PointerLockControls);
-
-        camera.rotation.set(0, 0, 0);
-
-        this.pitchObject = new THREE.Object3D();
-        this.pitchObject.add(camera);
-
-        this.yawObject = new THREE.Object3D();
-        this.yawObject.position.y = 10;
-        this.yawObject.add(this.pitchObject);
-
-        this.mouseMoveHander = function (event) {
-            return _this.onMouseMove(event);
-        };
-        document.addEventListener('mousemove', function (event) {
-            return _this.onMouseMove(event);
-        }, false);
-
-        this.enabled = false;
-        this.movementFactor = 0.002;
-
-        this.direction = new THREE.Vector3(0, 0, -1);
-        this.rotation = new THREE.Euler(0, 0, 0, 'YXZ');
-    }
-
-    (0, _createClass3.default)(PointerLockControls, [{
-        key: 'onMouseMove',
-        value: function onMouseMove(event) {
-
-            if (this.enabled === false) return;
-
-            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-            this.yawObject.rotation.y -= movementX * this.movementFactor;
-            this.pitchObject.rotation.x -= movementY * this.movementFactor;
-
-            this.pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
-        }
-    }, {
-        key: 'dispose',
-        value: function dispose() {
-            document.removeEventListener('mousemove', this.mouseMoveHander, false);
-        }
-    }, {
-        key: 'getDirection',
-        value: function getDirection(v) {
-            this.rotation.set(this.pitchObject.rotation.x, this.yawObject.rotation.y, 0);
-            v.copy(this.direction).applyEuler(this.rotation);
-            return v;
-        }
-    }, {
-        key: 'getObject',
-        value: function getObject() {
-            return this.yawObject;
-        }
-    }, {
-        key: 'setPosition',
-        value: function setPosition(x, y, z) {
-            this.yawObject.position.setX(x);
-            this.yawObject.position.setY(y);
-            this.yawObject.position.setZ(z);
-        }
-    }]);
-    return PointerLockControls;
-}();
-
-var pointerLockSupported = function pointerLockSupported() {
-    return 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-};
-
-var lockPointer = function lockPointer(element) {
-    // Ask the browser to lock the pointer
-    element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-    element.requestPointerLock();
-};
-
-var onPointerLockChanged = function onPointerLockChanged(document, pointerLockChange) {
-    var element = document.body;
-    var changed = function changed() {
-        pointerLockChange(document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element);
-    };
-    document.addEventListener('pointerlockchange', changed, false);
-    document.addEventListener('mozpointerlockchange', changed, false);
-    document.addEventListener('webkitpointerlockchange', changed, false);
-};
-
-exports.default = PointerLockControls;
-exports.pointerLockSupported = pointerLockSupported;
-exports.lockPointer = lockPointer;
-exports.onPointerLockChanged = onPointerLockChanged;
-
-/***/ }),
-/* 58 */,
-/* 59 */,
-/* 60 */,
-/* 61 */,
-/* 62 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45390,11 +46344,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _classCallCheck2 = __webpack_require__(4);
+var _classCallCheck2 = __webpack_require__(3);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(5);
+var _createClass2 = __webpack_require__(4);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
@@ -45439,7 +46393,7 @@ var Experience = function () {
 exports.default = Experience;
 
 /***/ }),
-/* 63 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45449,69 +46403,73 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _regenerator = __webpack_require__(39);
+var _regenerator = __webpack_require__(27);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _getIterator2 = __webpack_require__(15);
+var _getIterator2 = __webpack_require__(9);
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _asyncToGenerator2 = __webpack_require__(50);
+var _asyncToGenerator2 = __webpack_require__(42);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _classCallCheck2 = __webpack_require__(4);
+var _classCallCheck2 = __webpack_require__(3);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(5);
+var _createClass2 = __webpack_require__(4);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _defineProperty2 = __webpack_require__(91);
+var _defineProperty2 = __webpack_require__(87);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
 exports.startUp = startUp;
 
-var _three = __webpack_require__(14);
+var _three = __webpack_require__(8);
 
 var THREE = _interopRequireWildcard(_three);
 
-var _threeVrcontrolsModule = __webpack_require__(135);
+var _threeVrcontrolsModule = __webpack_require__(88);
 
 var _threeVrcontrolsModule2 = _interopRequireDefault(_threeVrcontrolsModule);
 
-var _threeVreffectModule = __webpack_require__(137);
+var _threeVreffectModule = __webpack_require__(90);
 
 var _threeVreffectModule2 = _interopRequireDefault(_threeVreffectModule);
 
-var _world = __webpack_require__(92);
+var _webvrUi = __webpack_require__(92);
 
-var _boid = __webpack_require__(97);
+var webvrui = _interopRequireWildcard(_webvrUi);
 
-var _renderer = __webpack_require__(99);
+var _world = __webpack_require__(95);
 
-var _persistence = __webpack_require__(100);
+var _boid = __webpack_require__(101);
 
-var _resources = __webpack_require__(129);
+var _renderer = __webpack_require__(103);
+
+var _persistence = __webpack_require__(104);
+
+var _resources = __webpack_require__(109);
 
 var _resources2 = _interopRequireDefault(_resources);
 
-var _page = __webpack_require__(132);
+var _page = __webpack_require__(112);
 
 var _page2 = _interopRequireDefault(_page);
 
-var _loadingScene = __webpack_require__(133);
+var _loadingScene = __webpack_require__(114);
 
 var _loadingScene2 = _interopRequireDefault(_loadingScene);
 
-var _CompositeView = __webpack_require__(134);
+var _CompositeView = __webpack_require__(115);
 
 var _CompositeView2 = _interopRequireDefault(_CompositeView);
 
-var _Experience = __webpack_require__(62);
+var _Experience = __webpack_require__(51);
 
 var _Experience2 = _interopRequireDefault(_Experience);
 
@@ -45765,7 +46723,7 @@ var Program = function () {
             var clock = new THREE.Clock();
 
             var internalRender = function internalRender() {
-                _this.page.requestAnimationFrame(internalRender);
+                (_this.vrDisplay || window).requestAnimationFrame(internalRender);
 
                 var delta = clock.getDelta();
                 if (_this.context.simulationRunning) {
@@ -45777,6 +46735,10 @@ var Program = function () {
                 }
 
                 _this.experience.renderUsing(renderer);
+
+                if (_this.enterVR.isPresenting()) {
+                    _this.experience.renderUsing(_this.effect);
+                }
             };
             return internalRender;
         }
@@ -45875,12 +46837,12 @@ var Program = function () {
         key: '_startAppAsync',
         value: function () {
             var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(page) {
-                var glRenderer, camera, scope;
+                var glRenderer, camera;
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
                             case 0:
-                                glRenderer = new THREE.WebGLRenderer();
+                                glRenderer = new THREE.WebGLRenderer({ antialias: true });
 
                                 glRenderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
@@ -45896,37 +46858,57 @@ var Program = function () {
 
                                 this.controls = new _threeVrcontrolsModule2.default(camera);
 
+                                this.enterVR = new webvrui.EnterVRButton(glRenderer.domElement, {});
+                                document.getElementById('button').appendChild(this.enterVR.domElement);
+
                                 this.effect = new _threeVreffectModule2.default(glRenderer);
                                 this.effect.setSize(window.innerWidth, window.innerHeight);
 
-                                this.vrDisplay = null;
-                                scope = this;
+                                _context3.prev = 12;
+                                _context3.next = 15;
+                                return this.enterVR.getVRDisplay();
 
-                                navigator.getVRDisplays().then(function (displays) {
-                                    if (displays.length > 0) {
-                                        scope.vrDisplay = displays[0];
-                                        // Kick off the render loop.
-                                        scope.vrDisplay.requestAnimationFrame(scope._createRenderLoop(scope.effect));
-                                    }
-                                });
+                            case 15:
+                                this.vrDisplay = _context3.sent;
+                                _context3.next = 21;
+                                break;
+
+                            case 18:
+                                _context3.prev = 18;
+                                _context3.t0 = _context3['catch'](12);
+
+                                console.log('no VR ', _context3.t0);
+
+                            case 21:
+
+                                this._createRenderLoop(this.vrDisplay ? this.effect : glRenderer)();
+
+                                // this.vrDisplay = null;
+                                // navigator.getVRDisplays().then(function(displays) {
+                                //   if (displays.length > 0) {
+                                //     scope.vrDisplay = displays[0];
+                                //     // Kick off the render loop.
+                                //     scope.vrDisplay.requestAnimationFrame(scope._createRenderLoop(scope.effect));
+                                //   }
+                                // });
 
                                 this.renderer = glRenderer;
 
-                                _context3.next = 16;
+                                _context3.next = 25;
                                 return this._createFlockingExperienceAsync(page, glRenderer, camera);
 
-                            case 16:
+                            case 25:
                                 this.experience = _context3.sent;
 
                                 this.context.simulationRunning = true;
                                 this.doneWithLoadingLoop = true;
 
-                            case 19:
+                            case 28:
                             case 'end':
                                 return _context3.stop();
                         }
                     }
-                }, _callee3, this);
+                }, _callee3, this, [[12, 18]]);
             }));
 
             function _startAppAsync(_x7) {
@@ -45976,7 +46958,7 @@ function startUp() {
 }
 
 /***/ }),
-/* 64 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// This method of obtaining a reference to the global object needs to be
@@ -45997,7 +46979,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(65);
+module.exports = __webpack_require__(54);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -46011,10 +46993,10 @@ if (hadRuntime) {
   }
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
 
 /***/ }),
-/* 65 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -46754,32 +47736,32 @@ if (hadRuntime) {
   typeof self === "object" ? self : this
 );
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
 
 /***/ }),
-/* 66 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(25);
-__webpack_require__(36);
-module.exports = __webpack_require__(76);
+__webpack_require__(29);
+__webpack_require__(39);
+module.exports = __webpack_require__(71);
 
 /***/ }),
-/* 67 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(68)
-  , step             = __webpack_require__(69)
-  , Iterators        = __webpack_require__(16)
-  , toIObject        = __webpack_require__(6);
+var addToUnscopables = __webpack_require__(57)
+  , step             = __webpack_require__(58)
+  , Iterators        = __webpack_require__(10)
+  , toIObject        = __webpack_require__(13);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = __webpack_require__(41)(Array, 'Array', function(iterated, kind){
+module.exports = __webpack_require__(30)(Array, 'Array', function(iterated, kind){
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -46805,13 +47787,13 @@ addToUnscopables('values');
 addToUnscopables('entries');
 
 /***/ }),
-/* 68 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = function(){ /* empty */ };
 
 /***/ }),
-/* 69 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = function(done, value){
@@ -46819,28 +47801,59 @@ module.exports = function(done, value){
 };
 
 /***/ }),
-/* 70 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(17);
+var cof = __webpack_require__(14);
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
 /***/ }),
-/* 71 */
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = !__webpack_require__(7) && !__webpack_require__(21)(function(){
+  return Object.defineProperty(__webpack_require__(22)('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(16);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(6);
+
+/***/ }),
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create         = __webpack_require__(30)
-  , descriptor     = __webpack_require__(21)
-  , setToStringTag = __webpack_require__(23)
+var create         = __webpack_require__(64)
+  , descriptor     = __webpack_require__(32)
+  , setToStringTag = __webpack_require__(26)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(10)(IteratorPrototype, __webpack_require__(1)('iterator'), function(){ return this; });
+__webpack_require__(6)(IteratorPrototype, __webpack_require__(1)('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -46848,14 +47861,61 @@ module.exports = function(Constructor, NAME, next){
 };
 
 /***/ }),
-/* 72 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP       = __webpack_require__(8)
-  , anObject = __webpack_require__(3)
-  , getKeys  = __webpack_require__(13);
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject    = __webpack_require__(5)
+  , dPs         = __webpack_require__(65)
+  , enumBugKeys = __webpack_require__(36)
+  , IE_PROTO    = __webpack_require__(25)('IE_PROTO')
+  , Empty       = function(){ /* empty */ }
+  , PROTOTYPE   = 'prototype';
 
-module.exports = __webpack_require__(9) ? Object.defineProperties : function defineProperties(O, Properties){
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function(){
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = __webpack_require__(22)('iframe')
+    , i      = enumBugKeys.length
+    , lt     = '<'
+    , gt     = '>'
+    , iframeDocument;
+  iframe.style.display = 'none';
+  __webpack_require__(37).appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties){
+  var result;
+  if(O !== null){
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty;
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP       = __webpack_require__(12)
+  , anObject = __webpack_require__(5)
+  , getKeys  = __webpack_require__(23);
+
+module.exports = __webpack_require__(7) ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
   var keys   = getKeys(Properties)
     , length = keys.length
@@ -46866,14 +47926,36 @@ module.exports = __webpack_require__(9) ? Object.defineProperties : function def
 };
 
 /***/ }),
-/* 73 */
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has          = __webpack_require__(17)
+  , toIObject    = __webpack_require__(13)
+  , arrayIndexOf = __webpack_require__(67)(false)
+  , IE_PROTO     = __webpack_require__(25)('IE_PROTO');
+
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+/***/ }),
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(6)
-  , toLength  = __webpack_require__(45)
-  , toIndex   = __webpack_require__(74);
+var toIObject = __webpack_require__(13)
+  , toLength  = __webpack_require__(33)
+  , toIndex   = __webpack_require__(68);
 module.exports = function(IS_INCLUDES){
   return function($this, el, fromIndex){
     var O      = toIObject($this)
@@ -46892,10 +47974,10 @@ module.exports = function(IS_INCLUDES){
 };
 
 /***/ }),
-/* 74 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(31)
+var toInteger = __webpack_require__(24)
   , max       = Math.max
   , min       = Math.min;
 module.exports = function(index, length){
@@ -46904,11 +47986,29 @@ module.exports = function(index, length){
 };
 
 /***/ }),
-/* 75 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(31)
-  , defined   = __webpack_require__(26);
+// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+var has         = __webpack_require__(17)
+  , toObject    = __webpack_require__(38)
+  , IE_PROTO    = __webpack_require__(25)('IE_PROTO')
+  , ObjectProto = Object.prototype;
+
+module.exports = Object.getPrototypeOf || function(O){
+  O = toObject(O);
+  if(has(O, IE_PROTO))return O[IE_PROTO];
+  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectProto : null;
+};
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(24)
+  , defined   = __webpack_require__(19);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -46926,11 +48026,11 @@ module.exports = function(TO_STRING){
 };
 
 /***/ }),
-/* 76 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var anObject = __webpack_require__(3)
-  , get      = __webpack_require__(48);
+var anObject = __webpack_require__(5)
+  , get      = __webpack_require__(40);
 module.exports = __webpack_require__(0).getIterator = function(it){
   var iterFn = get(it);
   if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
@@ -46938,33 +48038,39 @@ module.exports = __webpack_require__(0).getIterator = function(it){
 };
 
 /***/ }),
-/* 77 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(52);
-__webpack_require__(36);
-__webpack_require__(25);
-__webpack_require__(78);
+__webpack_require__(73);
+__webpack_require__(39);
+__webpack_require__(29);
+__webpack_require__(74);
 module.exports = __webpack_require__(0).Promise;
 
 /***/ }),
-/* 78 */
+/* 73 */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY            = __webpack_require__(20)
+var LIBRARY            = __webpack_require__(31)
   , global             = __webpack_require__(2)
-  , ctx                = __webpack_require__(18)
-  , classof            = __webpack_require__(49)
-  , $export            = __webpack_require__(7)
-  , isObject           = __webpack_require__(12)
-  , aFunction          = __webpack_require__(27)
-  , anInstance         = __webpack_require__(79)
-  , forOf              = __webpack_require__(80)
-  , speciesConstructor = __webpack_require__(83)
-  , task               = __webpack_require__(53).set
-  , microtask          = __webpack_require__(85)()
+  , ctx                = __webpack_require__(15)
+  , classof            = __webpack_require__(41)
+  , $export            = __webpack_require__(11)
+  , isObject           = __webpack_require__(16)
+  , aFunction          = __webpack_require__(20)
+  , anInstance         = __webpack_require__(75)
+  , forOf              = __webpack_require__(76)
+  , speciesConstructor = __webpack_require__(79)
+  , task               = __webpack_require__(44).set
+  , microtask          = __webpack_require__(81)()
   , PROMISE            = 'Promise'
   , TypeError          = global.TypeError
   , process            = global.process
@@ -47156,7 +48262,7 @@ if(!USE_NATIVE){
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = __webpack_require__(86)($Promise.prototype, {
+  Internal.prototype = __webpack_require__(82)($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected){
       var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -47182,8 +48288,8 @@ if(!USE_NATIVE){
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-__webpack_require__(23)($Promise, PROMISE);
-__webpack_require__(87)(PROMISE);
+__webpack_require__(26)($Promise, PROMISE);
+__webpack_require__(83)(PROMISE);
 Wrapper = __webpack_require__(0)[PROMISE];
 
 // statics
@@ -47207,7 +48313,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return capability.promise;
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(88)(function(iter){
+$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(84)(function(iter){
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -47253,7 +48359,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(88)(function
 });
 
 /***/ }),
-/* 79 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = function(it, Constructor, name, forbiddenField){
@@ -47263,15 +48369,15 @@ module.exports = function(it, Constructor, name, forbiddenField){
 };
 
 /***/ }),
-/* 80 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ctx         = __webpack_require__(18)
-  , call        = __webpack_require__(81)
-  , isArrayIter = __webpack_require__(82)
-  , anObject    = __webpack_require__(3)
-  , toLength    = __webpack_require__(45)
-  , getIterFn   = __webpack_require__(48)
+var ctx         = __webpack_require__(15)
+  , call        = __webpack_require__(77)
+  , isArrayIter = __webpack_require__(78)
+  , anObject    = __webpack_require__(5)
+  , toLength    = __webpack_require__(33)
+  , getIterFn   = __webpack_require__(40)
   , BREAK       = {}
   , RETURN      = {};
 var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -47293,11 +48399,11 @@ exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
 
 /***/ }),
-/* 81 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
-var anObject = __webpack_require__(3);
+var anObject = __webpack_require__(5);
 module.exports = function(iterator, fn, value, entries){
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
@@ -47310,11 +48416,11 @@ module.exports = function(iterator, fn, value, entries){
 };
 
 /***/ }),
-/* 82 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
-var Iterators  = __webpack_require__(16)
+var Iterators  = __webpack_require__(10)
   , ITERATOR   = __webpack_require__(1)('iterator')
   , ArrayProto = Array.prototype;
 
@@ -47323,12 +48429,12 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 83 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
-var anObject  = __webpack_require__(3)
-  , aFunction = __webpack_require__(27)
+var anObject  = __webpack_require__(5)
+  , aFunction = __webpack_require__(20)
   , SPECIES   = __webpack_require__(1)('species');
 module.exports = function(O, D){
   var C = anObject(O).constructor, S;
@@ -47336,7 +48442,7 @@ module.exports = function(O, D){
 };
 
 /***/ }),
-/* 84 */
+/* 80 */
 /***/ (function(module, exports) {
 
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -47357,15 +48463,15 @@ module.exports = function(fn, args, that){
 };
 
 /***/ }),
-/* 85 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global    = __webpack_require__(2)
-  , macrotask = __webpack_require__(53).set
+  , macrotask = __webpack_require__(44).set
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
   , process   = global.process
   , Promise   = global.Promise
-  , isNode    = __webpack_require__(17)(process) == 'process';
+  , isNode    = __webpack_require__(14)(process) == 'process';
 
 module.exports = function(){
   var head, last, notify;
@@ -47430,10 +48536,10 @@ module.exports = function(){
 };
 
 /***/ }),
-/* 86 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hide = __webpack_require__(10);
+var hide = __webpack_require__(6);
 module.exports = function(target, src, safe){
   for(var key in src){
     if(safe && target[key])target[key] = src[key];
@@ -47442,15 +48548,15 @@ module.exports = function(target, src, safe){
 };
 
 /***/ }),
-/* 87 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var global      = __webpack_require__(2)
   , core        = __webpack_require__(0)
-  , dP          = __webpack_require__(8)
-  , DESCRIPTORS = __webpack_require__(9)
+  , dP          = __webpack_require__(12)
+  , DESCRIPTORS = __webpack_require__(7)
   , SPECIES     = __webpack_require__(1)('species');
 
 module.exports = function(KEY){
@@ -47462,7 +48568,7 @@ module.exports = function(KEY){
 };
 
 /***/ }),
-/* 88 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ITERATOR     = __webpack_require__(1)('iterator')
@@ -47488,25 +48594,25 @@ module.exports = function(exec, skipClosing){
 };
 
 /***/ }),
-/* 89 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(90);
+__webpack_require__(86);
 var $Object = __webpack_require__(0).Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
 
 /***/ }),
-/* 90 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(7);
+var $export = __webpack_require__(11);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(9), 'Object', {defineProperty: __webpack_require__(8).f});
+$export($export.S + $export.F * !__webpack_require__(7), 'Object', {defineProperty: __webpack_require__(12).f});
 
 /***/ }),
-/* 91 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47514,7 +48620,7 @@ $export($export.S + $export.F * !__webpack_require__(9), 'Object', {defineProper
 
 exports.__esModule = true;
 
-var _defineProperty = __webpack_require__(54);
+var _defineProperty = __webpack_require__(45);
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
@@ -47536,1375 +48642,7 @@ exports.default = function (obj, key, value) {
 };
 
 /***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.World = undefined;
-
-var _values = __webpack_require__(93);
-
-var _values2 = _interopRequireDefault(_values);
-
-var _getIterator2 = __webpack_require__(15);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var World = function () {
-    function World() {
-        (0, _classCallCheck3.default)(this, World);
-
-        this.boids = [];
-        this.controllers = {};
-        this.nextControllerName = 0;
-    }
-
-    (0, _createClass3.default)(World, [{
-        key: "addController",
-        value: function addController(controller, name) {
-            if (!name) {
-                this.nextControllerName += 1;
-                name = this.nextControllerName;
-            }
-            this.controllers[name] = controller;
-        }
-    }, {
-        key: "addBoid",
-        value: function addBoid(boid) {
-            this.boids.push(boid);
-        }
-    }, {
-        key: "update",
-        value: function update(delta) {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)((0, _values2.default)(this.controllers)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var controller = _step.value;
-
-                    controller.update(delta);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = (0, _getIterator3.default)(this.boids), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var boid = _step2.value;
-
-                    boid.update(delta, this);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-        }
-    }, {
-        key: "getBoid",
-        value: function getBoid(key) {
-            return this.boids[key];
-        }
-    }, {
-        key: "findNearbyBoids",
-        value: function findNearbyBoids(fromBoid, cutoffDistance) {
-            var friends = [];
-            this.boids.forEach(function (otherBoid) {
-                if (fromBoid === otherBoid) return;
-                var newDist = fromBoid.position.distanceTo(otherBoid.position);
-                if (newDist < cutoffDistance) {
-                    friends.push(otherBoid);
-                }
-            });
-            return friends;
-        }
-    }]);
-    return World;
-}();
-
-exports.World = World;
-
-/***/ }),
-/* 93 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(94), __esModule: true };
-
-/***/ }),
-/* 94 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(95);
-module.exports = __webpack_require__(0).Object.values;
-
-/***/ }),
-/* 95 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// https://github.com/tc39/proposal-object-values-entries
-var $export = __webpack_require__(7)
-  , $values = __webpack_require__(96)(false);
-
-$export($export.S, 'Object', {
-  values: function values(it){
-    return $values(it);
-  }
-});
-
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var getKeys   = __webpack_require__(13)
-  , toIObject = __webpack_require__(6)
-  , isEnum    = __webpack_require__(24).f;
-module.exports = function(isEntries){
-  return function(it){
-    var O      = toIObject(it)
-      , keys   = getKeys(O)
-      , length = keys.length
-      , i      = 0
-      , result = []
-      , key;
-    while(length > i)if(isEnum.call(O, key = keys[i++])){
-      result.push(isEntries ? [key, O[key]] : O[key]);
-    } return result;
-  };
-};
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Boid = undefined;
-
-var _getIterator2 = __webpack_require__(15);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _three = __webpack_require__(14);
-
-var _mathUtils = __webpack_require__(55);
-
-var _steering = __webpack_require__(98);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var friendDistance = 1;
-var yOffset = 10;
-var flockingCenter = new _three.Vector3(0, yOffset, 0);
-
-var BoidStates = {
-    flocking: 'flocking',
-    returning: 'returning'
-};
-
-var maxDistance = 50;
-var startFlockingAgainDistance = 45;
-
-var Boid = function () {
-    function Boid(position, direction, speed) {
-        (0, _classCallCheck3.default)(this, Boid);
-
-        this.position = position;
-        this.direction = direction;
-        this.speed = speed;
-        this.maxSpeed = 1.5;
-        this.minSpeed = 0.7;
-        this.maxForce = 0.1;
-        this.mass = 1;
-        this.friends = [];
-        this.maxDistanceFromCenter = 10;
-        this.state = BoidStates.flocking;
-        this.getMovementVector = this.flock;
-    }
-
-    (0, _createClass3.default)(Boid, [{
-        key: 'integrate',
-        value: function integrate(steeringDirection, delta) {
-            var steeringForce = steeringDirection.clone();
-            steeringForce.clampLength(0, this.maxForce * delta);
-            var acceleration = steeringForce.clone();
-            acceleration.divideScalar(this.mass);
-
-            var velocity = this.direction.clone();
-            velocity.multiplyScalar(this.speed * delta);
-            velocity.add(acceleration);
-            velocity.clampLength(this.minSpeed * delta, this.maxSpeed * delta);
-
-            this.position.add(velocity);
-
-            this.speed = velocity.length() / delta;
-            velocity.normalize();
-            this.direction.copy(velocity);
-        }
-    }, {
-        key: 'findLocalAveragePoint',
-        value: function findLocalAveragePoint() {
-            var averagePosition = new _three.Vector3(0, 0, 0);
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)(this.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var friend = _step.value;
-
-                    averagePosition.add(friend.position);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            averagePosition.divideScalar(this.friends.length);
-            return averagePosition;
-        }
-    }, {
-        key: 'getForceTowardCenterOfFriends',
-        value: function getForceTowardCenterOfFriends() {
-            var localCenter = this.findLocalAveragePoint();
-            if (this.friends.length > 0) {
-                localCenter.sub(this.position);
-                localCenter.divideScalar(100);
-            }
-            return localCenter;
-        }
-    }, {
-        key: 'getForceAwayFromNearby',
-        value: function getForceAwayFromNearby() {
-            var result = new _three.Vector3(0, 0, 0);
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = (0, _getIterator3.default)(this.friends), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var friend = _step2.value;
-
-                    var vectorFromFriendToBoid = friend.position.clone();
-                    vectorFromFriendToBoid.sub(this.position);
-                    var lengthFromFriendToBoid = vectorFromFriendToBoid.length();
-                    var inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
-                    var forceLength = inverseOfLengthFromFriendToBoid * -0.7;
-                    vectorFromFriendToBoid.setLength(forceLength);
-
-                    result.add(vectorFromFriendToBoid);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
-            result.divideScalar(150);
-            return result;
-        }
-    }, {
-        key: 'getForceToMatchVelocity',
-        value: function getForceToMatchVelocity() {
-            var result = new _three.Vector3(0, 0, 0);
-
-            if (this.friends.length === 0) {
-                return result;
-            }
-
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = (0, _getIterator3.default)(this.friends), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var friend = _step3.value;
-
-                    result.add(friend.getVelocity());
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            result.divideScalar(this.friends.length);
-
-            result.sub(this.getVelocity());
-            result.divideScalar(320);
-            return result;
-        }
-    }, {
-        key: 'getVelocity',
-        value: function getVelocity() {
-            var velocity = this.direction.clone();
-            velocity.multiplyScalar(this.speed);
-            return velocity;
-        }
-    }, {
-        key: 'selectState',
-        value: function selectState() {
-            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
-            if (distanceToFlockingCenter > maxDistance && this.state === BoidStates.flocking) {
-                return BoidStates.returning;
-            }
-
-            if (distanceToFlockingCenter < startFlockingAgainDistance && this.state === BoidStates.returning) {
-                return BoidStates.flocking;
-            }
-
-            return this.state;
-        }
-    }, {
-        key: 'flock',
-        value: function flock() {
-            var totalSteeringForce = new _three.Vector3();
-
-            this.forceToCenter = this.getForceTowardCenterOfFriends();
-            this.forceAway = this.getForceAwayFromNearby();
-            this.forceToMatchVelocity = this.getForceToMatchVelocity();
-            totalSteeringForce.add(this.forceToCenter);
-            totalSteeringForce.add(this.forceAway);
-            totalSteeringForce.add(this.forceToMatchVelocity);
-
-            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
-            if (distanceToFlockingCenter > maxDistance) {
-                this.getMovementVector = this.turnBack;
-            }
-
-            return totalSteeringForce;
-        }
-    }, {
-        key: 'turnBack',
-        value: function turnBack(delta) {
-            var totalSteeringForce = new _three.Vector3();
-
-            this.forceAway = this.getForceAwayFromNearby();
-            totalSteeringForce.add(this.forceAway);
-            totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
-
-            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
-            if (distanceToFlockingCenter < startFlockingAgainDistance) {
-                this.getMovementVector = this.flock;
-            }
-
-            return totalSteeringForce;
-        }
-    }, {
-        key: 'update',
-        value: function update(delta, world) {
-            this.friends = world.findNearbyBoids(this, friendDistance);
-
-            var movementVector = this.getMovementVector(delta);
-
-            this.integrate(movementVector, delta);
-        }
-    }], [{
-        key: 'createWithRandomPositionAndDirection',
-        value: function createWithRandomPositionAndDirection(min, max, speed) {
-            var _randomVec = (0, _mathUtils.randomVec2)(min, max),
-                xPos = _randomVec.x,
-                yPos = _randomVec.y;
-
-            var position = new _three.Vector3(xPos, yOffset, yPos);
-
-            var _randomDirection = (0, _mathUtils.randomDirection)(),
-                xDir = _randomDirection.x,
-                yDir = _randomDirection.y;
-
-            var direction = new _three.Vector3(xDir, 0, yDir);
-
-            return new Boid(position, direction, speed);
-        }
-    }]);
-    return Boid;
-}();
-
-exports.Boid = Boid;
-
-/***/ }),
-/* 98 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var SEEK_STEERING = 'seek';
-var FLEE_STEERING = 'flee';
-
-var seek = function seek(currentPosition, targetPosition, speed, delta) {
-    var desiredVelocity = targetPosition.clone();
-    desiredVelocity.sub(currentPosition);
-    desiredVelocity.normalize();
-    desiredVelocity.multiplyScalar(speed * delta);
-    return desiredVelocity;
-};
-
-var flee = function flee(currentPosition, targetPosition, speed, delta) {
-    var desiredVelocity = currentPosition.clone();
-    desiredVelocity.sub(targetPosition);
-    desiredVelocity.normalize();
-    desiredVelocity.multiplyScalar(speed * delta);
-    return desiredVelocity;
-};
-
-exports.SEEK_STEERING = SEEK_STEERING;
-exports.FLEE_STEERING = FLEE_STEERING;
-exports.seek = seek;
-exports.flee = flee;
-
-/***/ }),
-/* 99 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createSkyView = exports.createCamera = exports.createLights = exports.createFloor = exports.BoidView = undefined;
-
-var _getIterator2 = __webpack_require__(15);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _three = __webpack_require__(14);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _mathUtils = __webpack_require__(55);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var center = new THREE.Vector3(0, 0, 0);
-var yAxisNormal = new THREE.Vector3(0, 1, 0);
-
-var xAxisHalfNormal = new THREE.Vector3(0.5, 0, 0);
-var yAxisHalfNormal = new THREE.Vector3(0, 0.5, 0);
-var zAxisHalfNormal = new THREE.Vector3(0, 0, 0.5);
-
-var createAxisGroup = function createAxisGroup() {
-    var group = new THREE.Group();
-    var xAxisLine = new DebugLine(group, 0xff0000);
-    xAxisLine.setLineEnd(xAxisHalfNormal);
-    var yAxisLine = new DebugLine(group, 0x00ff00);
-    yAxisLine.setLineEnd(yAxisHalfNormal);
-    var zAxisLine = new DebugLine(group, 0x0000ff);
-    zAxisLine.setLineEnd(zAxisHalfNormal);
-    return group;
-};
-
-var getRotationMatrix = function getRotationMatrix(direction) {
-    var zAxis = direction.clone();
-    var yAxis = yAxisNormal.clone();
-    var xAxis = yAxis.clone();
-    xAxis.cross(zAxis);
-    xAxis.normalize();
-    var rotationMatrix = new THREE.Matrix4();
-    rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
-    return rotationMatrix;
-};
-
-var createFriendLines = function createFriendLines(scene) {
-    var lineColor = Math.random() * 0xffffff;
-    var friendLines = [];
-    for (var i = 0; i < 10; i++) {
-        friendLines[i] = new DebugLine(scene, lineColor);
-        friendLines[i].hide();
-    }
-    return friendLines;
-};
-
-var getClipAction = function getClipAction(mixer, animationClips, clipName) {
-    var clip = THREE.AnimationClip.findByName(animationClips, clipName);
-    var result = mixer.clipAction(clip);
-    if (!result) {
-        throw new Error('Could not find clip ' + clipName);
-    }
-    return result;
-};
-
-var flappingActionName = 'Flapping';
-var glidingActionName = 'Gliding';
-
-var BoidView = function () {
-    function BoidView(scene) {
-        var boidGeometry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new THREE.BoxGeometry(1, 1, 1);
-        var boidMaterial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new THREE.MeshPhongMaterial({ color: 0xff6464 });
-        var gameBoid = arguments[3];
-        (0, _classCallCheck3.default)(this, BoidView);
-
-
-        this.gameBoid = gameBoid;
-        if (!boidGeometry.animations) {
-            throw new Error('boidGeometry must contain animations');
-        }
-
-        boidMaterial.skinning = true;
-        var boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
-        this.mixer = new THREE.AnimationMixer(boidMesh);
-        this.animationClips = boidGeometry.animations;
-        this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
-        this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
-        this.flappingAction.startAt(this.mixer.time + (0, _mathUtils.randomBetween)(0, 1)).play();
-
-        this.modelScale = (0, _mathUtils.randomBetween)(0.2, 0.3);
-        boidMesh.scale.set(this.modelScale, this.modelScale, this.modelScale);
-        this.debugAxis = createAxisGroup();
-        boidMesh.add(this.debugAxis);
-        this.forceLine = new DebugLine(boidMesh, 0xffffff);
-        this.repelForceLine = new DebugLine(boidMesh, 0xff0000);
-        this.attractForceLine = new DebugLine(boidMesh, 0x00ff00);
-        this.followForceLine = new DebugLine(boidMesh, 0x0000ff);
-        //this.friendLines = createFriendLines(boidMesh);
-
-        this._timeTillThink = (0, _mathUtils.randomBetween)(5, 10);
-        this._timeSinceThink = 0;
-
-        this._currentActionName = 'Flapping';
-
-        scene.add(boidMesh);
-
-        this.mesh = boidMesh;
-    }
-
-    (0, _createClass3.default)(BoidView, [{
-        key: 'update',
-        value: function update(context, delta) {
-            this._timeSinceThink += delta;
-
-            if (this._timeSinceThink > this._timeTillThink) {
-                this._think();
-                this._timeSinceThink = 0;
-            }
-
-            this.mesh.position.copy(this.gameBoid.position);
-
-            this._handleForceLine(this.gameBoid, context);
-            this._handleRepelLine(this.gameBoid, context);
-            this._handleAttractLine(this.gameBoid, context);
-            this._handleFollowLine(this.gameBoid, context);
-
-            this._updateFriendLines(this.gameBoid, context);
-
-            this.debugAxis.visible = context.config.showAxis;
-
-            this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
-
-            if (this.mixer) {
-                //this.mixer.update(delta);
-            }
-        }
-    }, {
-        key: '_think',
-        value: function _think() {
-            if (this._currentActionName === flappingActionName) {
-                this.glidingAction.enabled = true;
-                this.flappingAction.crossFadeTo(this.glidingAction, 0.5);
-                this._currentActionName = glidingActionName;
-            } else {
-                this.flappingAction.enabled = true;
-                this.glidingAction.crossFadeTo(this.flappingAction, 0.5);
-                this._currentActionName = flappingActionName;
-            }
-        }
-    }, {
-        key: '_hideForceLine',
-        value: function _hideForceLine() {
-            this.forceLine.hide();
-        }
-    }, {
-        key: '_hideRepelLine',
-        value: function _hideRepelLine() {
-            this.repelForceLine.hide();
-        }
-    }, {
-        key: '_hideAttractLine',
-        value: function _hideAttractLine() {
-            this.attractForceLine.hide();
-        }
-    }, {
-        key: '_hideFollowLine',
-        value: function _hideFollowLine() {
-            this.followForceLine.hide();
-        }
-    }, {
-        key: '_updateForceLine',
-        value: function _updateForceLine(gameBoid) {
-            var forceVector = gameBoid.getVelocity().clone();
-            forceVector.add(this.mesh.position);
-            this.mesh.worldToLocal(forceVector);
-            this.forceLine.setLineEnd(forceVector);
-        }
-    }, {
-        key: '_updateRepelLine',
-        value: function _updateRepelLine(gameBoid) {
-            var forceVector = center.clone();
-            forceVector.addScaledVector(gameBoid.forceAway, 100);
-            forceVector.add(this.mesh.position);
-            this.mesh.worldToLocal(forceVector);
-            this.repelForceLine.setLineEnd(forceVector);
-        }
-    }, {
-        key: '_updateFollowLine',
-        value: function _updateFollowLine(gameBoid) {
-            var forceVector = center.clone();
-            forceVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
-            forceVector.add(this.mesh.position);
-            this.mesh.worldToLocal(forceVector);
-            this.followForceLine.setLineEnd(forceVector);
-        }
-    }, {
-        key: '_updateAttractLine',
-        value: function _updateAttractLine(gameBoid) {
-            var forceVector = center.clone();
-            forceVector.addScaledVector(gameBoid.forceToCenter, 100);
-            forceVector.add(this.mesh.position);
-            this.mesh.worldToLocal(forceVector);
-            this.attractForceLine.setLineEnd(forceVector);
-        }
-    }, {
-        key: '_getFriendLines',
-        value: function _getFriendLines() {
-            if (!this.friendLines) {
-                this.friendLines = createFriendLines(this.mesh);
-            }
-            return this.friendLines;
-        }
-    }, {
-        key: '_updateFriendLines',
-        value: function _updateFriendLines(gameBoid, context) {
-            var friendLineIndex = 0;
-            var friendLines = this._getFriendLines();
-            if (context.config.showFriendLines) {
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = (0, _getIterator3.default)(gameBoid.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var friend = _step.value;
-
-                        if (friendLineIndex < friendLines.length) {
-                            var localFriendPosition = friend.position.clone();
-                            this.mesh.worldToLocal(localFriendPosition);
-                            friendLines[friendLineIndex].setLineEnd(localFriendPosition);
-                        }
-                        friendLineIndex++;
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-            }
-            for (var i = friendLineIndex; i < 10; i++) {
-                friendLines[i].hide();
-            }
-        }
-    }, {
-        key: '_handleForceLine',
-        value: function _handleForceLine(gameBoid, context) {
-            if (context.config.showForceLine) {
-                this._updateForceLine(gameBoid);
-            } else {
-                this._hideForceLine();
-            }
-        }
-    }, {
-        key: '_handleRepelLine',
-        value: function _handleRepelLine(gameBoid, context) {
-            if (context.config.showRepelLine) {
-                this._updateRepelLine(gameBoid);
-            } else {
-                this._hideRepelLine();
-            }
-        }
-    }, {
-        key: '_handleAttractLine',
-        value: function _handleAttractLine(gameBoid, context) {
-            if (context.config.showAttractLine) {
-                this._updateAttractLine(gameBoid);
-            } else {
-                this._hideAttractLine();
-            }
-        }
-    }, {
-        key: '_handleFollowLine',
-        value: function _handleFollowLine(gameBoid, context) {
-            if (context.config.showFollowLine) {
-                this._updateFollowLine(gameBoid);
-            } else {
-                this._hideFollowLine();
-            }
-        }
-    }]);
-    return BoidView;
-}();
-
-var createSkyView = function createSkyView(geometry) {
-    var material = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
-
-    return new THREE.Mesh(geometry, material);
-};
-
-var DebugLine = function () {
-    function DebugLine(scene) {
-        var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var depthTest = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-        (0, _classCallCheck3.default)(this, DebugLine);
-
-        var material = void 0;
-        if (color) {
-            material = new THREE.LineBasicMaterial({ color: color });
-            material.depthTest = depthTest;
-        }
-
-        this.geometry = new THREE.Geometry();
-        this.geometry.vertices.push(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0));
-        this.mesh = new THREE.Line(this.geometry, material);
-
-        scene.add(this.mesh);
-    }
-
-    (0, _createClass3.default)(DebugLine, [{
-        key: 'setLineEnd',
-        value: function setLineEnd(end) {
-            this.show();
-            this.geometry.vertices[1].copy(end);
-            this.geometry.verticesNeedUpdate = true;
-        }
-    }, {
-        key: 'hide',
-        value: function hide() {
-            this.mesh.visible = false;
-        }
-    }, {
-        key: 'show',
-        value: function show() {
-            this.mesh.visible = true;
-        }
-    }]);
-    return DebugLine;
-}();
-
-var createFloor = function createFloor() {
-    var floorGeometry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new THREE.PlaneGeometry(1000, 1000, 10, 10);
-    var materials = arguments[1];
-
-    var floorMaterial = void 0;
-    if (materials) {
-        floorMaterial = materials[0];
-    } else {
-        floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D, shininess: 0.0 });
-    }
-    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-
-    floor.position.set(0, 0, 0);
-    return floor;
-};
-
-var createLights = function createLights() {
-    var lights = [];
-    var sunLight = new THREE.PointLight(0xf8df81, 1, 0);
-    sunLight.position.set(50, 50, 0);
-    lights.push(sunLight);
-
-    var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-    lights.push(ambientLight);
-
-    return lights;
-};
-
-var createCamera = function createCamera() {
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 150);
-    camera.updateProjectionMatrix();
-    return camera;
-};
-
-exports.BoidView = BoidView;
-exports.createFloor = createFloor;
-exports.createLights = createLights;
-exports.createCamera = createCamera;
-exports.createSkyView = createSkyView;
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.storeConfigChanges = exports.initializeConfig = undefined;
-
-var _keys = __webpack_require__(101);
-
-var _keys2 = _interopRequireDefault(_keys);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var storageAvailable = function () {
-    var result = typeof Storage !== 'undefined';
-    if (!result) {
-        console.log('no storage available');
-    }
-    return result;
-}();
-
-var boolFromString = function boolFromString(input) {
-    return input === 'true';
-};
-
-var boolFromStorage = function boolFromStorage(storageKey) {
-    return boolFromString(localStorage.getItem(storageKey));
-};
-
-var initializeConfig = exports.initializeConfig = function initializeConfig(config) {
-    if (storageAvailable) {
-        (0, _keys2.default)(config).forEach(function (key) {
-            return config[key] = boolFromStorage(key);
-        });
-    }
-};
-
-var storeConfigChanges = exports.storeConfigChanges = function storeConfigChanges(config) {
-    if (storageAvailable) {
-        (0, _keys2.default)(config).forEach(function (key) {
-            return localStorage.setItem(key, config[key]);
-        });
-    }
-};
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(102), __esModule: true };
-
-/***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(103);
-module.exports = __webpack_require__(0).Object.keys;
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__(35)
-  , $keys    = __webpack_require__(13);
-
-__webpack_require__(56)('keys', function(){
-  return function keys(it){
-    return $keys(toObject(it));
-  };
-});
-
-/***/ }),
-/* 104 */,
-/* 105 */,
-/* 106 */,
-/* 107 */,
-/* 108 */,
-/* 109 */,
-/* 110 */,
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */,
-/* 117 */,
-/* 118 */,
-/* 119 */,
-/* 120 */,
-/* 121 */,
-/* 122 */,
-/* 123 */,
-/* 124 */,
-/* 125 */,
-/* 126 */,
-/* 127 */,
-/* 128 */,
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _regenerator = __webpack_require__(39);
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = __webpack_require__(50);
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var _stringify = __webpack_require__(130);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-var _promise = __webpack_require__(51);
-
-var _promise2 = _interopRequireDefault(_promise);
-
-var _three = __webpack_require__(14);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var loadAsync = function loadAsync(loader, name, url) {
-    var onProgress = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
-
-    return new _promise2.default(function (resolve, reject) {
-        loader.load(url, function (geometry, materials) {
-            resolve({ name: name, geometry: geometry, materials: materials });
-        }, function (request) {
-            return onProgress(url, request.loaded, request.total);
-        }, function (err) {
-            return reject({ url: url, err: err });
-        });
-    });
-};
-
-var noDecimal = function noDecimal(number) {
-    return number.toFixed(0);
-};
-
-var loadResourceAsync = function loadResourceAsync(loader, name, url) {
-    return loadAsync(loader, name, url, function (url, loaded, total) {
-        return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
-    }).catch(function (err) {
-        return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
-    });
-};
-
-var loadAllResourcesAsync = function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(resources, assetRoot) {
-        var loader, allResources;
-        return _regenerator2.default.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        loader = new _three.JSONLoader();
-                        _context.next = 3;
-                        return _promise2.default.all(resources.map(function (x) {
-                            return loadResourceAsync(loader, x.name, assetRoot + x.url);
-                        }));
-
-                    case 3:
-                        allResources = _context.sent;
-
-                        console.log('loading done!');
-                        return _context.abrupt('return', allResources);
-
-                    case 6:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, undefined);
-    }));
-
-    return function loadAllResourcesAsync(_x2, _x3) {
-        return _ref.apply(this, arguments);
-    };
-}();
-
-exports.default = loadAllResourcesAsync;
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(131), __esModule: true };
-
-/***/ }),
-/* 131 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var core  = __webpack_require__(0)
-  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
-module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
-  return $JSON.stringify.apply($JSON, arguments);
-};
-
-/***/ }),
-/* 132 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _pointerLockControls = __webpack_require__(57);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Page = function () {
-    function Page() {
-        (0, _classCallCheck3.default)(this, Page);
-    }
-
-    (0, _createClass3.default)(Page, [{
-        key: 'registerOnLoad',
-        value: function registerOnLoad(onLoad) {
-            var _this = this;
-
-            window.onload = function () {
-                return onLoad(_this);
-            };
-        }
-    }, {
-        key: 'addViewPort',
-        value: function addViewPort(renderer) {
-            this.appendToBody(renderer.domElement);
-        }
-    }, {
-        key: 'appendToBody',
-        value: function appendToBody(element) {
-            document.body.appendChild(element);
-        }
-    }, {
-        key: 'registerOnResize',
-        value: function registerOnResize(onResize) {
-            window.onresize = onResize;
-        }
-    }, {
-        key: '_getElementById',
-        value: function _getElementById(id) {
-            return document.getElementById(id);
-        }
-    }, {
-        key: 'isPointerLockSupported',
-        value: function isPointerLockSupported() {
-            return (0, _pointerLockControls.pointerLockSupported)();
-        }
-    }, {
-        key: 'registerOnPointerLockChanged',
-        value: function registerOnPointerLockChanged(whenPointerLockChanged) {
-            (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
-                whenPointerLockChanged(isSourceElement);
-            });
-        }
-    }, {
-        key: 'registerOnClick',
-        value: function registerOnClick(onClick) {
-            var _this2 = this;
-
-            document.body.addEventListener('click', function () {
-                return onClick(_this2);
-            }, false);
-        }
-    }, {
-        key: 'lockPointer',
-        value: function lockPointer() {
-            (0, _pointerLockControls.lockPointer)(document.body);
-        }
-    }, {
-        key: 'getInnerWidth',
-        value: function getInnerWidth() {
-            return window.innerWidth;
-        }
-    }, {
-        key: 'getInnerHeight',
-        value: function getInnerHeight() {
-            return window.innerHeight;
-        }
-    }, {
-        key: 'addKeyDownListener',
-        value: function addKeyDownListener(onKeyDown) {
-            document.addEventListener('keydown', onKeyDown, false);
-        }
-    }, {
-        key: 'getAspectRatio',
-        value: function getAspectRatio() {
-            return window.innerWidth / window.innerHeight;
-        }
-    }, {
-        key: 'requestAnimationFrame',
-        value: function requestAnimationFrame(internalRender) {
-            window.requestAnimationFrame(internalRender);
-        }
-    }]);
-    return Page;
-}();
-
-exports.default = Page;
-
-/***/ }),
-/* 133 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-exports.default = createLoadingExperience;
-
-var _three = __webpack_require__(14);
-
-var THREE = _interopRequireWildcard(_three);
-
-var _Experience = __webpack_require__(62);
-
-var _Experience2 = _interopRequireDefault(_Experience);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var RotatingView = function () {
-    function RotatingView(mesh) {
-        (0, _classCallCheck3.default)(this, RotatingView);
-
-        this.mesh = mesh;
-    }
-
-    (0, _createClass3.default)(RotatingView, [{
-        key: 'update',
-        value: function update(context, delta) {
-            console.log('rotating view, delta: ' + delta);
-            this.mesh.rotation.x += 1 * delta;
-            this.mesh.rotation.y += 1 * delta;
-        }
-    }]);
-    return RotatingView;
-}();
-
-function createLoadingScene() {
-    var scene = new THREE.Scene();
-    var loadingIconGeometry = new THREE.BoxGeometry(1, 1, 1);
-    var loadingIconMaterial = new THREE.MeshBasicMaterial({ color: 0xff6464 });
-    var loadingIconMesh = new THREE.Mesh(loadingIconGeometry, loadingIconMaterial);
-    loadingIconMesh.position.z = -10;
-    scene.add(loadingIconMesh);
-
-    var loadingView = new RotatingView(loadingIconMesh);
-
-    return { loadingScene: scene, loadingView: loadingView };
-}
-
-function setupLoadingCamera() {
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 150);
-    camera.position.z = 5;
-    camera.lookAt(new THREE.Vector3());
-    camera.updateProjectionMatrix();
-
-    return camera;
-}
-
-function createLoadingExperience() {
-    var camera = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : setupLoadingCamera();
-
-    var _createLoadingScene = createLoadingScene(),
-        loadingScene = _createLoadingScene.loadingScene,
-        loadingView = _createLoadingScene.loadingView;
-
-    return new _Experience2.default(loadingScene, camera, loadingView);
-}
-
-/***/ }),
-/* 134 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _getIterator2 = __webpack_require__(15);
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-var _classCallCheck2 = __webpack_require__(4);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(5);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CompositeView = function () {
-    function CompositeView(children) {
-        (0, _classCallCheck3.default)(this, CompositeView);
-
-        this.children = children;
-    }
-
-    (0, _createClass3.default)(CompositeView, [{
-        key: "update",
-        value: function update(context, delta) {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = (0, _getIterator3.default)(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var child = _step.value;
-
-                    child.update(context, delta);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-        }
-    }]);
-    return CompositeView;
-}();
-
-exports.default = CompositeView;
-
-/***/ }),
-/* 135 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48916,7 +48654,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _three = __webpack_require__(136);
+var _three = __webpack_require__(89);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -49037,7 +48775,7 @@ exports.default = VRControls;
 ;
 
 /***/ }),
-/* 136 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -92720,7 +92458,7 @@ function CanvasRenderer() {
 
 
 /***/ }),
-/* 137 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -92732,7 +92470,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _three = __webpack_require__(138);
+var _three = __webpack_require__(91);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -93137,7 +92875,7 @@ exports.default = VREffect;
 ;
 
 /***/ }),
-/* 138 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -136818,6 +136556,1813 @@ function CanvasRenderer() {
 
 
 
+
+/***/ }),
+/* 92 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__webvr_manager__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__states__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__enter_vr_button__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__aframe_component__ = __webpack_require__(94);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "EnterVRButton", function() { return __WEBPACK_IMPORTED_MODULE_3__enter_vr_button__["a"]; });
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "dom", function() { return __WEBPACK_IMPORTED_MODULE_2__dom__; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "State", function() { return __WEBPACK_IMPORTED_MODULE_1__states__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "WebVRManager", function() { return __WEBPACK_IMPORTED_MODULE_0__webvr_manager__["a"]; });
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports) {
+
+/*!
+* screenfull
+* v3.3.1 - 2017-07-07
+* (c) Sindre Sorhus; MIT License
+*/
+(function () {
+	'use strict';
+
+	var document = typeof window !== 'undefined' && typeof window.document !== 'undefined' ? window.document : {};
+	var isCommonjs = typeof module !== 'undefined' && module.exports;
+	var keyboardAllowed = typeof Element !== 'undefined' && 'ALLOW_KEYBOARD_INPUT' in Element;
+
+	var fn = (function () {
+		var val;
+
+		var fnMap = [
+			[
+				'requestFullscreen',
+				'exitFullscreen',
+				'fullscreenElement',
+				'fullscreenEnabled',
+				'fullscreenchange',
+				'fullscreenerror'
+			],
+			// New WebKit
+			[
+				'webkitRequestFullscreen',
+				'webkitExitFullscreen',
+				'webkitFullscreenElement',
+				'webkitFullscreenEnabled',
+				'webkitfullscreenchange',
+				'webkitfullscreenerror'
+
+			],
+			// Old WebKit (Safari 5.1)
+			[
+				'webkitRequestFullScreen',
+				'webkitCancelFullScreen',
+				'webkitCurrentFullScreenElement',
+				'webkitCancelFullScreen',
+				'webkitfullscreenchange',
+				'webkitfullscreenerror'
+
+			],
+			[
+				'mozRequestFullScreen',
+				'mozCancelFullScreen',
+				'mozFullScreenElement',
+				'mozFullScreenEnabled',
+				'mozfullscreenchange',
+				'mozfullscreenerror'
+			],
+			[
+				'msRequestFullscreen',
+				'msExitFullscreen',
+				'msFullscreenElement',
+				'msFullscreenEnabled',
+				'MSFullscreenChange',
+				'MSFullscreenError'
+			]
+		];
+
+		var i = 0;
+		var l = fnMap.length;
+		var ret = {};
+
+		for (; i < l; i++) {
+			val = fnMap[i];
+			if (val && val[1] in document) {
+				for (i = 0; i < val.length; i++) {
+					ret[fnMap[0][i]] = val[i];
+				}
+				return ret;
+			}
+		}
+
+		return false;
+	})();
+
+	var eventNameMap = {
+		change: fn.fullscreenchange,
+		error: fn.fullscreenerror
+	};
+
+	var screenfull = {
+		request: function (elem) {
+			var request = fn.requestFullscreen;
+
+			elem = elem || document.documentElement;
+
+			// Work around Safari 5.1 bug: reports support for
+			// keyboard in fullscreen even though it doesn't.
+			// Browser sniffing, since the alternative with
+			// setTimeout is even worse.
+			if (/5\.1[.\d]* Safari/.test(navigator.userAgent)) {
+				elem[request]();
+			} else {
+				elem[request](keyboardAllowed && Element.ALLOW_KEYBOARD_INPUT);
+			}
+		},
+		exit: function () {
+			document[fn.exitFullscreen]();
+		},
+		toggle: function (elem) {
+			if (this.isFullscreen) {
+				this.exit();
+			} else {
+				this.request(elem);
+			}
+		},
+		onchange: function (callback) {
+			this.on('change', callback);
+		},
+		onerror: function (callback) {
+			this.on('error', callback);
+		},
+		on: function (event, callback) {
+			var eventName = eventNameMap[event];
+			if (eventName) {
+				document.addEventListener(eventName, callback, false);
+			}
+		},
+		off: function (event, callback) {
+			var eventName = eventNameMap[event];
+			if (eventName) {
+				document.removeEventListener(eventName, callback, false);
+			}
+		},
+		raw: fn
+	};
+
+	if (!fn) {
+		if (isCommonjs) {
+			module.exports = false;
+		} else {
+			window.screenfull = false;
+		}
+
+		return;
+	}
+
+	Object.defineProperties(screenfull, {
+		isFullscreen: {
+			get: function () {
+				return Boolean(document[fn.fullscreenElement]);
+			}
+		},
+		element: {
+			enumerable: true,
+			get: function () {
+				return document[fn.fullscreenElement];
+			}
+		},
+		enabled: {
+			enumerable: true,
+			get: function () {
+				// Coerce to boolean in case of old WebKit
+				return Boolean(document[fn.fullscreenEnabled]);
+			}
+		}
+	});
+
+	if (isCommonjs) {
+		module.exports = screenfull;
+	} else {
+		window.screenfull = screenfull;
+	}
+})();
+
+
+/***/ }),
+/* 94 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__enter_vr_button__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__states__ = __webpack_require__(18);
+// Copyright 2016 Google Inc.
+//
+//     Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+//     You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+//     Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//     See the License for the specific language governing permissions and
+// limitations under the License.
+
+/* global AFRAME */
+
+
+
+
+if (typeof AFRAME !== 'undefined' && AFRAME) {
+  AFRAME.registerComponent('webvr-ui', {
+    dependencies: ['canvas'],
+
+    schema: {
+      enabled: {type: 'boolean', default: true},
+      color: {type: 'string', default: 'white'},
+      background: {type: 'string', default: 'black'},
+      corners: {type: 'string', default: 'square'},
+      disabledOpacity: {type: 'number', default: 0.5},
+
+      textEnterVRTitle: {type: 'string'},
+      textExitVRTitle: {type: 'string'},
+      textVRNotFoundTitle: {type: 'string'},
+    },
+
+    init: function() {
+    },
+
+    update: function() {
+      let scene = document.querySelector('a-scene');
+      scene.setAttribute('vr-mode-ui', {enabled: !this.data.enabled});
+
+      if (this.data.enabled) {
+        if (this.enterVREl) {
+          return;
+        }
+
+        let options = {
+          color: this.data.color,
+          background: this.data.background,
+          corners: this.data.corners,
+          disabledOpacity: this.data.disabledOpacity,
+          textEnterVRTitle: this.data.textEnterVRTitle,
+          textExitVRTitle: this.data.textExitVRTitle,
+          textVRNotFoundTitle: this.data.textVRNotFoundTitle,
+          onRequestStateChange: function(state) {
+            if (state == __WEBPACK_IMPORTED_MODULE_1__states__["a" /* default */].PRESENTING) {
+              scene.enterVR();
+            } else {
+              scene.exitVR();
+            }
+            return false;
+          },
+        };
+
+        let enterVR = this.enterVR = new __WEBPACK_IMPORTED_MODULE_0__enter_vr_button__["a" /* default */](scene.canvas, options);
+
+        this.enterVREl = enterVR.domElement;
+
+        document.body.appendChild(enterVR.domElement);
+
+        enterVR.domElement.style.position = 'absolute';
+        enterVR.domElement.style.bottom = '10px';
+        enterVR.domElement.style.left = '50%';
+        enterVR.domElement.style.transform = 'translate(-50%, -50%)';
+        enterVR.domElement.style.textAlign = 'center';
+      } else {
+        if (this.enterVREl) {
+          this.enterVREl.parentNode.removeChild(this.enterVREl);
+          this.enterVR.remove();
+        }
+      }
+    },
+
+    remove: function() {
+      if (this.enterVREl) {
+        this.enterVREl.parentNode.removeChild(this.enterVREl);
+        this.enterVR.remove();
+      }
+    },
+  });
+}
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.World = undefined;
+
+var _values = __webpack_require__(96);
+
+var _values2 = _interopRequireDefault(_values);
+
+var _getIterator2 = __webpack_require__(9);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var World = function () {
+    function World() {
+        (0, _classCallCheck3.default)(this, World);
+
+        this.boids = [];
+        this.controllers = {};
+        this.nextControllerName = 0;
+    }
+
+    (0, _createClass3.default)(World, [{
+        key: "addController",
+        value: function addController(controller, name) {
+            if (!name) {
+                this.nextControllerName += 1;
+                name = this.nextControllerName;
+            }
+            this.controllers[name] = controller;
+        }
+    }, {
+        key: "addBoid",
+        value: function addBoid(boid) {
+            this.boids.push(boid);
+        }
+    }, {
+        key: "update",
+        value: function update(delta) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)((0, _values2.default)(this.controllers)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var controller = _step.value;
+
+                    controller.update(delta);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)(this.boids), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var boid = _step2.value;
+
+                    boid.update(delta, this);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    }, {
+        key: "getBoid",
+        value: function getBoid(key) {
+            return this.boids[key];
+        }
+    }, {
+        key: "findNearbyBoids",
+        value: function findNearbyBoids(fromBoid, cutoffDistance) {
+            var friends = [];
+            this.boids.forEach(function (otherBoid) {
+                if (fromBoid === otherBoid) return;
+                var newDist = fromBoid.position.distanceTo(otherBoid.position);
+                if (newDist < cutoffDistance) {
+                    friends.push(otherBoid);
+                }
+            });
+            return friends;
+        }
+    }]);
+    return World;
+}();
+
+exports.World = World;
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(97), __esModule: true };
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(98);
+module.exports = __webpack_require__(0).Object.values;
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// https://github.com/tc39/proposal-object-values-entries
+var $export = __webpack_require__(11)
+  , $values = __webpack_require__(99)(false);
+
+$export($export.S, 'Object', {
+  values: function values(it){
+    return $values(it);
+  }
+});
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getKeys   = __webpack_require__(23)
+  , toIObject = __webpack_require__(13)
+  , isEnum    = __webpack_require__(100).f;
+module.exports = function(isEntries){
+  return function(it){
+    var O      = toIObject(it)
+      , keys   = getKeys(O)
+      , length = keys.length
+      , i      = 0
+      , result = []
+      , key;
+    while(length > i)if(isEnum.call(O, key = keys[i++])){
+      result.push(isEntries ? [key, O[key]] : O[key]);
+    } return result;
+  };
+};
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports) {
+
+exports.f = {}.propertyIsEnumerable;
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Boid = undefined;
+
+var _getIterator2 = __webpack_require__(9);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _three = __webpack_require__(8);
+
+var _mathUtils = __webpack_require__(50);
+
+var _steering = __webpack_require__(102);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var friendDistance = 1;
+var yOffset = 10;
+var flockingCenter = new _three.Vector3(0, yOffset, 0);
+
+var BoidStates = {
+    flocking: 'flocking',
+    returning: 'returning'
+};
+
+var maxDistance = 50;
+var startFlockingAgainDistance = 45;
+
+var Boid = function () {
+    function Boid(position, direction, speed) {
+        (0, _classCallCheck3.default)(this, Boid);
+
+        this.position = position;
+        this.direction = direction;
+        this.speed = speed;
+        this.maxSpeed = 1.5;
+        this.minSpeed = 0.7;
+        this.maxForce = 0.1;
+        this.mass = 1;
+        this.friends = [];
+        this.maxDistanceFromCenter = 10;
+        this.state = BoidStates.flocking;
+        this.getMovementVector = this.flock;
+    }
+
+    (0, _createClass3.default)(Boid, [{
+        key: 'integrate',
+        value: function integrate(steeringDirection, delta) {
+            var steeringForce = steeringDirection.clone();
+            steeringForce.clampLength(0, this.maxForce * delta);
+            var acceleration = steeringForce.clone();
+            acceleration.divideScalar(this.mass);
+
+            var velocity = this.direction.clone();
+            velocity.multiplyScalar(this.speed * delta);
+            velocity.add(acceleration);
+            velocity.clampLength(this.minSpeed * delta, this.maxSpeed * delta);
+
+            this.position.add(velocity);
+
+            this.speed = velocity.length() / delta;
+            velocity.normalize();
+            this.direction.copy(velocity);
+        }
+    }, {
+        key: 'findLocalAveragePoint',
+        value: function findLocalAveragePoint() {
+            var averagePosition = new _three.Vector3(0, 0, 0);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var friend = _step.value;
+
+                    averagePosition.add(friend.position);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            averagePosition.divideScalar(this.friends.length);
+            return averagePosition;
+        }
+    }, {
+        key: 'getForceTowardCenterOfFriends',
+        value: function getForceTowardCenterOfFriends() {
+            var localCenter = this.findLocalAveragePoint();
+            if (this.friends.length > 0) {
+                localCenter.sub(this.position);
+                localCenter.divideScalar(100);
+            }
+            return localCenter;
+        }
+    }, {
+        key: 'getForceAwayFromNearby',
+        value: function getForceAwayFromNearby() {
+            var result = new _three.Vector3(0, 0, 0);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)(this.friends), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var friend = _step2.value;
+
+                    var vectorFromFriendToBoid = friend.position.clone();
+                    vectorFromFriendToBoid.sub(this.position);
+                    var lengthFromFriendToBoid = vectorFromFriendToBoid.length();
+                    var inverseOfLengthFromFriendToBoid = friendDistance - lengthFromFriendToBoid;
+                    var forceLength = inverseOfLengthFromFriendToBoid * -0.7;
+                    vectorFromFriendToBoid.setLength(forceLength);
+
+                    result.add(vectorFromFriendToBoid);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            result.divideScalar(150);
+            return result;
+        }
+    }, {
+        key: 'getForceToMatchVelocity',
+        value: function getForceToMatchVelocity() {
+            var result = new _three.Vector3(0, 0, 0);
+
+            if (this.friends.length === 0) {
+                return result;
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = (0, _getIterator3.default)(this.friends), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var friend = _step3.value;
+
+                    result.add(friend.getVelocity());
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            result.divideScalar(this.friends.length);
+
+            result.sub(this.getVelocity());
+            result.divideScalar(320);
+            return result;
+        }
+    }, {
+        key: 'getVelocity',
+        value: function getVelocity() {
+            var velocity = this.direction.clone();
+            velocity.multiplyScalar(this.speed);
+            return velocity;
+        }
+    }, {
+        key: 'selectState',
+        value: function selectState() {
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter > maxDistance && this.state === BoidStates.flocking) {
+                return BoidStates.returning;
+            }
+
+            if (distanceToFlockingCenter < startFlockingAgainDistance && this.state === BoidStates.returning) {
+                return BoidStates.flocking;
+            }
+
+            return this.state;
+        }
+    }, {
+        key: 'flock',
+        value: function flock() {
+            var totalSteeringForce = new _three.Vector3();
+
+            this.forceToCenter = this.getForceTowardCenterOfFriends();
+            this.forceAway = this.getForceAwayFromNearby();
+            this.forceToMatchVelocity = this.getForceToMatchVelocity();
+            totalSteeringForce.add(this.forceToCenter);
+            totalSteeringForce.add(this.forceAway);
+            totalSteeringForce.add(this.forceToMatchVelocity);
+
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter > maxDistance) {
+                this.getMovementVector = this.turnBack;
+            }
+
+            return totalSteeringForce;
+        }
+    }, {
+        key: 'turnBack',
+        value: function turnBack(delta) {
+            var totalSteeringForce = new _three.Vector3();
+
+            this.forceAway = this.getForceAwayFromNearby();
+            totalSteeringForce.add(this.forceAway);
+            totalSteeringForce.add((0, _steering.seek)(this.position, flockingCenter, this.speed, delta));
+
+            var distanceToFlockingCenter = this.position.distanceTo(flockingCenter);
+            if (distanceToFlockingCenter < startFlockingAgainDistance) {
+                this.getMovementVector = this.flock;
+            }
+
+            return totalSteeringForce;
+        }
+    }, {
+        key: 'update',
+        value: function update(delta, world) {
+            this.friends = world.findNearbyBoids(this, friendDistance);
+
+            var movementVector = this.getMovementVector(delta);
+
+            this.integrate(movementVector, delta);
+        }
+    }], [{
+        key: 'createWithRandomPositionAndDirection',
+        value: function createWithRandomPositionAndDirection(min, max, speed) {
+            var _randomVec = (0, _mathUtils.randomVec2)(min, max),
+                xPos = _randomVec.x,
+                yPos = _randomVec.y;
+
+            var position = new _three.Vector3(xPos, yOffset, yPos);
+
+            var _randomDirection = (0, _mathUtils.randomDirection)(),
+                xDir = _randomDirection.x,
+                yDir = _randomDirection.y;
+
+            var direction = new _three.Vector3(xDir, 0, yDir);
+
+            return new Boid(position, direction, speed);
+        }
+    }]);
+    return Boid;
+}();
+
+exports.Boid = Boid;
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var SEEK_STEERING = 'seek';
+var FLEE_STEERING = 'flee';
+
+var seek = function seek(currentPosition, targetPosition, speed, delta) {
+    var desiredVelocity = targetPosition.clone();
+    desiredVelocity.sub(currentPosition);
+    desiredVelocity.normalize();
+    desiredVelocity.multiplyScalar(speed * delta);
+    return desiredVelocity;
+};
+
+var flee = function flee(currentPosition, targetPosition, speed, delta) {
+    var desiredVelocity = currentPosition.clone();
+    desiredVelocity.sub(targetPosition);
+    desiredVelocity.normalize();
+    desiredVelocity.multiplyScalar(speed * delta);
+    return desiredVelocity;
+};
+
+exports.SEEK_STEERING = SEEK_STEERING;
+exports.FLEE_STEERING = FLEE_STEERING;
+exports.seek = seek;
+exports.flee = flee;
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createSkyView = exports.createCamera = exports.createLights = exports.createFloor = exports.BoidView = undefined;
+
+var _getIterator2 = __webpack_require__(9);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _three = __webpack_require__(8);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _mathUtils = __webpack_require__(50);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var center = new THREE.Vector3(0, 0, 0);
+var yAxisNormal = new THREE.Vector3(0, 1, 0);
+
+var xAxisHalfNormal = new THREE.Vector3(0.5, 0, 0);
+var yAxisHalfNormal = new THREE.Vector3(0, 0.5, 0);
+var zAxisHalfNormal = new THREE.Vector3(0, 0, 0.5);
+
+var createAxisGroup = function createAxisGroup() {
+    var group = new THREE.Group();
+    var xAxisLine = new DebugLine(group, 0xff0000);
+    xAxisLine.setLineEnd(xAxisHalfNormal);
+    var yAxisLine = new DebugLine(group, 0x00ff00);
+    yAxisLine.setLineEnd(yAxisHalfNormal);
+    var zAxisLine = new DebugLine(group, 0x0000ff);
+    zAxisLine.setLineEnd(zAxisHalfNormal);
+    return group;
+};
+
+var getRotationMatrix = function getRotationMatrix(direction) {
+    var zAxis = direction.clone();
+    var yAxis = yAxisNormal.clone();
+    var xAxis = yAxis.clone();
+    xAxis.cross(zAxis);
+    xAxis.normalize();
+    var rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeBasis(xAxis, yAxis, zAxis);
+    return rotationMatrix;
+};
+
+var createFriendLines = function createFriendLines(scene) {
+    var lineColor = Math.random() * 0xffffff;
+    var friendLines = [];
+    for (var i = 0; i < 10; i++) {
+        friendLines[i] = new DebugLine(scene, lineColor);
+        friendLines[i].hide();
+    }
+    return friendLines;
+};
+
+var getClipAction = function getClipAction(mixer, animationClips, clipName) {
+    var clip = THREE.AnimationClip.findByName(animationClips, clipName);
+    var result = mixer.clipAction(clip);
+    if (!result) {
+        throw new Error('Could not find clip ' + clipName);
+    }
+    return result;
+};
+
+var flappingActionName = 'Flapping';
+var glidingActionName = 'Gliding';
+
+var BoidView = function () {
+    function BoidView(scene) {
+        var boidGeometry = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new THREE.BoxGeometry(1, 1, 1);
+        var boidMaterial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new THREE.MeshPhongMaterial({ color: 0xff6464 });
+        var gameBoid = arguments[3];
+        (0, _classCallCheck3.default)(this, BoidView);
+
+
+        this.gameBoid = gameBoid;
+        if (!boidGeometry.animations) {
+            throw new Error('boidGeometry must contain animations');
+        }
+
+        boidMaterial.skinning = true;
+        var boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
+        this.mixer = new THREE.AnimationMixer(boidMesh);
+        this.animationClips = boidGeometry.animations;
+        this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
+        this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
+        this.flappingAction.startAt(this.mixer.time + (0, _mathUtils.randomBetween)(0, 1)).play();
+
+        this.modelScale = (0, _mathUtils.randomBetween)(0.2, 0.3);
+        boidMesh.scale.set(this.modelScale, this.modelScale, this.modelScale);
+        this.debugAxis = createAxisGroup();
+        boidMesh.add(this.debugAxis);
+        this.forceLine = new DebugLine(boidMesh, 0xffffff);
+        this.repelForceLine = new DebugLine(boidMesh, 0xff0000);
+        this.attractForceLine = new DebugLine(boidMesh, 0x00ff00);
+        this.followForceLine = new DebugLine(boidMesh, 0x0000ff);
+        //this.friendLines = createFriendLines(boidMesh);
+
+        this._timeTillThink = (0, _mathUtils.randomBetween)(5, 10);
+        this._timeSinceThink = 0;
+
+        this._currentActionName = 'Flapping';
+
+        scene.add(boidMesh);
+
+        this.mesh = boidMesh;
+    }
+
+    (0, _createClass3.default)(BoidView, [{
+        key: 'update',
+        value: function update(context, delta) {
+            this._timeSinceThink += delta;
+
+            if (this._timeSinceThink > this._timeTillThink) {
+                this._think();
+                this._timeSinceThink = 0;
+            }
+
+            this.mesh.position.copy(this.gameBoid.position);
+
+            this._handleForceLine(this.gameBoid, context);
+            this._handleRepelLine(this.gameBoid, context);
+            this._handleAttractLine(this.gameBoid, context);
+            this._handleFollowLine(this.gameBoid, context);
+
+            this._updateFriendLines(this.gameBoid, context);
+
+            this.debugAxis.visible = context.config.showAxis;
+
+            this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
+
+            if (this.mixer) {
+                //this.mixer.update(delta);
+            }
+        }
+    }, {
+        key: '_think',
+        value: function _think() {
+            if (this._currentActionName === flappingActionName) {
+                this.glidingAction.enabled = true;
+                this.flappingAction.crossFadeTo(this.glidingAction, 0.5);
+                this._currentActionName = glidingActionName;
+            } else {
+                this.flappingAction.enabled = true;
+                this.glidingAction.crossFadeTo(this.flappingAction, 0.5);
+                this._currentActionName = flappingActionName;
+            }
+        }
+    }, {
+        key: '_hideForceLine',
+        value: function _hideForceLine() {
+            this.forceLine.hide();
+        }
+    }, {
+        key: '_hideRepelLine',
+        value: function _hideRepelLine() {
+            this.repelForceLine.hide();
+        }
+    }, {
+        key: '_hideAttractLine',
+        value: function _hideAttractLine() {
+            this.attractForceLine.hide();
+        }
+    }, {
+        key: '_hideFollowLine',
+        value: function _hideFollowLine() {
+            this.followForceLine.hide();
+        }
+    }, {
+        key: '_updateForceLine',
+        value: function _updateForceLine(gameBoid) {
+            var forceVector = gameBoid.getVelocity().clone();
+            forceVector.add(this.mesh.position);
+            this.mesh.worldToLocal(forceVector);
+            this.forceLine.setLineEnd(forceVector);
+        }
+    }, {
+        key: '_updateRepelLine',
+        value: function _updateRepelLine(gameBoid) {
+            var forceVector = center.clone();
+            forceVector.addScaledVector(gameBoid.forceAway, 100);
+            forceVector.add(this.mesh.position);
+            this.mesh.worldToLocal(forceVector);
+            this.repelForceLine.setLineEnd(forceVector);
+        }
+    }, {
+        key: '_updateFollowLine',
+        value: function _updateFollowLine(gameBoid) {
+            var forceVector = center.clone();
+            forceVector.addScaledVector(gameBoid.forceToMatchVelocity, 100);
+            forceVector.add(this.mesh.position);
+            this.mesh.worldToLocal(forceVector);
+            this.followForceLine.setLineEnd(forceVector);
+        }
+    }, {
+        key: '_updateAttractLine',
+        value: function _updateAttractLine(gameBoid) {
+            var forceVector = center.clone();
+            forceVector.addScaledVector(gameBoid.forceToCenter, 100);
+            forceVector.add(this.mesh.position);
+            this.mesh.worldToLocal(forceVector);
+            this.attractForceLine.setLineEnd(forceVector);
+        }
+    }, {
+        key: '_getFriendLines',
+        value: function _getFriendLines() {
+            if (!this.friendLines) {
+                this.friendLines = createFriendLines(this.mesh);
+            }
+            return this.friendLines;
+        }
+    }, {
+        key: '_updateFriendLines',
+        value: function _updateFriendLines(gameBoid, context) {
+            var friendLineIndex = 0;
+            var friendLines = this._getFriendLines();
+            if (context.config.showFriendLines) {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = (0, _getIterator3.default)(gameBoid.friends), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var friend = _step.value;
+
+                        if (friendLineIndex < friendLines.length) {
+                            var localFriendPosition = friend.position.clone();
+                            this.mesh.worldToLocal(localFriendPosition);
+                            friendLines[friendLineIndex].setLineEnd(localFriendPosition);
+                        }
+                        friendLineIndex++;
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            }
+            for (var i = friendLineIndex; i < 10; i++) {
+                friendLines[i].hide();
+            }
+        }
+    }, {
+        key: '_handleForceLine',
+        value: function _handleForceLine(gameBoid, context) {
+            if (context.config.showForceLine) {
+                this._updateForceLine(gameBoid);
+            } else {
+                this._hideForceLine();
+            }
+        }
+    }, {
+        key: '_handleRepelLine',
+        value: function _handleRepelLine(gameBoid, context) {
+            if (context.config.showRepelLine) {
+                this._updateRepelLine(gameBoid);
+            } else {
+                this._hideRepelLine();
+            }
+        }
+    }, {
+        key: '_handleAttractLine',
+        value: function _handleAttractLine(gameBoid, context) {
+            if (context.config.showAttractLine) {
+                this._updateAttractLine(gameBoid);
+            } else {
+                this._hideAttractLine();
+            }
+        }
+    }, {
+        key: '_handleFollowLine',
+        value: function _handleFollowLine(gameBoid, context) {
+            if (context.config.showFollowLine) {
+                this._updateFollowLine(gameBoid);
+            } else {
+                this._hideFollowLine();
+            }
+        }
+    }]);
+    return BoidView;
+}();
+
+var createSkyView = function createSkyView(geometry) {
+    var material = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new THREE.MeshPhongMaterial({ color: 0x6C4BE7 });
+
+    return new THREE.Mesh(geometry, material);
+};
+
+var DebugLine = function () {
+    function DebugLine(scene) {
+        var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var depthTest = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+        (0, _classCallCheck3.default)(this, DebugLine);
+
+        var material = void 0;
+        if (color) {
+            material = new THREE.LineBasicMaterial({ color: color });
+            material.depthTest = depthTest;
+        }
+
+        this.geometry = new THREE.Geometry();
+        this.geometry.vertices.push(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0));
+        this.mesh = new THREE.Line(this.geometry, material);
+
+        scene.add(this.mesh);
+    }
+
+    (0, _createClass3.default)(DebugLine, [{
+        key: 'setLineEnd',
+        value: function setLineEnd(end) {
+            this.show();
+            this.geometry.vertices[1].copy(end);
+            this.geometry.verticesNeedUpdate = true;
+        }
+    }, {
+        key: 'hide',
+        value: function hide() {
+            this.mesh.visible = false;
+        }
+    }, {
+        key: 'show',
+        value: function show() {
+            this.mesh.visible = true;
+        }
+    }]);
+    return DebugLine;
+}();
+
+var createFloor = function createFloor() {
+    var floorGeometry = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new THREE.PlaneGeometry(1000, 1000, 10, 10);
+    var materials = arguments[1];
+
+    var floorMaterial = void 0;
+    if (materials) {
+        floorMaterial = materials[0];
+    } else {
+        floorMaterial = new THREE.MeshPhongMaterial({ color: 0x7A3B2D, shininess: 0.0 });
+    }
+    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+
+    floor.position.set(0, 0, 0);
+    return floor;
+};
+
+var createLights = function createLights() {
+    var lights = [];
+    var sunLight = new THREE.PointLight(0xf8df81, 1, 0);
+    sunLight.position.set(50, 50, 0);
+    lights.push(sunLight);
+
+    var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    lights.push(ambientLight);
+
+    return lights;
+};
+
+var createCamera = function createCamera() {
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 150);
+    camera.updateProjectionMatrix();
+    return camera;
+};
+
+exports.BoidView = BoidView;
+exports.createFloor = createFloor;
+exports.createLights = createLights;
+exports.createCamera = createCamera;
+exports.createSkyView = createSkyView;
+
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.storeConfigChanges = exports.initializeConfig = undefined;
+
+var _keys = __webpack_require__(105);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var storageAvailable = function () {
+    var result = typeof Storage !== 'undefined';
+    if (!result) {
+        console.log('no storage available');
+    }
+    return result;
+}();
+
+var boolFromString = function boolFromString(input) {
+    return input === 'true';
+};
+
+var boolFromStorage = function boolFromStorage(storageKey) {
+    return boolFromString(localStorage.getItem(storageKey));
+};
+
+var initializeConfig = exports.initializeConfig = function initializeConfig(config) {
+    if (storageAvailable) {
+        (0, _keys2.default)(config).forEach(function (key) {
+            return config[key] = boolFromStorage(key);
+        });
+    }
+};
+
+var storeConfigChanges = exports.storeConfigChanges = function storeConfigChanges(config) {
+    if (storageAvailable) {
+        (0, _keys2.default)(config).forEach(function (key) {
+            return localStorage.setItem(key, config[key]);
+        });
+    }
+};
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(106), __esModule: true };
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(107);
+module.exports = __webpack_require__(0).Object.keys;
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 Object.keys(O)
+var toObject = __webpack_require__(38)
+  , $keys    = __webpack_require__(23);
+
+__webpack_require__(108)('keys', function(){
+  return function keys(it){
+    return $keys(toObject(it));
+  };
+});
+
+/***/ }),
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// most Object methods by ES6 should accept primitives
+var $export = __webpack_require__(11)
+  , core    = __webpack_require__(0)
+  , fails   = __webpack_require__(21);
+module.exports = function(KEY, exec){
+  var fn  = (core.Object || {})[KEY] || Object[KEY]
+    , exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
+};
+
+/***/ }),
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _regenerator = __webpack_require__(27);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(42);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _stringify = __webpack_require__(110);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = __webpack_require__(43);
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _three = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var loadAsync = function loadAsync(loader, name, url) {
+    var onProgress = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
+
+    return new _promise2.default(function (resolve, reject) {
+        loader.load(url, function (geometry, materials) {
+            resolve({ name: name, geometry: geometry, materials: materials });
+        }, function (request) {
+            return onProgress(url, request.loaded, request.total);
+        }, function (err) {
+            return reject({ url: url, err: err });
+        });
+    });
+};
+
+var noDecimal = function noDecimal(number) {
+    return number.toFixed(0);
+};
+
+var loadResourceAsync = function loadResourceAsync(loader, name, url) {
+    return loadAsync(loader, name, url, function (url, loaded, total) {
+        return console.log('loading ' + url + ': ' + noDecimal(loaded / total * 100) + '%');
+    }).catch(function (err) {
+        return console.log('error loading "' + url + '"', (0, _stringify2.default)(err));
+    });
+};
+
+var loadAllResourcesAsync = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(resources, assetRoot) {
+        var loader, allResources;
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        loader = new _three.JSONLoader();
+                        _context.next = 3;
+                        return _promise2.default.all(resources.map(function (x) {
+                            return loadResourceAsync(loader, x.name, assetRoot + x.url);
+                        }));
+
+                    case 3:
+                        allResources = _context.sent;
+
+                        console.log('loading done!');
+                        return _context.abrupt('return', allResources);
+
+                    case 6:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined);
+    }));
+
+    return function loadAllResourcesAsync(_x2, _x3) {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+exports.default = loadAllResourcesAsync;
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(111), __esModule: true };
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var core  = __webpack_require__(0)
+  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _pointerLockControls = __webpack_require__(113);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Page = function () {
+    function Page() {
+        (0, _classCallCheck3.default)(this, Page);
+    }
+
+    (0, _createClass3.default)(Page, [{
+        key: 'registerOnLoad',
+        value: function registerOnLoad(onLoad) {
+            var _this = this;
+
+            window.onload = function () {
+                return onLoad(_this);
+            };
+        }
+    }, {
+        key: 'addViewPort',
+        value: function addViewPort(renderer) {
+            this.appendToBody(renderer.domElement);
+        }
+    }, {
+        key: 'appendToBody',
+        value: function appendToBody(element) {
+            document.body.appendChild(element);
+        }
+    }, {
+        key: 'registerOnResize',
+        value: function registerOnResize(onResize) {
+            window.onresize = onResize;
+        }
+    }, {
+        key: '_getElementById',
+        value: function _getElementById(id) {
+            return document.getElementById(id);
+        }
+    }, {
+        key: 'isPointerLockSupported',
+        value: function isPointerLockSupported() {
+            return (0, _pointerLockControls.pointerLockSupported)();
+        }
+    }, {
+        key: 'registerOnPointerLockChanged',
+        value: function registerOnPointerLockChanged(whenPointerLockChanged) {
+            (0, _pointerLockControls.onPointerLockChanged)(document, function (isSourceElement) {
+                whenPointerLockChanged(isSourceElement);
+            });
+        }
+    }, {
+        key: 'registerOnClick',
+        value: function registerOnClick(onClick) {
+            var _this2 = this;
+
+            document.body.addEventListener('click', function () {
+                return onClick(_this2);
+            }, false);
+        }
+    }, {
+        key: 'lockPointer',
+        value: function lockPointer() {
+            (0, _pointerLockControls.lockPointer)(document.body);
+        }
+    }, {
+        key: 'getInnerWidth',
+        value: function getInnerWidth() {
+            return window.innerWidth;
+        }
+    }, {
+        key: 'getInnerHeight',
+        value: function getInnerHeight() {
+            return window.innerHeight;
+        }
+    }, {
+        key: 'addKeyDownListener',
+        value: function addKeyDownListener(onKeyDown) {
+            document.addEventListener('keydown', onKeyDown, false);
+        }
+    }, {
+        key: 'getAspectRatio',
+        value: function getAspectRatio() {
+            return window.innerWidth / window.innerHeight;
+        }
+    }, {
+        key: 'requestAnimationFrame',
+        value: function requestAnimationFrame(internalRender) {
+            window.requestAnimationFrame(internalRender);
+        }
+    }]);
+    return Page;
+}();
+
+exports.default = Page;
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.onPointerLockChanged = exports.lockPointer = exports.pointerLockSupported = undefined;
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _three = __webpack_require__(8);
+
+var THREE = _interopRequireWildcard(_three);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+var PI_2 = Math.PI / 2;
+
+var PointerLockControls = function () {
+    function PointerLockControls(camera) {
+        var _this = this;
+
+        (0, _classCallCheck3.default)(this, PointerLockControls);
+
+        camera.rotation.set(0, 0, 0);
+
+        this.pitchObject = new THREE.Object3D();
+        this.pitchObject.add(camera);
+
+        this.yawObject = new THREE.Object3D();
+        this.yawObject.position.y = 10;
+        this.yawObject.add(this.pitchObject);
+
+        this.mouseMoveHander = function (event) {
+            return _this.onMouseMove(event);
+        };
+        document.addEventListener('mousemove', function (event) {
+            return _this.onMouseMove(event);
+        }, false);
+
+        this.enabled = false;
+        this.movementFactor = 0.002;
+
+        this.direction = new THREE.Vector3(0, 0, -1);
+        this.rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+    }
+
+    (0, _createClass3.default)(PointerLockControls, [{
+        key: 'onMouseMove',
+        value: function onMouseMove(event) {
+
+            if (this.enabled === false) return;
+
+            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+            this.yawObject.rotation.y -= movementX * this.movementFactor;
+            this.pitchObject.rotation.x -= movementY * this.movementFactor;
+
+            this.pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
+        }
+    }, {
+        key: 'dispose',
+        value: function dispose() {
+            document.removeEventListener('mousemove', this.mouseMoveHander, false);
+        }
+    }, {
+        key: 'getDirection',
+        value: function getDirection(v) {
+            this.rotation.set(this.pitchObject.rotation.x, this.yawObject.rotation.y, 0);
+            v.copy(this.direction).applyEuler(this.rotation);
+            return v;
+        }
+    }, {
+        key: 'getObject',
+        value: function getObject() {
+            return this.yawObject;
+        }
+    }, {
+        key: 'setPosition',
+        value: function setPosition(x, y, z) {
+            this.yawObject.position.setX(x);
+            this.yawObject.position.setY(y);
+            this.yawObject.position.setZ(z);
+        }
+    }]);
+    return PointerLockControls;
+}();
+
+var pointerLockSupported = function pointerLockSupported() {
+    return 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+};
+
+var lockPointer = function lockPointer(element) {
+    // Ask the browser to lock the pointer
+    element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+    element.requestPointerLock();
+};
+
+var onPointerLockChanged = function onPointerLockChanged(document, pointerLockChange) {
+    var element = document.body;
+    var changed = function changed() {
+        pointerLockChange(document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element);
+    };
+    document.addEventListener('pointerlockchange', changed, false);
+    document.addEventListener('mozpointerlockchange', changed, false);
+    document.addEventListener('webkitpointerlockchange', changed, false);
+};
+
+exports.default = PointerLockControls;
+exports.pointerLockSupported = pointerLockSupported;
+exports.lockPointer = lockPointer;
+exports.onPointerLockChanged = onPointerLockChanged;
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+exports.default = createLoadingExperience;
+
+var _three = __webpack_require__(8);
+
+var THREE = _interopRequireWildcard(_three);
+
+var _Experience = __webpack_require__(51);
+
+var _Experience2 = _interopRequireDefault(_Experience);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var RotatingView = function () {
+    function RotatingView(mesh) {
+        (0, _classCallCheck3.default)(this, RotatingView);
+
+        this.mesh = mesh;
+    }
+
+    (0, _createClass3.default)(RotatingView, [{
+        key: 'update',
+        value: function update(context, delta) {
+            console.log('rotating view, delta: ' + delta);
+            this.mesh.rotation.x += 1 * delta;
+            this.mesh.rotation.y += 1 * delta;
+        }
+    }]);
+    return RotatingView;
+}();
+
+function createLoadingScene() {
+    var scene = new THREE.Scene();
+    var loadingIconGeometry = new THREE.BoxGeometry(1, 1, 1);
+    var loadingIconMaterial = new THREE.MeshBasicMaterial({ color: 0xff6464 });
+    var loadingIconMesh = new THREE.Mesh(loadingIconGeometry, loadingIconMaterial);
+    loadingIconMesh.position.z = -10;
+    scene.add(loadingIconMesh);
+
+    var loadingView = new RotatingView(loadingIconMesh);
+
+    return { loadingScene: scene, loadingView: loadingView };
+}
+
+function setupLoadingCamera() {
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 150);
+    camera.position.z = 5;
+    camera.lookAt(new THREE.Vector3());
+    camera.updateProjectionMatrix();
+
+    return camera;
+}
+
+function createLoadingExperience() {
+    var camera = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : setupLoadingCamera();
+
+    var _createLoadingScene = createLoadingScene(),
+        loadingScene = _createLoadingScene.loadingScene,
+        loadingView = _createLoadingScene.loadingView;
+
+    return new _Experience2.default(loadingScene, camera, loadingView);
+}
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getIterator2 = __webpack_require__(9);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CompositeView = function () {
+    function CompositeView(children) {
+        (0, _classCallCheck3.default)(this, CompositeView);
+
+        this.children = children;
+    }
+
+    (0, _createClass3.default)(CompositeView, [{
+        key: "update",
+        value: function update(context, delta) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var child = _step.value;
+
+                    child.update(context, delta);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+    }]);
+    return CompositeView;
+}();
+
+exports.default = CompositeView;
 
 /***/ })
 /******/ ]);

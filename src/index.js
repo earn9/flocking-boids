@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import VRControls from 'three-vrcontrols-module';
 import VREffect from 'three-vreffect-module';
+import * as webvrui from 'webvr-ui';
 
 import { World } from './game/world';
 import { Boid } from './game/boid';
@@ -157,7 +158,7 @@ class Program {
         const clock = new THREE.Clock();
 
         const internalRender = () => {
-            this.page.requestAnimationFrame(internalRender);
+            (this.vrDisplay || window).requestAnimationFrame(internalRender);
 
             var delta = clock.getDelta();
             if (this.context.simulationRunning) {
@@ -169,6 +170,10 @@ class Program {
             }
 
             this.experience.renderUsing(renderer);
+
+            if (this.enterVR.isPresenting()) {
+                this.experience.renderUsing(this.effect);
+            }
         };
         return internalRender;
     }
@@ -226,12 +231,12 @@ class Program {
 
     async _startAppAsync(page) {
 
-        var glRenderer = new THREE.WebGLRenderer();
+        var glRenderer = new THREE.WebGLRenderer({antialias: true});
         glRenderer.setSize(page.getInnerWidth(), page.getInnerHeight());
 
         page.addViewPort(glRenderer);        
         page.registerOnResize(this._createWindowResizeHandler(glRenderer));
-
+        
         var camera = createCamera();        
         
         this.experience = createLoadingExperience(camera);
@@ -240,18 +245,30 @@ class Program {
 
         this.controls = new VRControls(camera);
 
+        this.enterVR = new webvrui.EnterVRButton(glRenderer.domElement, {});
+        document.getElementById('button').appendChild(this.enterVR.domElement);
+        
+
         this.effect = new VREffect(glRenderer);
         this.effect.setSize(window.innerWidth,  window.innerHeight);
 
-        this.vrDisplay = null;
-        const scope = this;
-        navigator.getVRDisplays().then(function(displays) {
-          if (displays.length > 0) {
-            scope.vrDisplay = displays[0];
-            // Kick off the render loop.
-            scope.vrDisplay.requestAnimationFrame(scope._createRenderLoop(scope.effect));
-          }
-        });
+        try {
+            this.vrDisplay = await this.enterVR.getVRDisplay();
+            //glRenderer.vr.setDisplay(this.vrDisplay);
+        } catch (ex) {
+            console.log('no VR ', ex);
+        }
+        
+        this._createRenderLoop(this.vrDisplay ? this.effect : glRenderer)();
+        
+        // this.vrDisplay = null;
+        // navigator.getVRDisplays().then(function(displays) {
+        //   if (displays.length > 0) {
+        //     scope.vrDisplay = displays[0];
+        //     // Kick off the render loop.
+        //     scope.vrDisplay.requestAnimationFrame(scope._createRenderLoop(scope.effect));
+        //   }
+        // });
 
         this.renderer = glRenderer;
 
