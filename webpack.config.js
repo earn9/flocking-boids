@@ -18,7 +18,7 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         plugins: ['transform-runtime'],
-                        presets: ['env']
+                        presets: [['env', { 'targets': { 'browsers': ['last 2 versions']}}]]
                     }
                 }
             }
