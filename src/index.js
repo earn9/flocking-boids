@@ -49,7 +49,7 @@ const mainSceneResources = [
     },
     {
         name: 'bird',
-        url: '/assets/models/birdSimple02.json'
+        url: '/assets/models/birdSimpler01.json'
     },
     {
         name: 'terrain',
@@ -123,7 +123,9 @@ class Program {
         this.context = new Context();
     }
 
-    _setupBoids(scene, world, boidGeometry, boidMaterial, boids = []) {
+    _setupBoids(scene, world, bird, boids = []) {
+        const boidGeometry = bird.geometry;
+        const boidMaterial = bird.materials[0];
         const numBoids = 200;
 
         for (let i = 0; i < numBoids; i++) {
@@ -171,7 +173,7 @@ class Program {
     _createResourcesStrategies(scene, world, boids) {
         return {
             skySphere: skySphere => scene.add(createSkyView(skySphere.geometry, skySphere.materials)),
-            bird: bird => this._setupBoids(scene, world, bird.geometry, bird.materials[0], boids),
+            bird: bird => this._setupBoids(scene, world, bird, boids),
             terrain: terrain => scene.add(createFloor(terrain.geometry, terrain.material))
         };
     }

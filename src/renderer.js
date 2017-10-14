@@ -62,19 +62,20 @@ class BoidView {
     ) {
 
         this.gameBoid = gameBoid;
-        if (!boidGeometry.animations) {
-            throw new Error('boidGeometry must contain animations');
+        let boidMesh;
+        if (boidGeometry.animations) {
+            this.mixer = new THREE.AnimationMixer(boidMesh);
+            this.animationClips = boidGeometry.animations;
+            this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
+            this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
+            this.flappingAction
+                .startAt(this.mixer.time + randomBetween(0, 1))
+                .play();
+            boidMaterial.skinning = true;
+            boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial)
+        } else {
+            boidMesh = new THREE.Mesh(boidGeometry, boidMaterial); 
         }
-
-        boidMaterial.skinning = true;
-        const boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
-        this.mixer = new THREE.AnimationMixer(boidMesh);
-        this.animationClips = boidGeometry.animations;
-        this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
-        this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
-        this.flappingAction
-            .startAt(this.mixer.time + randomBetween(0, 1))
-            .play();
 
         this.modelScale = randomBetween(0.2, 0.3);
         boidMesh.scale.set(this.modelScale, this.modelScale, this.modelScale);
@@ -118,11 +119,13 @@ class BoidView {
         this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
 
         if (this.mixer) {
-            //this.mixer.update(delta);
+            this.mixer.update(delta);
         }
     }
 
     _think() {
+        if (!this.mixer) return;
+
         if (this._currentActionName === flappingActionName) {
             this.glidingAction.enabled = true;
             this.flappingAction.crossFadeTo(this.glidingAction, 0.5);

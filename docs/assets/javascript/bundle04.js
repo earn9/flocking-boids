@@ -45277,7 +45277,7 @@ var mainSceneResources = [{
     url: '/assets/models/skySphere.json'
 }, {
     name: 'bird',
-    url: '/assets/models/birdSimple02.json'
+    url: '/assets/models/birdSimpler01.json'
 }, {
     name: 'terrain',
     url: '/assets/models/terain01.json'
@@ -45375,9 +45375,11 @@ var Program = function () {
 
     (0, _createClass3.default)(Program, [{
         key: '_setupBoids',
-        value: function _setupBoids(scene, world, boidGeometry, boidMaterial) {
-            var boids = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+        value: function _setupBoids(scene, world, bird) {
+            var boids = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 
+            var boidGeometry = bird.geometry;
+            var boidMaterial = bird.materials[0];
             var numBoids = 200;
 
             for (var i = 0; i < numBoids; i++) {
@@ -45501,7 +45503,7 @@ var Program = function () {
                     return scene.add((0, _renderer.createSkyView)(_skySphere.geometry, _skySphere.materials));
                 },
                 bird: function bird(_bird) {
-                    return _this2._setupBoids(scene, world, _bird.geometry, _bird.materials[0], boids);
+                    return _this2._setupBoids(scene, world, _bird, boids);
                 },
                 terrain: function terrain(_terrain) {
                     return scene.add((0, _renderer.createFloor)(_terrain.geometry, _terrain.material));
@@ -47964,17 +47966,18 @@ var BoidView = function () {
 
 
         this.gameBoid = gameBoid;
-        if (!boidGeometry.animations) {
-            throw new Error('boidGeometry must contain animations');
+        var boidMesh = void 0;
+        if (boidGeometry.animations) {
+            this.mixer = new THREE.AnimationMixer(boidMesh);
+            this.animationClips = boidGeometry.animations;
+            this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
+            this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
+            this.flappingAction.startAt(this.mixer.time + (0, _mathUtils.randomBetween)(0, 1)).play();
+            boidMaterial.skinning = true;
+            boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
+        } else {
+            boidMesh = new THREE.Mesh(boidGeometry, boidMaterial);
         }
-
-        boidMaterial.skinning = true;
-        var boidMesh = new THREE.SkinnedMesh(boidGeometry, boidMaterial);
-        this.mixer = new THREE.AnimationMixer(boidMesh);
-        this.animationClips = boidGeometry.animations;
-        this.flappingAction = getClipAction(this.mixer, this.animationClips, flappingActionName);
-        this.glidingAction = getClipAction(this.mixer, this.animationClips, 'Gliding');
-        this.flappingAction.startAt(this.mixer.time + (0, _mathUtils.randomBetween)(0, 1)).play();
 
         this.modelScale = (0, _mathUtils.randomBetween)(0.2, 0.3);
         boidMesh.scale.set(this.modelScale, this.modelScale, this.modelScale);
@@ -48020,12 +48023,14 @@ var BoidView = function () {
             this.mesh.setRotationFromMatrix(getRotationMatrix(this.gameBoid.direction));
 
             if (this.mixer) {
-                //this.mixer.update(delta);
+                this.mixer.update(delta);
             }
         }
     }, {
         key: '_think',
         value: function _think() {
+            if (!this.mixer) return;
+
             if (this._currentActionName === flappingActionName) {
                 this.glidingAction.enabled = true;
                 this.flappingAction.crossFadeTo(this.glidingAction, 0.5);
@@ -48751,7 +48756,6 @@ var RotatingView = function () {
     (0, _createClass3.default)(RotatingView, [{
         key: 'update',
         value: function update(context, delta) {
-            console.log('rotating view, delta: ' + delta);
             this.mesh.rotation.x += 1 * delta;
             this.mesh.rotation.y += 1 * delta;
         }

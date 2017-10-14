@@ -7,7 +7,6 @@ class RotatingView {
         this.mesh = mesh;
     }
      update(context, delta) {
-         console.log(`rotating view, delta: ${delta}`);
          this.mesh.rotation.x += 1 * delta;
          this.mesh.rotation.y += 1 * delta;
      }
